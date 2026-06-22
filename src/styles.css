@@ -1,0 +1,172 @@
+@import "tw-animate-css";
+@import "tailwindcss" source(none);
+@source "../src";
+
+@custom-variant dark (&:is(.dark *));
+
+/* CodeForge premium design system: deep night + electric purple + electric blue */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+
+  --color-electric: var(--electric);
+  --color-violet: var(--violet);
+  --color-navy: var(--navy);
+
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+:root {
+  --radius: 0.875rem;
+
+  /* Default = dark, premium night */
+  --background: oklch(0.13 0.025 270);
+  --foreground: oklch(0.97 0.005 260);
+  --card: oklch(0.17 0.03 270);
+  --card-foreground: oklch(0.97 0.005 260);
+  --popover: oklch(0.17 0.03 270);
+  --popover-foreground: oklch(0.97 0.005 260);
+
+  --primary: oklch(0.65 0.24 295);          /* electric violet */
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.22 0.04 268);
+  --secondary-foreground: oklch(0.97 0.005 260);
+  --muted: oklch(0.22 0.04 268);
+  --muted-foreground: oklch(0.7 0.03 260);
+  --accent: oklch(0.7 0.18 230);            /* electric blue */
+  --accent-foreground: oklch(0.13 0.025 270);
+
+  --destructive: oklch(0.65 0.24 25);
+  --destructive-foreground: oklch(0.99 0 0);
+
+  --border: oklch(1 0 0 / 8%);
+  --input: oklch(1 0 0 / 10%);
+  --ring: oklch(0.65 0.24 295);
+
+  --electric: oklch(0.78 0.18 230);
+  --violet: oklch(0.65 0.24 295);
+  --navy: oklch(0.18 0.05 270);
+}
+
+.light {
+  --background: oklch(0.99 0.002 260);
+  --foreground: oklch(0.16 0.03 270);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.16 0.03 270);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.16 0.03 270);
+  --primary: oklch(0.55 0.24 295);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.96 0.01 260);
+  --secondary-foreground: oklch(0.16 0.03 270);
+  --muted: oklch(0.96 0.01 260);
+  --muted-foreground: oklch(0.45 0.02 260);
+  --accent: oklch(0.55 0.18 230);
+  --accent-foreground: oklch(0.99 0 0);
+  --destructive: oklch(0.6 0.24 25);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(0.16 0.03 270 / 12%);
+  --input: oklch(0.16 0.03 270 / 14%);
+  --ring: oklch(0.55 0.24 295);
+}
+
+@layer base {
+  * { border-color: var(--color-border); }
+  html, body { background-color: var(--color-background); color: var(--color-foreground); }
+  body {
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01","cv11";
+    background-image:
+      radial-gradient(900px circle at 10% -10%, color-mix(in oklch, var(--violet) 28%, transparent), transparent 60%),
+      radial-gradient(700px circle at 110% 10%, color-mix(in oklch, var(--electric) 22%, transparent), transparent 55%),
+      radial-gradient(800px circle at 50% 120%, color-mix(in oklch, var(--violet) 18%, transparent), transparent 70%);
+    background-attachment: fixed;
+  }
+  h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.02em; }
+}
+
+/* Utilities */
+@utility glass {
+  background: color-mix(in oklch, var(--card) 55%, transparent);
+  backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid color-mix(in oklch, var(--foreground) 8%, transparent);
+}
+@utility glass-strong {
+  background: color-mix(in oklch, var(--card) 75%, transparent);
+  backdrop-filter: blur(28px) saturate(150%);
+  border: 1px solid color-mix(in oklch, var(--foreground) 10%, transparent);
+}
+@utility gradient-text {
+  background: linear-gradient(120deg, var(--violet), var(--electric));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+@utility gradient-border {
+  position: relative;
+  &::before {
+    content: "";
+    position: absolute; inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, var(--violet), var(--electric));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    pointer-events: none;
+  }
+}
+@utility glow-violet {
+  box-shadow: 0 20px 60px -20px color-mix(in oklch, var(--violet) 55%, transparent);
+}
+@utility glow-electric {
+  box-shadow: 0 20px 60px -20px color-mix(in oklch, var(--electric) 55%, transparent);
+}
+@utility grid-bg {
+  background-image:
+    linear-gradient(color-mix(in oklch, var(--foreground) 6%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklch, var(--foreground) 6%, transparent) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+}
+@utility shimmer {
+  position: relative; overflow: hidden;
+  &::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(110deg, transparent 35%, color-mix(in oklch, var(--foreground) 12%, transparent) 50%, transparent 65%);
+    transform: translateX(-100%);
+    animation: shimmer 2.4s infinite;
+  }
+}
+@keyframes shimmer { to { transform: translateX(100%); } }
+
+@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@utility float-slow { animation: float 6s ease-in-out infinite; }

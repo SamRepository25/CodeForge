@@ -1,0 +1,88 @@
+import { Link, useRouterState } from "@tanstack/react-router";
+import { Code2, Menu, X, LogIn, LayoutDashboard } from "lucide-react";
+import { useState } from "react";
+import { useAuth } from "@/hooks/use-auth";
+import { Button } from "@/components/ui/button";
+
+const NAV = [
+  { to: "/", label: "Home" },
+  { to: "/projects", label: "Projects" },
+  { to: "/blog", label: "Blog" },
+  { to: "/ai-tools", label: "AI Tools" },
+  { to: "/about", label: "About" },
+] as const;
+
+export function Navbar() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { user } = useAuth();
+  const [open, setOpen] = useState(false);
+
+  return (
+    <header className="sticky top-0 z-50 w-full">
+      <div className="mx-auto mt-4 max-w-7xl px-4">
+        <nav className="glass-strong flex items-center justify-between rounded-2xl px-4 py-3">
+          <Link to="/" className="group flex items-center gap-2.5">
+            <div className="relative grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-violet to-electric glow-violet">
+              <Code2 className="h-5 w-5 text-white" />
+            </div>
+            <div className="flex flex-col leading-none">
+              <span className="font-display text-base font-bold tracking-tight">CodeForge</span>
+              <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Forge ideas</span>
+            </div>
+          </Link>
+
+          <div className="hidden items-center gap-1 md:flex">
+            {NAV.map((n) => {
+              const active = n.to === "/" ? pathname === "/" : pathname.startsWith(n.to);
+              return (
+                <Link
+                  key={n.to}
+                  to={n.to}
+                  className={`relative rounded-lg px-3.5 py-2 text-sm font-medium transition ${
+                    active ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {n.label}
+                  {active && (
+                    <span className="absolute inset-x-3 -bottom-0.5 h-px bg-gradient-to-r from-violet to-electric" />
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+
+          <div className="hidden items-center gap-2 md:flex">
+            {user ? (
+              <Button asChild size="sm" className="rounded-lg bg-gradient-to-r from-violet to-electric text-white hover:opacity-90">
+                <Link to="/dashboard"><LayoutDashboard className="mr-1.5 h-4 w-4" />Dashboard</Link>
+              </Button>
+            ) : (
+              <Button asChild size="sm" className="rounded-lg bg-gradient-to-r from-violet to-electric text-white hover:opacity-90">
+                <Link to="/auth"><LogIn className="mr-1.5 h-4 w-4" />Sign in</Link>
+              </Button>
+            )}
+          </div>
+
+          <button className="md:hidden" onClick={() => setOpen((v) => !v)} aria-label="Menu">
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </nav>
+
+        {open && (
+          <div className="glass mt-2 rounded-2xl p-3 md:hidden">
+            <div className="flex flex-col">
+              {NAV.map((n) => (
+                <Link key={n.to} to={n.to} onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 text-sm hover:bg-white/5">
+                  {n.label}
+                </Link>
+              ))}
+              <Link to={user ? "/dashboard" : "/auth"} onClick={() => setOpen(false)} className="mt-1 rounded-lg bg-gradient-to-r from-violet to-electric px-3 py-2 text-center text-sm font-medium text-white">
+                {user ? "Dashboard" : "Sign in"}
+              </Link>
+            </div>
+          </div>
+        )}
+      </div>
+    </header>
+  );
+}

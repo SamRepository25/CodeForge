@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /auth
+Disallow: /dashboard
+Disallow: /admin
+
+Sitemap: https://codeforgedev.lovable.app/sitemap.xml
