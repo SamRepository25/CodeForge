@@ -20,7 +20,7 @@ export const Route = createFileRoute("/blog/$slug")({
     return { meta: data };
   },
   head: ({ params, loaderData }) => {
-    const url = `https://codeforgedev.lovable.app/blog/${params.slug}`;
+    const url = `https://https://codeforgedev.vercel.app/blog/${params.slug}`;
     const m = loaderData?.meta;
     const title = m?.title ? `${m.title} — CodeForge` : "Article — CodeForge";
     const description = m?.excerpt ?? "Technical article on the CodeForge blog.";

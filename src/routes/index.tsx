@@ -10,7 +10,7 @@ import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 
-const SITE_URL = "https://codeforgedev.lovable.app";
+const SITE_URL = "https://https://codeforgedev.vercel.app";
 const OG_IMAGE = "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/cb2daafa-ef7b-443c-91ff-56bf8bc32259";
 
 export const Route = createFileRoute("/")({

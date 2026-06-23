@@ -16,7 +16,7 @@ export const Route = createFileRoute("/auth")({
       { name: "description", content: "Sign in or create your CodeForge account." },
       { name: "robots", content: "noindex, nofollow" },
     ],
-    links: [{ rel: "canonical", href: "https://codeforgedev.lovable.app/auth" }],
+    links: [{ rel: "canonical", href: "https://https://codeforgedev.vercel.app/auth" }],
   }),
 
   component: AuthPage,
