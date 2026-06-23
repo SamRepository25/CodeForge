@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/auth")({
@@ -54,12 +53,11 @@ function AuthPage() {
   };
 
   const google = async () => {
-    setBusy(true);
-    const r = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/dashboard" });
-    setBusy(false);
-    if (r.error) return toast.error(r.error.message ?? "Google sign-in failed");
-    if (r.redirected) return;
-    navigate({ to: "/dashboard" });
+    toast.info("🚀 Coming Soon", {
+      description:
+        "Google Sign-In is currently under development.\nPlease use Email & Password sign-in for now.",
+      duration: 5000,
+    });
   };
 
   return (
