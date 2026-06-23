@@ -1,5 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { createFileRoute, Link, Outlet, useChildMatches } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Plus, Edit, Trash, Bookmark, Heart, Eye, LogOut, Settings, ShieldCheck } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
@@ -81,6 +80,8 @@ function Dashboard() {
     toast.success("Profile saved");
   };
 
+  const childMatches = useChildMatches();
+  if (childMatches.length > 0) return <Outlet />;
   return (
     <SiteLayout>
       <section className="mx-auto max-w-7xl px-4 pt-12">
