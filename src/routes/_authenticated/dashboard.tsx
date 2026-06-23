@@ -1,4 +1,5 @@
-import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Plus, Edit, Trash, Bookmark, Heart, Eye, LogOut, Settings, ShieldCheck } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
@@ -183,10 +184,9 @@ function Dashboard() {
               </div>
             </form>
           </TabsContent>
-       </Tabs>
-    </section>
-    <Outlet />
-  </SiteLayout>
+        </Tabs>
+      </section>
+    </SiteLayout>
   );
 }
 
