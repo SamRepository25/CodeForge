@@ -1,4 +1,5 @@
 import { createFileRoute, Link, Outlet, useChildMatches } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Plus, Edit, Trash, Bookmark, Heart, Eye, LogOut, Settings, ShieldCheck } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
@@ -155,7 +156,7 @@ function Dashboard() {
 
           <TabsContent value="bookmarks" className="mt-6">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {(bookmarks.data ?? []).length === 0 && <div className="glass md:col-span-2 lg:col-span-3 rounded-2xl p-10 text-center text-sm text-muted-foreground">No bookmarks yet. <Link to="/blog" className="text-electric">Browse the blog</Link></div>}
+              {(bookmarks.data ?? []).length === 0 && <div className="glass md:col-span-2 lg:col-span-3 rounded-2xl p-10 text-center text-sm text-muted-foreground">No bookmarks yet. <Link to="/blog" className="text-electric">Explore articles</Link>.</div>}
               {(bookmarks.data ?? []).map((b) => b.posts && (
                 <Link key={b.post_id} to="/blog/$slug" params={{ slug: b.posts.slug }} className="glass block rounded-2xl p-5 transition hover:-translate-y-0.5">
                   <div className="text-[10px] uppercase tracking-wider text-electric">{b.posts.category}</div>
