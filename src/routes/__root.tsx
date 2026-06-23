@@ -75,11 +75,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "@context": "https://schema.org",
           "@type": "WebSite",
           name: "CodeForge",
-          url: "https://codeforgedev.lovable.app",
+          url: "https://codeforgedev.vercel.app",
           potentialAction: {
             "@type": "SearchAction",
-            target: "https://codeforgedev.lovable.app/blog?q={search_term_string}",
-            "query-input": "required name=search_term_string",
+            target: "https://codeforgedev.vercel.app/blog?q={search_term_string}",
           },
         }),
       },
