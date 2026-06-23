@@ -81,6 +81,11 @@ function Home() {
         <div className="absolute inset-0 grid-bg" aria-hidden />
         <div className="relative mx-auto max-w-7xl px-4">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="mx-auto max-w-4xl text-center">
+            <div className="mb-4 flex justify-center">
+              <div className="rounded-full border border-orange-500/30 bg-orange-500/10 px-4 py-2 text-sm font-medium text-orange-400 backdrop-blur-sm">
+                🚧 This Website is Currently Under Development!
+              </div>
+            </div>
             <div className="mx-auto inline-flex items-center gap-2 rounded-full glass px-3 py-1.5 text-xs font-medium">
               <Sparkles className="h-3.5 w-3.5 text-violet" />
               <span className="text-muted-foreground">Welcome to the Future World</span>
@@ -107,7 +112,7 @@ function Home() {
           </motion.div>
 
           {/* Stat strip */}
-          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="glass-strong mx-auto mt-20 grid max-w-4xl grid-cols-2 gap-px overflow-hidden rounded-2xl bg-border/60 md:grid-cols-4">
+          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="glass-strong mx-auto mt-20 grid max-w-4xl grid-cols-2 gap-px overflow-hidden rounded-3xl md:grid-cols-4">
             {[
               { v: "50+", l: "Projects shipped" },
               { v: "120K", l: "Lines of code" },
@@ -128,7 +133,7 @@ function Home() {
         <SectionHeading eyebrow="Selected work" title="Featured projects" cta={{ to: "/projects", label: "All projects" }} />
         <div className="mt-10 grid gap-6 md:grid-cols-3">
           {(projects.data ?? []).map((p, i) => (
-            <motion.div key={p.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="group glass relative flex flex-col overflow-hidden rounded-2xl p-6 transition hover:-translate-y-1 hover:glow-violet">
+            <motion.div key={p.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="group glass relative flex h-full flex-col rounded-2xl p-6 transition hover:-translate-y-1">
               <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet to-transparent opacity-40" />
               <div className="mb-4 inline-flex w-fit items-center gap-1.5 rounded-full bg-white/5 px-2.5 py-1 text-[10px] uppercase tracking-wider text-muted-foreground">
                 {p.category ?? "Project"}
@@ -174,7 +179,7 @@ function Home() {
         <div className="mt-10 grid gap-6 md:grid-cols-3">
           {posts.data && posts.data.length > 0 ? (
             posts.data.map((p, i) => (
-              <motion.div key={p.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="glass rounded-2xl p-6 transition hover:-translate-y-1">
+              <motion.div key={p.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="glass rounded-2xl p-6">
                 <div className="text-[10px] uppercase tracking-wider text-electric">{p.category ?? "Article"}</div>
                 <h3 className="mt-2 font-display text-lg font-semibold">
                   <Link to="/blog/$slug" params={{ slug: p.slug }} className="hover:gradient-text">{p.title}</Link>
