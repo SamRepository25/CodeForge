@@ -46,9 +46,17 @@ export function Footer() {
             </ul>
           </div>
         </div>
-        <div className="mt-10 flex flex-col items-start justify-between gap-3 border-t border-border/40 pt-6 text-xs text-muted-foreground md:flex-row md:items-center">
+        <div className="mt-10 flex flex-col items-start gap-4 border-t border-border/40 pt-6 text-xs text-muted-foreground">
           <span>© {new Date().getFullYear()} CodeForge. All Rights Reserved by B SIMAK AHMED</span>
-          <span className="whitespace-pre-line text-right">React{"\n"}TypeScript{"\n"}Tailwind CSS{"\n"}TanStack Router / React Start (the build logs mentioned TanStack packages)</span>
+          <div className="flex flex-col items-start gap-2">
+            <span className="font-medium text-foreground/80">Built with</span>
+            <ul className="space-y-1">
+              <li>React</li>
+              <li>TypeScript</li>
+              <li>Tailwind CSS</li>
+            </ul>
+          </div>
+          <span>TanStack Router / React Start</span>
         </div>
       </div>
     </footer>
