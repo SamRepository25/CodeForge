@@ -114,8 +114,8 @@ function Home() {
           {/* Stat strip */}
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="glass-strong mx-auto mt-20 grid max-w-4xl grid-cols-2 gap-px overflow-hidden rounded-3xl md:grid-cols-4">
             {[
-              { v: "50+", l: "Projects shipped" },
-              { v: "120K", l: "Lines of code" },
+              { v: "4+", l: "Projects Built" },
+              { v: "15K+", l: "Lines of Code" },
               { v: "8", l: "AI tools" },
               { v: "24/7", l: "Always learning" },
             ].map((s) => (
