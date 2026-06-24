@@ -5,7 +5,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 
 const NAV = [
-  { to: "/", label: "About" },
+  { to: "/", label: "Home" },
+  { to: "/about", label: "About" },
   { to: "/projects", label: "Projects" },
   { to: "/blog", label: "Blog" },
   { to: "/ai-tools", label: "AI Tools" },
