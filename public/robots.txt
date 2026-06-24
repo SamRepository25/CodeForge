@@ -4,4 +4,4 @@ Disallow: /auth
 Disallow: /dashboard
 Disallow: /admin
 
-Sitemap: https://https://codeforgedev.vercel.app/sitemap.xml
+Sitemap: https://codeforgedev.vercel.app/sitemap.xml

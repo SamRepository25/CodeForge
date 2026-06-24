@@ -25,7 +25,7 @@ export const Route = createFileRoute("/ai-tools/$tool")({
     return { tool: params.tool, label: TOOL_PROMPTS[params.tool].label };
   },
   head: ({ loaderData, params }) => {
-    const url = `https://https://codeforgedev.vercel.app/ai-tools/${params?.tool ?? ""}`;
+    const url = `https://codeforgedev.vercel.app/ai-tools/${params?.tool ?? ""}`;
     const label = loaderData?.label ?? "AI Tool";
     const og = "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/cb2daafa-ef7b-443c-91ff-56bf8bc32259";
     return {

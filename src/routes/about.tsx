@@ -4,7 +4,7 @@ import { Briefcase, GraduationCap, Sparkles, Code2, Download, Github, Linkedin, 
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 
-const URL_ABOUT = "https://https://codeforgedev.vercel.app/about";
+const URL_ABOUT = "https://codeforgedev.vercel.app/about";
 const OG_IMAGE = "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/cb2daafa-ef7b-443c-91ff-56bf8bc32259";
 
 export const Route = createFileRoute("/about")({

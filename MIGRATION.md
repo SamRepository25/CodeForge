@@ -79,9 +79,9 @@ In **Authentication → Providers** of your new project:
 
 In **Authentication → URL Configuration**:
 
-- **Site URL**: `https://https://codeforgedev.vercel.app` (or your custom domain)
+- **Site URL**: `https://codeforgedev.vercel.app` (or your custom domain)
 - **Redirect URLs**: add both
-  - `https://https://codeforgedev.vercel.app/**`
+  - `https://codeforgedev.vercel.app/**`
   - `http://localhost:8080/**` (for local dev)
 
 ---

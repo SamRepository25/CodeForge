@@ -3,7 +3,7 @@ import { SiteLayout } from "@/components/SiteLayout";
 import { motion } from "framer-motion";
 import { FileText, BookOpen, GraduationCap, MessageSquareCode, Brain, Wand2, Code2, Sparkles, ArrowRight } from "lucide-react";
 
-const URL_AI = "https://https://codeforgedev.vercel.app/ai-tools";
+const URL_AI = "https://codeforgedev.vercel.app/ai-tools";
 const OG_IMAGE = "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/cb2daafa-ef7b-443c-91ff-56bf8bc32259";
 
 export const Route = createFileRoute("/ai-tools")({
