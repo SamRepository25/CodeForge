@@ -5,11 +5,10 @@ import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 
 const NAV = [
-  { to: "/", label: "Home" },
+  { to: "/", label: "About" },
   { to: "/projects", label: "Projects" },
   { to: "/blog", label: "Blog" },
   { to: "/ai-tools", label: "AI Tools" },
-  { to: "/about", label: "About" },
 ] as const;
 
 export function Navbar() {
@@ -69,17 +68,20 @@ export function Navbar() {
         </nav>
 
         {open && (
-          <div className="glass mt-2 rounded-2xl p-3 md:hidden">
-            <div className="flex flex-col">
-              {NAV.map((n) => (
-                <Link key={n.to} to={n.to} onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 text-sm hover:bg-white/5">
+          <div className="glass-strong mt-2 space-y-1 rounded-2xl p-3 md:hidden">
+            {NAV.map((n) => {
+              const active = n.to === "/" ? pathname === "/" : pathname.startsWith(n.to);
+              return (
+                <Link key={n.to} to={n.to} className={`block rounded-lg px-3 py-2 text-sm ${active ? "bg-secondary text-foreground" : "text-muted-foreground"}`} onClick={() => setOpen(false)}>
                   {n.label}
                 </Link>
-              ))}
-              <Link to={user ? "/dashboard" : "/auth"} onClick={() => setOpen(false)} className="mt-1 rounded-lg bg-gradient-to-r from-violet to-electric px-3 py-2 text-center text-sm font-medium text-white">
-                {user ? "Dashboard" : "Sign in"}
-              </Link>
-            </div>
+              );
+            })}
+            {user ? (
+              <Link to="/dashboard" className="block rounded-lg px-3 py-2 text-sm" onClick={() => setOpen(false)}>Dashboard</Link>
+            ) : (
+              <Link to="/auth" className="block rounded-lg px-3 py-2 text-sm" onClick={() => setOpen(false)}>Sign in</Link>
+            )}
           </div>
         )}
       </div>
