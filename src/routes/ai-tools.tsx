@@ -39,6 +39,9 @@ function Hub() {
     <SiteLayout>
       <section className="mx-auto max-w-7xl px-4 pt-20">
         <div className="max-w-3xl">
+          <div className="glass gradient-border inline-flex items-center rounded-full border border-white/10 px-4 py-2 text-xs font-medium text-electric">
+            🚧 AI Tools Are Currently Under Development!
+          </div>
           <div className="text-xs uppercase tracking-[0.18em] text-electric">AI Hub</div>
           <h1 className="mt-2 font-display text-5xl font-bold tracking-tight md:text-6xl">A toolbelt powered by AI</h1>
           <p className="mt-4 text-lg text-muted-foreground">Eight focused tools — built on top of Lovable AI — to help you build, learn and ship faster.</p>
