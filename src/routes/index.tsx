@@ -81,11 +81,7 @@ function Home() {
         <div className="absolute inset-0 grid-bg" aria-hidden />
         <div className="relative mx-auto max-w-7xl px-4">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="mx-auto max-w-4xl text-center">
-            <div className="mb-4 flex justify-center">
-              <div className="rounded-full border border-orange-500/30 bg-orange-500/10 px-4 py-2 text-sm font-medium text-orange-400 backdrop-blur-sm">
-                🚧 This Website is Currently Under Development!
-              </div>
-            </div>
+          
             <div className="mx-auto inline-flex items-center gap-2 rounded-full glass px-3 py-1.5 text-xs font-medium">
               <Sparkles className="h-3.5 w-3.5 text-violet" />
               <span className="text-muted-foreground">Welcome to the Future World</span>

@@ -38,7 +38,7 @@ function Hub() {
   return (
     <SiteLayout>
       <section className="mx-auto max-w-7xl px-4 pt-20">
-        <div className="max-w-3xl">
+        <div className="max-w-3xl mx-auto text-center">
           <div className="glass gradient-border inline-flex items-center rounded-full border border-white/10 px-4 py-2 text-xs font-medium text-electric">
             🚧 AI Tools Are Currently Under Development!
           </div>
