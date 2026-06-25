@@ -186,7 +186,7 @@ function Home() {
             ))
           ) : (
             <div className="glass md:col-span-3 rounded-2xl p-10 text-center text-sm text-muted-foreground">
-              No posts yet. <Link to="/auth" className="text-electric">Sign in</Link> and publish the first article.
+              No posts yet.
             </div>
           )}
         </div>
