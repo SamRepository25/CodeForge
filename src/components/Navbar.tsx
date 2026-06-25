@@ -20,7 +20,7 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full">
       <div className="mx-auto mt-4 max-w-7xl px-4">
-        <nav className="glass-strong grid grid-cols-[1fr_auto_1fr] items-center rounded-2xl px-4 py-3 md:grid-cols-3">
+        <nav className="glass-strong grid grid-cols-[1fr_1fr] items-center rounded-2xl px-4 py-3 md:grid-cols-3">
           {/* Left — logo */}
           <Link to="/" className="group flex items-center gap-2.5 justify-self-start">
             <div className="relative grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-violet to-electric glow-violet">
