@@ -44,7 +44,7 @@ function Hub() {
           </div>
           <div className="mt-12 text-xs uppercase tracking-[0.18em] text-electric">AI Hub</div>
           <h1 className="mt-2 font-display text-5xl font-bold tracking-tight md:text-6xl">A toolbelt powered by AI</h1>
-          <p className="mt-4 text-lg text-muted-foreground">Eight focused tools — built on top of Lovable AI — to help you build, learn and ship faster.</p>
+          <p className="mt-4 text-lg text-muted-foreground">Eight focused tools — to help you build, learn and ship faster.</p>
         </div>
         <div className="mt-12 grid gap-5 pb-20 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {TOOLS.map((t, i) => (
