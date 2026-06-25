@@ -6,13 +6,11 @@ import { Button } from "@/components/ui/button";
 
 const EDU = [
   { year: "2024 — present", title: "B.E. Computer Science", org: "Independent Study & Online Programs", desc: "Focus on systems, AI/ML and modern web architecture." },
-  { year: "2022 — 2024", title: "Foundations", org: "Self-taught + bootcamps", desc: "Full-stack web, TypeScript, design systems, databases." },
+  { year: "2022 — 2024", title: "CBSE Class 11th & 12th", org: "Science Group", desc: "Physics, Chemistry, Mathematics, Biology (Science Group)" },
 ];
 
 const EXP = [
   { year: "2025", title: "Indie Developer", org: "CodeForge", desc: "Building portfolio, blog & AI productivity tools as a public-build project." },
-  { year: "2024", title: "Open Source Contributor", org: "Various", desc: "Contributing to React, Tailwind ecosystem libraries and AI tooling." },
-  { year: "2023", title: "Freelance Web Developer", org: "Remote", desc: "Shipped marketing sites, dashboards and SaaS MVPs for early-stage teams." },
 ];
 
 export function AboutPage() {
@@ -25,10 +23,10 @@ export function AboutPage() {
               <Sparkles className="h-3.5 w-3.5 text-violet" /> About me
             </div>
             <h1 className="mt-4 font-display text-5xl font-bold tracking-tight md:text-6xl">
-              Hi, I'm the <span className="gradient-text">CodeForge</span> builder.
+              Hi, I'm <span className="gradient-text">B SIMAK AHMED</span>.
             </h1>
             <p className="mt-5 max-w-2xl text-lg text-muted-foreground">
-              Software Developer & AI Enthusiast. I build modern web applications, AI-powered tools and write about everything I learn for developers and students.
+              B.E. CSE Student | Tech Enthusiast | Exploring Software, AI, Cybersecurity & Digital Systems
             </p>
             <div className="mt-7 flex flex-wrap gap-2">
               <Button asChild className="rounded-xl bg-gradient-to-r from-violet to-electric text-white">
