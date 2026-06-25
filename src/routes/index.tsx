@@ -101,9 +101,9 @@ function Home() {
               </Button>
             </div>
             <div className="mx-auto mt-10 flex max-w-md items-center justify-center gap-6 text-xs text-muted-foreground">
-              <div className="flex items-center gap-1.5"><Shield className="h-3.5 w-3.5 text-electric" />Secure auth</div>
-              <div className="flex items-center gap-1.5"><Zap className="h-3.5 w-3.5 text-electric" />Realtime DB</div>
-              <div className="flex items-center gap-1.5"><Cpu className="h-3.5 w-3.5 text-electric" />AI powered</div>
+              <div className="flex items-center gap-1.5"><Shield className="h-3.5 w-3.5 text-electric" />Modern Stack</div>
+              <div className="flex items-center gap-1.5"><Zap className="h-3.5 w-3.5 text-electric" />Fast Performance</div>
+              <div className="flex items-center gap-1.5"><Cpu className="h-3.5 w-3.5 text-electric" />AI Powered</div>
             </div>
           </motion.div>
 
@@ -240,11 +240,11 @@ function Home() {
           <div className="absolute -top-32 left-1/2 h-72 w-[40rem] -translate-x-1/2 rounded-full bg-violet/30 blur-[120px]" aria-hidden />
           <div className="relative">
             <Rocket className="mx-auto mb-4 h-8 w-8 text-electric" />
-            <h2 className="font-display text-3xl font-bold md:text-5xl">Ready to forge something new?</h2>
-            <p className="mx-auto mt-3 max-w-xl text-muted-foreground">Sign in to create posts, save articles, and unlock the full AI hub.</p>
+            <h2 className="font-display text-3xl font-bold md:text-5xl">Let's Connect</h2>
+            <p className="mx-auto mt-3 max-w-xl text-muted-foreground">Interested in collaborating, discussing technology, or checking out more of my work? Feel free to get in touch.</p>
             <div className="mt-7 flex flex-wrap justify-center gap-3">
               <Button asChild size="lg" className="rounded-xl bg-gradient-to-r from-violet to-electric text-white">
-                <Link to="/auth">Get started — it's free</Link>
+                <Link to="/about">Contact</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="rounded-xl">
                 <a href="https://github.com/placeholder" target="_blank" rel="noreferrer"><Github className="mr-1.5 h-4 w-4" />GitHub</a>

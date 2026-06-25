@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as BlogRouteImport } from './routes/blog'
+import { Route as Auth_backupRouteImport } from './routes/auth_backup'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AiToolsRouteImport } from './routes/ai-tools'
 import { Route as AboutRouteImport } from './routes/about'
@@ -37,6 +38,11 @@ const ProjectsRoute = ProjectsRouteImport.update({
 const BlogRoute = BlogRouteImport.update({
   id: '/blog',
   path: '/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Auth_backupRoute = Auth_backupRouteImport.update({
+  id: '/auth_backup',
+  path: '/auth_backup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -101,6 +107,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/ai-tools': typeof AiToolsRouteWithChildren
   '/auth': typeof AuthRoute
+  '/auth_backup': typeof Auth_backupRoute
   '/blog': typeof BlogRouteWithChildren
   '/projects': typeof ProjectsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -116,6 +123,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/ai-tools': typeof AiToolsRouteWithChildren
   '/auth': typeof AuthRoute
+  '/auth_backup': typeof Auth_backupRoute
   '/blog': typeof BlogRouteWithChildren
   '/projects': typeof ProjectsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -133,6 +141,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/ai-tools': typeof AiToolsRouteWithChildren
   '/auth': typeof AuthRoute
+  '/auth_backup': typeof Auth_backupRoute
   '/blog': typeof BlogRouteWithChildren
   '/projects': typeof ProjectsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -150,6 +159,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/ai-tools'
     | '/auth'
+    | '/auth_backup'
     | '/blog'
     | '/projects'
     | '/sitemap.xml'
@@ -165,6 +175,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/ai-tools'
     | '/auth'
+    | '/auth_backup'
     | '/blog'
     | '/projects'
     | '/sitemap.xml'
@@ -181,6 +192,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/ai-tools'
     | '/auth'
+    | '/auth_backup'
     | '/blog'
     | '/projects'
     | '/sitemap.xml'
@@ -198,6 +210,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AiToolsRoute: typeof AiToolsRouteWithChildren
   AuthRoute: typeof AuthRoute
+  Auth_backupRoute: typeof Auth_backupRoute
   BlogRoute: typeof BlogRouteWithChildren
   ProjectsRoute: typeof ProjectsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -224,6 +237,13 @@ declare module '@tanstack/react-router' {
       path: '/blog'
       fullPath: '/blog'
       preLoaderRoute: typeof BlogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth_backup': {
+      id: '/auth_backup'
+      path: '/auth_backup'
+      fullPath: '/auth_backup'
+      preLoaderRoute: typeof Auth_backupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -362,6 +382,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AiToolsRoute: AiToolsRouteWithChildren,
   AuthRoute: AuthRoute,
+  Auth_backupRoute: Auth_backupRoute,
   BlogRoute: BlogRouteWithChildren,
   ProjectsRoute: ProjectsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,

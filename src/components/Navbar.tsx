@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Code2, Menu, X, LogIn, LayoutDashboard } from "lucide-react";
+import { Code2, Menu, X, LayoutDashboard } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
@@ -20,8 +20,9 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full">
       <div className="mx-auto mt-4 max-w-7xl px-4">
-        <nav className="glass-strong flex items-center justify-between rounded-2xl px-4 py-3">
-          <Link to="/" className="group flex items-center gap-2.5">
+        <nav className="glass-strong grid grid-cols-[1fr_auto_1fr] items-center rounded-2xl px-4 py-3 md:grid-cols-3">
+          {/* Left — logo */}
+          <Link to="/" className="group flex items-center gap-2.5 justify-self-start">
             <div className="relative grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-violet to-electric glow-violet">
               <Code2 className="h-5 w-5 text-white" />
             </div>
@@ -31,7 +32,8 @@ export function Navbar() {
             </div>
           </Link>
 
-          <div className="hidden items-center gap-1 md:flex">
+          {/* Center — nav links (desktop only) */}
+          <div className="hidden items-center justify-center gap-1 md:flex">
             {NAV.map((n) => {
               const active = n.to === "/" ? pathname === "/" : pathname.startsWith(n.to);
               return (
@@ -51,21 +53,17 @@ export function Navbar() {
             })}
           </div>
 
-          <div className="hidden items-center gap-2 md:flex">
-            {user ? (
-              <Button asChild size="sm" className="rounded-lg bg-gradient-to-r from-violet to-electric text-white hover:opacity-90">
+          {/* Right — Dashboard (admin only) or hamburger on mobile */}
+          <div className="flex items-center justify-end gap-2">
+            {user && (
+              <Button asChild size="sm" className="hidden rounded-lg bg-gradient-to-r from-violet to-electric text-white hover:opacity-90 md:inline-flex">
                 <Link to="/dashboard"><LayoutDashboard className="mr-1.5 h-4 w-4" />Dashboard</Link>
               </Button>
-            ) : (
-              <Button asChild size="sm" className="rounded-lg bg-gradient-to-r from-violet to-electric text-white hover:opacity-90">
-                <Link to="/auth"><LogIn className="mr-1.5 h-4 w-4" />Sign in</Link>
-              </Button>
             )}
+            <button className="md:hidden" onClick={() => setOpen((v) => !v)} aria-label="Menu">
+              {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
           </div>
-
-          <button className="md:hidden" onClick={() => setOpen((v) => !v)} aria-label="Menu">
-            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
         </nav>
 
         {open && (
@@ -78,10 +76,8 @@ export function Navbar() {
                 </Link>
               );
             })}
-            {user ? (
+            {user && (
               <Link to="/dashboard" className="block rounded-lg px-3 py-2 text-sm" onClick={() => setOpen(false)}>Dashboard</Link>
-            ) : (
-              <Link to="/auth" className="block rounded-lg px-3 py-2 text-sm" onClick={() => setOpen(false)}>Sign in</Link>
             )}
           </div>
         )}
