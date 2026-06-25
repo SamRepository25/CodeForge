@@ -28,12 +28,28 @@ function AuthPage() {
   const signIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
-    setBusy(true);
-    const { error } = await supabase.auth.signInWithPassword({ email: String(f.get("email")), password: String(f.get("password")) });
-    setBusy(false);
-    if (error) return toast.error(error.message);
-    toast.success("Welcome back!");
-    navigate({ to: "/dashboard" });
+setBusy(true);
+
+const email = String(f.get("email")).trim().toLowerCase();
+const password = String(f.get("password"));
+
+const ADMIN_EMAIL = "simakahmed002@gmail.com"; 
+
+if (email !== ADMIN_EMAIL.toLowerCase()) {
+  setBusy(false);
+  return toast.error("Invalid email or password.");
+}
+const { error } = await supabase.auth.signInWithPassword({
+  email,
+  password,
+});
+
+setBusy(false);
+
+if (error) return toast.error(error.message);
+
+toast.success("Welcome back!");
+navigate({ to: "/dashboard" });
   };
 
   return (
