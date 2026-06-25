@@ -244,7 +244,7 @@ function Home() {
             <p className="mx-auto mt-3 max-w-xl text-muted-foreground">Interested in collaborating, discussing technology, or checking out more of my work? Feel free to get in touch.</p>
             <div className="mt-7 flex flex-wrap justify-center gap-3">
               <Button asChild size="lg" className="rounded-xl bg-gradient-to-r from-violet to-electric text-white">
-                <Link to="/about">Contact</Link>
+                <a href="mailto:hello@codeforge.dev">Contact</a>
               </Button>
               <Button asChild size="lg" variant="outline" className="rounded-xl">
                 <a href="https://github.com/placeholder" target="_blank" rel="noreferrer"><Github className="mr-1.5 h-4 w-4" />GitHub</a>
