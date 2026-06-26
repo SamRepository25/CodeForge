@@ -60,15 +60,22 @@ const FEATURED_PROJECTS = [
     id: "1",
     category: "WEB DEVELOPMENT",
     title: "Login Authentication System",
-    description: "A secure login and registration system built with Python featuring user authentication, session management, and password validation.",
+    description: "A secure login and registration system built with Python featuring user authentication, password validation, and user session management.",
     tags: ["Python", "HTML", "CSS"],
   },
   {
     id: "2",
     category: "AI / EDUCATION",
     title: "AI Study Planner",
-    description: "A Java-based study planner that helps students organize subjects, create study schedules, and improve productivity with AI-inspired planning.",
+    description: "A Java-based study planner that helps students organize subjects, create study schedules, and improve productivity using object-oriented programming concepts.",
     tags: ["Java", "OOP"],
+  },
+  {
+    id: "3",
+    category: "C PROGRAMMING",
+    title: "Rock Paper Scissors Game",
+    description: "A console-based Rock Paper Scissors game developed in C. The game generates random computer moves, keeps score across multiple rounds, validates user input, and allows continuous gameplay until the player exits.",
+    tags: ["C", "Standard Library", "Random Number Generation"],
   },
 ];
 
@@ -135,7 +142,7 @@ function Home() {
       {/* FEATURED PROJECTS */}
       <section className="mx-auto max-w-7xl px-4 py-20">
         <SectionHeading eyebrow="Selected work" title="Featured projects" cta={{ to: "/projects", label: "All projects" }} />
-        <div className="mt-10 grid gap-6 md:grid-cols-2">
+        <div className="mt-10 grid gap-6 md:grid-cols-3">
           {FEATURED_PROJECTS.map((p, i) => (
             <motion.div key={p.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="group glass relative flex h-full flex-col rounded-2xl p-6 transition hover:-translate-y-1">
               <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet to-transparent opacity-40" />
