@@ -10,7 +10,9 @@ const EDU = [
 ];
 
 const EXP = [
-  { year: "2025", title: "Indie Developer", org: "CodeForge", desc: "Building portfolio, blog & AI productivity tools as a public-build project." },
+  { year: "2026 – Present", title: "Java Developer", org: "Personal Project", desc: "Built an AI Study Planner using Java and Object-Oriented Programming (OOP) principles to help students organize study schedules and improve productivity." },
+  { year: "2025", title: "C Programmer", org: "Personal Project", desc: "Created a console-based Rock Paper Scissors Game in C featuring random computer moves, score tracking, input validation, and continuous gameplay." },
+  { year: "2024", title: "Python Developer", org: "Personal Project", desc: "Developed a secure Login Authentication System using Python, implementing user authentication, password validation, and session management." },
 ];
 
 export function AboutPage() {
