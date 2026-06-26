@@ -13,6 +13,7 @@ const EXP = [
   { year: "2026 – Present", title: "Java Developer", org: "Personal Project", desc: "Built an AI Study Planner using Java and Object-Oriented Programming (OOP) principles to help students organize study schedules and improve productivity." },
   { year: "2025", title: "C Programmer", org: "Personal Project", desc: "Created a console-based Rock Paper Scissors Game in C featuring random computer moves, score tracking, input validation, and continuous gameplay." },
   { year: "2024", title: "Python Developer", org: "Personal Project", desc: "Developed a secure Login Authentication System using Python, implementing user authentication, password validation, and session management." },
+  { year: "2024", title: "Robotics and Automation", org: "Group Project", desc: "Designed and developed a Water Sprinkler and Humidity Sensor Robot as part of a group project. The system monitors humidity levels and automatically activates a water sprinkler when required, demonstrating practical applications of sensors, automation, and embedded systems." },
 ];
 
 export function AboutPage() {
