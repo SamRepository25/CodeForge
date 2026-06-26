@@ -55,16 +55,24 @@ const AI_TOOLS = [
   { slug: "text-improver", title: "Text Improver", desc: "Refine tone, clarity and grammar without losing voice.", icon: Wand2, accent: "from-electric to-violet" },
 ];
 
-function Home() {
-  const projects = useQuery({
-    queryKey: ["projects", "featured"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("projects").select("*").eq("featured", true).order("order_index").limit(3);
-      if (error) throw error;
-      return data;
-    },
-  });
+const FEATURED_PROJECTS = [
+  {
+    id: "1",
+    category: "WEB DEVELOPMENT",
+    title: "Login Authentication System",
+    description: "A secure login and registration system built with Python featuring user authentication, session management, and password validation.",
+    tags: ["Python", "HTML", "CSS"],
+  },
+  {
+    id: "2",
+    category: "AI / EDUCATION",
+    title: "AI Study Planner",
+    description: "A Java-based study planner that helps students organize subjects, create study schedules, and improve productivity with AI-inspired planning.",
+    tags: ["Java", "OOP"],
+  },
+];
 
+function Home() {
   const posts = useQuery({
     queryKey: ["posts", "featured"],
     queryFn: async () => {
@@ -84,13 +92,13 @@ function Home() {
           
             <div className="mx-auto inline-flex items-center gap-2 rounded-full glass px-3 py-1.5 text-xs font-medium">
               <Sparkles className="h-3.5 w-3.5 text-violet" />
-              <span className="text-muted-foreground">Building the Future</span>
+              <span className="text-muted-foreground">Welcome to the Future World</span>
             </div>
             <h1 className="mt-6 font-display text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
               Forge ideas into <span className="gradient-text">reality</span>.
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-balance text-lg text-muted-foreground">
-              A modern portfolio showcasing projects, technical blogs and AI-powered tools built to inspire and simplify learning.
+              CodeForge is a personal portfolio, technical blog, and AI tools hub — engineered for developers, students and creators who ship.
             </p>
             <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
               <Button asChild size="lg" className="rounded-xl bg-gradient-to-r from-violet to-electric text-white shadow-lg shadow-violet/30 hover:opacity-95">
@@ -127,17 +135,17 @@ function Home() {
       {/* FEATURED PROJECTS */}
       <section className="mx-auto max-w-7xl px-4 py-20">
         <SectionHeading eyebrow="Selected work" title="Featured projects" cta={{ to: "/projects", label: "All projects" }} />
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
-          {(projects.data ?? []).map((p, i) => (
+        <div className="mt-10 grid gap-6 md:grid-cols-2">
+          {FEATURED_PROJECTS.map((p, i) => (
             <motion.div key={p.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="group glass relative flex h-full flex-col rounded-2xl p-6 transition hover:-translate-y-1">
               <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet to-transparent opacity-40" />
               <div className="mb-4 inline-flex w-fit items-center gap-1.5 rounded-full bg-white/5 px-2.5 py-1 text-[10px] uppercase tracking-wider text-muted-foreground">
-                {p.category ?? "Project"}
+                {p.category}
               </div>
               <h3 className="font-display text-xl font-semibold">{p.title}</h3>
               <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">{p.description}</p>
               <div className="mt-4 flex flex-wrap gap-1.5">
-                {p.tags.slice(0, 3).map((t) => (
+                {p.tags.map((t) => (
                   <span key={t} className="rounded-md border border-border/60 px-2 py-0.5 text-[10px] font-mono text-muted-foreground">{t}</span>
                 ))}
               </div>
@@ -146,7 +154,6 @@ function Home() {
               </Link>
             </motion.div>
           ))}
-          {projects.isLoading && Array.from({ length: 3 }).map((_, i) => <div key={i} className="glass h-56 rounded-2xl shimmer" />)}
         </div>
       </section>
 
