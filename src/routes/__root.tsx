@@ -13,6 +13,8 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider } from "@/hooks/use-auth";
 import { Toaster } from "@/components/ui/sonner";
+import { EditModeProvider } from "@/contexts/EditModeContext";
+import { EditModeButton } from "@/components/EditModeButton";
 
 function NotFoundComponent() {
   return (
@@ -107,8 +109,11 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Outlet />
-        <Toaster richColors theme="dark" />
+        <EditModeProvider>
+          <Outlet />
+          <EditModeButton />
+          <Toaster richColors theme="dark" />
+        </EditModeProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

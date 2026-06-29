@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import {
   Sparkles, ArrowRight, Code2, Cpu, Layers, Rocket, BookOpen, Brain,
@@ -9,6 +9,8 @@ import {
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import { useEditMode } from "@/contexts/EditModeContext";
+import { EditableText } from "@/components/edit/EditableText";
 
 const SITE_URL = "https://codeforgedev.vercel.app";
 const OG_IMAGE = "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/cb2daafa-ef7b-443c-91ff-56bf8bc32259";
@@ -45,7 +47,6 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
-
 const AI_TOOLS = [
   { slug: "resume-builder", title: "AI Resume Builder", desc: "Craft ATS-ready resumes from your raw experience.", icon: FileText, accent: "from-violet to-fuchsia-500" },
   { slug: "study-notes", title: "Study Notes Generator", desc: "Turn any topic into structured notes & summaries.", icon: BookOpen, accent: "from-sky-500 to-electric" },
@@ -55,31 +56,37 @@ const AI_TOOLS = [
   { slug: "text-improver", title: "Text Improver", desc: "Refine tone, clarity and grammar without losing voice.", icon: Wand2, accent: "from-electric to-violet" },
 ];
 
-const FEATURED_PROJECTS = [
-  {
-    id: "1",
-    category: "WEB DEVELOPMENT",
-    title: "Login Authentication System",
-    description: "A secure login and registration system built with Python featuring user authentication, password validation, and user session management.",
-    tags: ["Python", "HTML", "CSS"],
-  },
-  {
-    id: "2",
-    category: "AI / EDUCATION",
-    title: "AI Study Planner",
-    description: "A Java-based study planner that helps students organize subjects, create study schedules, and improve productivity using object-oriented programming concepts.",
-    tags: ["Java", "OOP"],
-  },
-  {
-    id: "3",
-    category: "C PROGRAMMING",
-    title: "Rock Paper Scissors Game",
-    description: "A console-based Rock Paper Scissors game developed in C. The game generates random computer moves, keeps score across multiple rounds, validates user input, and allows continuous gameplay until the player exits.",
-    tags: ["C", "Standard Library", "Random Number Generation"],
-  },
-];
-
 function Home() {
+  const qc = useQueryClient();
+  const { editMode } = useEditMode();
+
+  const settings = useQuery({
+    queryKey: ["site_settings"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("site_settings").select("key,value");
+      if (error) throw error;
+      const map: Record<string, string> = {};
+      (data ?? []).forEach((r) => { map[r.key] = r.value ?? ""; });
+      return map;
+    },
+  });
+
+  const saveSetting = async (key: string, value: string) => {
+    await supabase.from("site_settings").upsert({ key, value, updated_at: new Date().toISOString() });
+    qc.invalidateQueries({ queryKey: ["site_settings"] });
+  };
+
+  const s = settings.data ?? {};
+
+  const featuredProjects = useQuery({
+    queryKey: ["projects", "featured"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("projects").select("*").eq("featured", true).order("order_index");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
   const posts = useQuery({
     queryKey: ["posts", "featured"],
     queryFn: async () => {
@@ -96,16 +103,30 @@ function Home() {
         <div className="absolute inset-0 grid-bg" aria-hidden />
         <div className="relative mx-auto max-w-7xl px-4">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="mx-auto max-w-4xl text-center">
-          
             <div className="mx-auto inline-flex items-center gap-2 rounded-full glass px-3 py-1.5 text-xs font-medium">
               <Sparkles className="h-3.5 w-3.5 text-violet" />
-              <span className="text-muted-foreground">Welcome to the Future World</span>
+              <EditableText
+  value={s.hero_badge ?? "Welcome to the Future World"}
+  onSave={(v) => saveSetting("hero_badge", v)}
+  as="span"
+  className="text-muted-foreground"
+/>
             </div>
             <h1 className="mt-6 font-display text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
-              Forge ideas into <span className="gradient-text">reality</span>.
+              <EditableText
+                value={s.hero_title ?? "Forge ideas into reality."}
+                onSave={(v) => saveSetting("hero_title", v)}
+                as="span"
+                className="font-display text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl"
+              />
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-balance text-lg text-muted-foreground">
-              CodeForge is a personal portfolio, technical blog, and AI tools hub — engineered for developers, students and creators who ship.
+              <EditableText
+                value={s.hero_description ?? "CodeForge is a personal portfolio, technical blog, and AI tools hub — engineered for developers, students and creators who ship."}
+                onSave={(v) => saveSetting("hero_description", v)}
+                as="span"
+                multiline
+              />
             </p>
             <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
               <Button asChild size="lg" className="rounded-xl bg-gradient-to-r from-violet to-electric text-white shadow-lg shadow-violet/30 hover:opacity-95">
@@ -143,7 +164,7 @@ function Home() {
       <section className="mx-auto max-w-7xl px-4 py-20">
         <SectionHeading eyebrow="Selected work" title="Featured projects" cta={{ to: "/projects", label: "All projects" }} />
         <div className="mt-10 grid gap-6 md:grid-cols-3">
-          {FEATURED_PROJECTS.map((p, i) => (
+          {(featuredProjects.data ?? []).map((p, i) => (
             <motion.div key={p.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="group glass relative flex h-full flex-col rounded-2xl p-6 transition hover:-translate-y-1">
               <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet to-transparent opacity-40" />
               <div className="mb-4 inline-flex w-fit items-center gap-1.5 rounded-full bg-white/5 px-2.5 py-1 text-[10px] uppercase tracking-wider text-muted-foreground">
@@ -152,7 +173,7 @@ function Home() {
               <h3 className="font-display text-xl font-semibold">{p.title}</h3>
               <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">{p.description}</p>
               <div className="mt-4 flex flex-wrap gap-1.5">
-                {p.tags.map((t) => (
+                {(p.tags ?? []).map((t: string) => (
                   <span key={t} className="rounded-md border border-border/60 px-2 py-0.5 text-[10px] font-mono text-muted-foreground">{t}</span>
                 ))}
               </div>
@@ -161,6 +182,7 @@ function Home() {
               </Link>
             </motion.div>
           ))}
+          {featuredProjects.isLoading && Array.from({ length: 3 }).map((_, i) => <div key={i} className="glass h-56 rounded-2xl animate-pulse" />)}
         </div>
       </section>
 
@@ -222,7 +244,7 @@ function Home() {
               </div>
               <ul className="mt-4 flex flex-wrap gap-2">
                 {g.items.map((it) => (
-                  <li key={it} className="rounded-md bg-white/5 px-2.5 py-1 text-xs font-mono">{it === "React" ? `This website is built with React\n` : it}</li>
+                  <li key={it} className="rounded-md bg-white/5 px-2.5 py-1 text-xs font-mono">{it}</li>
                 ))}
               </ul>
             </div>
