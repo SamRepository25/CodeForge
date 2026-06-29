@@ -182,13 +182,13 @@ export function AboutPage() {
                 <a href={s.resume_url || "#"} download><Download className="mr-1.5 h-4 w-4" />Download Resume</a>
               </Button>
               <Button asChild variant="outline" className="rounded-xl">
-                <a href={`mailto:${s.email || "hello@codeforge.dev"}`}><Mail className="mr-1.5 h-4 w-4" />Contact</a>
+                <a href={`mailto:${s.email || "simakahmed@outlook.com"}`}><Mail className="mr-1.5 h-4 w-4" />Contact</a>
               </Button>
               <Button asChild variant="outline" className="rounded-xl">
-                <a href={s.github_url || "https://github.com/placeholder"} target="_blank" rel="noreferrer"><Github className="mr-1.5 h-4 w-4" />GitHub</a>
+                <a href={s.github_url || "https://github.com/SamRepository25/"} target="_blank" rel="noreferrer"><Github className="mr-1.5 h-4 w-4" />GitHub</a>
               </Button>
               <Button asChild variant="outline" className="rounded-xl">
-                <a href={s.linkedin_url || "https://linkedin.com/in/placeholder"} target="_blank" rel="noreferrer"><Linkedin className="mr-1.5 h-4 w-4" />LinkedIn</a>
+                <a href={s.linkedin_url || "https://www.linkedin.com/in/simakahmed?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"} target="_blank" rel="noreferrer"><Linkedin className="mr-1.5 h-4 w-4" />LinkedIn</a>
               </Button>
             </div>
             {editMode && (
@@ -212,7 +212,7 @@ export function AboutPage() {
           <p className="mt-2 text-muted-foreground">Open to collaborations, freelance work and conversations.</p>
           <div className="mt-6 flex justify-center gap-3">
             <Button asChild className="rounded-xl bg-gradient-to-r from-violet to-electric text-white">
-              <a href={`mailto:${s.email || "hello@codeforge.dev"}`}>Get in touch</a>
+              <a href={`mailto:${s.email || "simakahmed@outlook.com"}`}>Get in touch</a>
             </Button>
             <Button asChild variant="outline" className="rounded-xl"><Link to="/projects">See my work</Link></Button>
           </div>

@@ -280,13 +280,13 @@ function Home() {
             <p className="mx-auto mt-3 max-w-xl text-muted-foreground">Interested in collaborating, discussing technology, or checking out more of my work? Feel free to get in touch.</p>
             <div className="mt-7 flex flex-wrap justify-center gap-3">
               <Button asChild size="lg" className="rounded-xl bg-gradient-to-r from-violet to-electric text-white">
-                <a href="mailto:hello@codeforge.dev">Contact</a>
+                <a href="mailto:simakahmed@outlook.com">Contact</a>
               </Button>
               <Button asChild size="lg" variant="outline" className="rounded-xl">
-                <a href="https://github.com/placeholder" target="_blank" rel="noreferrer"><Github className="mr-1.5 h-4 w-4" />GitHub</a>
+                <a href="https://github.com/SamRepository25/" target="_blank" rel="noreferrer"><Github className="mr-1.5 h-4 w-4" />GitHub</a>
               </Button>
               <Button asChild size="lg" variant="outline" className="rounded-xl">
-                <a href="https://linkedin.com/in/placeholder" target="_blank" rel="noreferrer"><Linkedin className="mr-1.5 h-4 w-4" />LinkedIn</a>
+                <a href="https://www.linkedin.com/in/simakahmed?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" rel="noreferrer"><Linkedin className="mr-1.5 h-4 w-4" />LinkedIn</a>
               </Button>
             </div>
           </div>
