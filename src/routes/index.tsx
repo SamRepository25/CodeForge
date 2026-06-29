@@ -106,7 +106,7 @@ function Home() {
             <div className="mx-auto inline-flex items-center gap-2 rounded-full glass px-3 py-1.5 text-xs font-medium">
               <Sparkles className="h-3.5 w-3.5 text-violet" />
               <EditableText
-  value={s.hero_badge ?? "Welcome to the Future World"}
+  value={s.hero_badge ?? "Building the future, one line of code at a time."}
   onSave={(v) => saveSetting("hero_badge", v)}
   as="span"
   className="text-muted-foreground"
