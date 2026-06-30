@@ -53,7 +53,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "CodeForge — Forge Ideas Into Reality" },
-      { name: "description", content: "Personal portfolio, technical blog and AI productivity hub for developers, students and creators." },
+      { name: "description", content: "Personal portfolio, technical blog." },
       { name: "author", content: "CodeForge" },
       { name: "robots", content: "index, follow" },
       { name: "google-site-verification", content: "sFLRCk3MJq9XdOJgpua8QuF8PL2R_cOKq4VJp7WfYas" },

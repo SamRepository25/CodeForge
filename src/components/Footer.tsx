@@ -14,7 +14,7 @@ export function Footer() {
               <span className="font-display text-lg font-bold">CodeForge</span>
             </Link>
             <p className="mt-3 max-w-sm text-sm text-muted-foreground">
-              Forge ideas into reality. A personal portfolio, technical blog, and AI productivity hub built for the modern developer.
+              Forge ideas into reality. A personal portfolio, technical blog.
             </p>
             <div className="mt-4 flex items-center gap-2">
             {[
