@@ -19,8 +19,8 @@ export function Footer() {
             <div className="mt-4 flex items-center gap-2">
             {[
                 { icon: Github, href: "https://github.com/SamRepository25/", label: "Follow us on GitHub" },
-                { icon: Linkedin, href: "https://www.linkedin.com/in/simakahmed?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app", label: "Follow us on LinkedIn" },
-                { icon: Twitter, href: "#", label: "Follow us on Twitter" },
+                { icon: Linkedin, href: "https://www.linkedin.com/in/simakahmed", label: "Follow us on LinkedIn" },
+                { icon: Twitter, href: "https://x.com/yourusername", label: "Follow us on Twitter" },
                 { icon: Mail, href: "mailto:simakahmed@outlook.com", label: "Email us" },
               ].map(({ icon: Icon, href, label }, i) => (
                 <a key={i} href={href} target="_blank" rel="noreferrer" aria-label={label} className="grid h-9 w-9 place-items-center rounded-lg border border-border/60 text-muted-foreground transition hover:border-violet/60 hover:text-foreground">
