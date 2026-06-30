@@ -20,7 +20,7 @@ export function Footer() {
             {[
                 { icon: Github, href: "https://github.com/SamRepository25/", label: "Follow us on GitHub" },
                 { icon: Linkedin, href: "https://www.linkedin.com/in/simakahmed", label: "Follow us on LinkedIn" },
-                { icon: Twitter, href: "https://x.com/yourusername", label: "Follow us on Twitter" },
+                { icon: Twitter, href: "https://x.com/X", label: "Follow us on X" },
                 { icon: Mail, href: "mailto:simakahmed@outlook.com", label: "Email us" },
               ].map(({ icon: Icon, href, label }, i) => (
                 <a key={i} href={href} target="_blank" rel="noreferrer" aria-label={label} className="grid h-9 w-9 place-items-center rounded-lg border border-border/60 text-muted-foreground transition hover:border-violet/60 hover:text-foreground">
