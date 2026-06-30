@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as Auth_backupRouteImport } from './routes/auth_backup'
@@ -25,11 +24,6 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedDashboardNewRouteImport } from './routes/_authenticated/dashboard.new'
 import { Route as AuthenticatedDashboardEditIdRouteImport } from './routes/_authenticated/dashboard.edit.$id'
 
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ProjectsRoute = ProjectsRouteImport.update({
   id: '/projects',
   path: '/projects',
@@ -110,7 +104,6 @@ export interface FileRoutesByFullPath {
   '/auth_backup': typeof Auth_backupRoute
   '/blog': typeof BlogRouteWithChildren
   '/projects': typeof ProjectsRoute
-  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/ai-tools/$tool': typeof AiToolsToolRoute
@@ -126,7 +119,6 @@ export interface FileRoutesByTo {
   '/auth_backup': typeof Auth_backupRoute
   '/blog': typeof BlogRouteWithChildren
   '/projects': typeof ProjectsRoute
-  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/ai-tools/$tool': typeof AiToolsToolRoute
@@ -144,7 +136,6 @@ export interface FileRoutesById {
   '/auth_backup': typeof Auth_backupRoute
   '/blog': typeof BlogRouteWithChildren
   '/projects': typeof ProjectsRoute
-  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/ai-tools/$tool': typeof AiToolsToolRoute
@@ -162,7 +153,6 @@ export interface FileRouteTypes {
     | '/auth_backup'
     | '/blog'
     | '/projects'
-    | '/sitemap.xml'
     | '/admin'
     | '/dashboard'
     | '/ai-tools/$tool'
@@ -178,7 +168,6 @@ export interface FileRouteTypes {
     | '/auth_backup'
     | '/blog'
     | '/projects'
-    | '/sitemap.xml'
     | '/admin'
     | '/dashboard'
     | '/ai-tools/$tool'
@@ -195,7 +184,6 @@ export interface FileRouteTypes {
     | '/auth_backup'
     | '/blog'
     | '/projects'
-    | '/sitemap.xml'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
     | '/ai-tools/$tool'
@@ -213,18 +201,10 @@ export interface RootRouteChildren {
   Auth_backupRoute: typeof Auth_backupRoute
   BlogRoute: typeof BlogRouteWithChildren
   ProjectsRoute: typeof ProjectsRoute
-  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/projects': {
       id: '/projects'
       path: '/projects'
@@ -385,7 +365,6 @@ const rootRouteChildren: RootRouteChildren = {
   Auth_backupRoute: Auth_backupRoute,
   BlogRoute: BlogRouteWithChildren,
   ProjectsRoute: ProjectsRoute,
-  SitemapDotxmlRoute: SitemapDotxmlRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
