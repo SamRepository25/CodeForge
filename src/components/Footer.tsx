@@ -40,7 +40,7 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-10 flex flex-col items-start gap-4 border-t border-border/40 pt-6 text-xs text-muted-foreground">
-          <span>© {new Date().getFullYear()} CodeForge. All Rights Reserved by B SIMAK AHMED</span>
+          <span>© {new Date().getFullYear()} CodeForge. All Rights Reserved.</span>
           <div className="flex flex-col items-start gap-2">
             <span className="font-medium text-foreground/80">Built with</span>
             <ul className="space-y-1">
