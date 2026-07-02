@@ -122,7 +122,7 @@ function Home() {
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-balance text-lg text-muted-foreground">
               <EditableText
-                value={s.hero_description ?? "Personal portfolio, technical blog and AI productivity hub."}
+                value={s.hero_description ?? "Personal portfolio, technical blog."}
 
 
                 onSave={(v) => saveSetting("hero_description", v)}
