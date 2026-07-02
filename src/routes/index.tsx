@@ -18,15 +18,15 @@ const OG_IMAGE = "https://storage.googleapis.com/gpt-engineer-file-uploads/attac
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "CodeForge — Portfolio, Blog & AI Tools for Developers" },
+      { title: "CodeForge — Portfolio and Blog" },
       { name: "description", content: "Premium portfolio, technical blog and AI productivity tools hub for developers, students and creators. Built with React, TypeScript and TanStack." },
       { name: "keywords", content: "developer portfolio, technical blog, AI tools, resume builder, code explainer, React, TypeScript, TanStack" },
-      { property: "og:title", content: "CodeForge — Portfolio, Blog & AI Tools for Developers" },
+      { property: "og:title", content: "CodeForge — Portfolio and Blog" },
       { property: "og:description", content: "Portfolio · Blog · AI productivity tools, all in one place." },
       { property: "og:url", content: SITE_URL + "/" },
       { property: "og:image", content: OG_IMAGE },
       { name: "twitter:image", content: OG_IMAGE },
-      { name: "twitter:title", content: "CodeForge — Portfolio, Blog & AI Tools" },
+      { name: "twitter:title", content: "CodeForge — Portfolio and Blog" },
       { name: "twitter:description", content: "Portfolio · Blog · AI productivity tools, all in one place." },
     ],
     links: [{ rel: "canonical", href: SITE_URL + "/" }],
