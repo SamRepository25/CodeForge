@@ -116,7 +116,7 @@ function Projects() {
           <div className="max-w-3xl">
             <div className="text-xs uppercase tracking-[0.18em] text-electric">Portfolio</div>
             <h1 className="mt-2 font-display text-5xl font-bold tracking-tight md:text-6xl">Projects & case studies</h1>
-            <p className="mt-4 text-lg text-muted-foreground">A selection of work spanning AI products, developer tools and SaaS experiments.</p>
+            <p className="mt-4 text-lg text-muted-foreground">A curated portfolio of web applications, AI-powered tools, and software solutions built with modern technologies and best development practices.</p>
           </div>
           {editMode && (
             <button

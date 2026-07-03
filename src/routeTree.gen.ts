@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProjectsRouteImport } from './routes/projects'
+import { Route as MfaVerifyRouteImport } from './routes/mfa-verify'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as Auth_backupRouteImport } from './routes/auth_backup'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -27,6 +28,11 @@ import { Route as AuthenticatedDashboardEditIdRouteImport } from './routes/_auth
 const ProjectsRoute = ProjectsRouteImport.update({
   id: '/projects',
   path: '/projects',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MfaVerifyRoute = MfaVerifyRouteImport.update({
+  id: '/mfa-verify',
+  path: '/mfa-verify',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogRoute = BlogRouteImport.update({
@@ -103,6 +109,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/auth_backup': typeof Auth_backupRoute
   '/blog': typeof BlogRouteWithChildren
+  '/mfa-verify': typeof MfaVerifyRoute
   '/projects': typeof ProjectsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
@@ -118,6 +125,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/auth_backup': typeof Auth_backupRoute
   '/blog': typeof BlogRouteWithChildren
+  '/mfa-verify': typeof MfaVerifyRoute
   '/projects': typeof ProjectsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
@@ -135,6 +143,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/auth_backup': typeof Auth_backupRoute
   '/blog': typeof BlogRouteWithChildren
+  '/mfa-verify': typeof MfaVerifyRoute
   '/projects': typeof ProjectsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
@@ -152,6 +161,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/auth_backup'
     | '/blog'
+    | '/mfa-verify'
     | '/projects'
     | '/admin'
     | '/dashboard'
@@ -167,6 +177,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/auth_backup'
     | '/blog'
+    | '/mfa-verify'
     | '/projects'
     | '/admin'
     | '/dashboard'
@@ -183,6 +194,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/auth_backup'
     | '/blog'
+    | '/mfa-verify'
     | '/projects'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
@@ -200,6 +212,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   Auth_backupRoute: typeof Auth_backupRoute
   BlogRoute: typeof BlogRouteWithChildren
+  MfaVerifyRoute: typeof MfaVerifyRoute
   ProjectsRoute: typeof ProjectsRoute
 }
 
@@ -210,6 +223,13 @@ declare module '@tanstack/react-router' {
       path: '/projects'
       fullPath: '/projects'
       preLoaderRoute: typeof ProjectsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mfa-verify': {
+      id: '/mfa-verify'
+      path: '/mfa-verify'
+      fullPath: '/mfa-verify'
+      preLoaderRoute: typeof MfaVerifyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog': {
@@ -364,6 +384,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   Auth_backupRoute: Auth_backupRoute,
   BlogRoute: BlogRouteWithChildren,
+  MfaVerifyRoute: MfaVerifyRoute,
   ProjectsRoute: ProjectsRoute,
 }
 export const routeTree = rootRouteImport
