@@ -268,7 +268,7 @@ function Home() {
                 <a href="https://github.com/SamRepository25/" target="_blank" rel="noreferrer"><Github className="mr-1.5 h-4 w-4" />GitHub</a>
               </Button>
               <Button asChild size="lg" variant="outline" className="rounded-xl">
-                <a href="https://www.linkedin.com/in/simakahmed?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" rel="noreferrer"><Linkedin className="mr-1.5 h-4 w-4" />LinkedIn</a>
+                <a href="https://www.linkedin.com/in/simakahmed" target="_blank" rel="noreferrer"><Linkedin className="mr-1.5 h-4 w-4" />LinkedIn</a>
               </Button>
             </div>
           </div>
