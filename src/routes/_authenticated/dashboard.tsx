@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import { SecurityTab } from "@/components/SecurityTab";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — CodeForge" }] }),
@@ -122,6 +123,7 @@ function Dashboard() {
             <TabsTrigger value="posts">My posts</TabsTrigger>
             <TabsTrigger value="bookmarks">Bookmarks</TabsTrigger>
             <TabsTrigger value="settings"><Settings className="mr-1.5 h-3 w-3" />Settings</TabsTrigger>
+            <TabsTrigger value="security"><ShieldCheck className="mr-1.5 h-3 w-3" />Security</TabsTrigger>
           </TabsList>
 
           <TabsContent value="posts" className="mt-6">
@@ -185,6 +187,10 @@ function Dashboard() {
                 <Button type="submit" className="rounded-xl bg-gradient-to-r from-violet to-electric text-white">Save changes</Button>
               </div>
             </form>
+          </TabsContent>
+
+          <TabsContent value="security" className="mt-6">
+            <SecurityTab />
           </TabsContent>
         </Tabs>
       </section>
