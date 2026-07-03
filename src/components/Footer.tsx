@@ -43,13 +43,14 @@ export function Footer() {
           <span>© {new Date().getFullYear()} CodeForge. All Rights Reserved.</span>
           <div className="flex flex-col items-start gap-2">
             <span className="font-medium text-foreground/80">Built with</span>
-            <ul className="space-y-1">
-              <li>React</li>
-              <li>TypeScript</li>
-              <li>Tailwind CSS</li>
-            </ul>
-          </div>
-          <span>TanStack Router / React Start</span>
+
+    <ul className="space-y-1">
+        <li>React</li>
+        <li>TypeScript</li>
+        <li>Tailwind CSS</li>
+        <li>TanStack Router / React Start</li>
+    </ul>
+</div>
         </div>
       </div>
     </footer>
