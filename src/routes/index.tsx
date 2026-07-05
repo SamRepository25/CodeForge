@@ -10,7 +10,7 @@ import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useEditMode } from "@/contexts/EditModeContext";
-import { EditableText } from "@/components/edit/EditableText";
+import { EditableText, EditZone } from "@/components/edit/EditableText";
 
 const SITE_URL = "https://codeforgedev.vercel.app";
 const OG_IMAGE = "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/cb2daafa-ef7b-443c-91ff-56bf8bc32259";
@@ -18,15 +18,15 @@ const OG_IMAGE = "https://storage.googleapis.com/gpt-engineer-file-uploads/attac
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "CodeForge — Portfolio and Blog" },
+      { title: "CodeForge — Portfolio, Blog & AI Tools for Developers" },
       { name: "description", content: "Premium portfolio, technical blog and AI productivity tools hub for developers, students and creators. Built with React, TypeScript and TanStack." },
       { name: "keywords", content: "developer portfolio, technical blog, AI tools, resume builder, code explainer, React, TypeScript, TanStack" },
-      { property: "og:title", content: "CodeForge — Portfolio and Blog" },
+      { property: "og:title", content: "CodeForge — Portfolio, Blog & AI Tools for Developers" },
       { property: "og:description", content: "Portfolio · Blog · AI productivity tools, all in one place." },
       { property: "og:url", content: SITE_URL + "/" },
       { property: "og:image", content: OG_IMAGE },
       { name: "twitter:image", content: OG_IMAGE },
-      { name: "twitter:title", content: "CodeForge — Portfolio and Blog" },
+      { name: "twitter:title", content: "CodeForge — Portfolio, Blog & AI Tools" },
       { name: "twitter:description", content: "Portfolio · Blog · AI productivity tools, all in one place." },
     ],
     links: [{ rel: "canonical", href: SITE_URL + "/" }],
@@ -47,6 +47,7 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
+
 const AI_TOOLS = [
   { slug: "resume-builder", title: "AI Resume Builder", desc: "Craft ATS-ready resumes from your raw experience.", icon: FileText, accent: "from-violet to-fuchsia-500" },
   { slug: "study-notes", title: "Study Notes Generator", desc: "Turn any topic into structured notes & summaries.", icon: BookOpen, accent: "from-sky-500 to-electric" },
@@ -55,6 +56,15 @@ const AI_TOOLS = [
   { slug: "interview-questions", title: "Interview Q Generator", desc: "Targeted interview prep questions for any role.", icon: Brain, accent: "from-amber-500 to-rose-500" },
   { slug: "text-improver", title: "Text Improver", desc: "Refine tone, clarity and grammar without losing voice.", icon: Wand2, accent: "from-electric to-violet" },
 ];
+
+  const featuredProjects = useQuery({
+    queryKey: ["projects", "featured"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("projects").select("*").eq("featured", true).order("order_index");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
 
 function Home() {
   const qc = useQueryClient();
@@ -78,15 +88,6 @@ function Home() {
 
   const s = settings.data ?? {};
 
-  const featuredProjects = useQuery({
-    queryKey: ["projects", "featured"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("projects").select("*").eq("featured", true).order("order_index");
-      if (error) throw error;
-      return data ?? [];
-    },
-  });
-
   const posts = useQuery({
     queryKey: ["posts", "featured"],
     queryFn: async () => {
@@ -103,38 +104,42 @@ function Home() {
         <div className="absolute inset-0 grid-bg" aria-hidden />
         <div className="relative mx-auto max-w-7xl px-4">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="mx-auto max-w-4xl text-center">
+          
             <div className="mx-auto inline-flex items-center gap-2 rounded-full glass px-3 py-1.5 text-xs font-medium">
               <Sparkles className="h-3.5 w-3.5 text-violet" />
-              <EditableText
-  value={s.hero_badge ?? "Building the future, one line of code at a time."}
-  onSave={(v) => saveSetting("hero_badge", v)}
-  as="span"
-  className="text-muted-foreground"
-/>
+              <span className="text-muted-foreground">Welcome to the Future World</span>
             </div>
             <h1 className="mt-6 font-display text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
-              <EditableText
-                value={s.hero_title ?? "Forge ideas into reality."}
-                onSave={(v) => saveSetting("hero_title", v)}
-                as="span"
-                className="font-display text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl"
-              />
+              {editMode ? (
+                <EditableText
+                  value={s.hero_title ?? "Forge ideas into reality."}
+                  onSave={(v) => saveSetting("hero_title", v)}
+                  as="span"
+                  className="font-display text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl"
+                />
+              ) : (() => {
+                const title = s.hero_title ?? "Forge ideas into reality.";
+                const spaceIdx = title.indexOf(" ");
+                const first = spaceIdx === -1 ? title : title.slice(0, spaceIdx);
+                const rest  = spaceIdx === -1 ? ""    : title.slice(spaceIdx);
+                return <><span className="gradient-text">{first}</span>{rest}</>;
+              })()}
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-balance text-lg text-muted-foreground">
               <EditableText
-                value={s.hero_description ?? "Personal portfolio, technical blog"}
-
-
+                value={s.hero_description ?? "CodeForge is a personal portfolio, technical blog, and AI tools hub — engineered for developers, students and creators who ship."}
                 onSave={(v) => saveSetting("hero_description", v)}
                 as="span"
                 multiline
               />
             </p>
-                <div className="mt-9 flex items-center justify-center">
-                <Button asChild size="lg" className="rounded-xl bg-gradient-to-r from-violet to-electric text-white shadow-lg shadow-violet/30 hover:opacity-95">
+            <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
+              <Button asChild size="lg" className="rounded-xl bg-gradient-to-r from-violet to-electric text-white shadow-lg shadow-violet/30 hover:opacity-95">
                 <Link to="/projects">Explore Projects <ArrowRight className="ml-1.5 h-4 w-4" /></Link>
               </Button>
-             
+              <Button asChild size="lg" variant="outline" className="rounded-xl border-border/60 bg-white/5 backdrop-blur hover:bg-white/10">
+                <Link to="/ai-tools">Try AI Tools</Link>
+              </Button>
             </div>
             <div className="mx-auto mt-10 flex max-w-md items-center justify-center gap-6 text-xs text-muted-foreground">
               <div className="flex items-center gap-1.5"><Shield className="h-3.5 w-3.5 text-electric" />Modern Stack</div>
@@ -244,10 +249,28 @@ function Home() {
               </div>
               <ul className="mt-4 flex flex-wrap gap-2">
                 {g.items.map((it) => (
-                  <li key={it} className="rounded-md bg-white/5 px-2.5 py-1 text-xs font-mono">{it}</li>
+                  <li key={it} className="rounded-md bg-white/5 px-2.5 py-1 text-xs font-mono">{it === "React" ? `This website is built with React\n` : it}</li>
                 ))}
               </ul>
             </div>
+          ))}
+        </div>
+      </section>
+
+      {/* TESTIMONIALS */}
+      <section className="mx-auto max-w-7xl px-4 py-20">
+        <SectionHeading eyebrow="What people say" title="Trusted by builders" />
+        <div className="mt-10 grid gap-6 md:grid-cols-3">
+          {[
+            { name: "Maya R.", role: "Frontend Engineer", quote: "CodeForge's AI tools shaved hours off my weekly study & writing routine. The Quiz Generator is unreal." },
+            { name: "Daniel K.", role: "CS Student", quote: "Used the Study Notes & Interview Q generators to land my first internship. Beautifully designed too." },
+            { name: "Priya S.", role: "Indie Dev", quote: "Honestly the cleanest personal portfolio + blog setup I've seen. Inspired me to ship mine." },
+          ].map((t, i) => (
+            <motion.div key={i} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="glass rounded-2xl p-6">
+              <div className="flex gap-0.5">{Array.from({ length: 5 }).map((_, n) => <Star key={n} className="h-4 w-4 fill-electric text-electric" />)}</div>
+              <p className="mt-4 text-sm leading-relaxed">"{t.quote}"</p>
+              <div className="mt-5 text-xs"><span className="font-semibold">{t.name}</span> · <span className="text-muted-foreground">{t.role}</span></div>
+            </motion.div>
           ))}
         </div>
       </section>
@@ -262,13 +285,13 @@ function Home() {
             <p className="mx-auto mt-3 max-w-xl text-muted-foreground">Interested in collaborating, discussing technology, or checking out more of my work? Feel free to get in touch.</p>
             <div className="mt-7 flex flex-wrap justify-center gap-3">
               <Button asChild size="lg" className="rounded-xl bg-gradient-to-r from-violet to-electric text-white">
-                <a href="mailto:simakahmed@outlook.com">Contact</a>
+                <a href="mailto:hello@codeforge.dev">Contact</a>
               </Button>
               <Button asChild size="lg" variant="outline" className="rounded-xl">
-                <a href="https://github.com/SamRepository25/" target="_blank" rel="noreferrer"><Github className="mr-1.5 h-4 w-4" />GitHub</a>
+                <a href="https://github.com/placeholder" target="_blank" rel="noreferrer"><Github className="mr-1.5 h-4 w-4" />GitHub</a>
               </Button>
               <Button asChild size="lg" variant="outline" className="rounded-xl">
-                <a href="https://www.linkedin.com/in/simakahmed" target="_blank" rel="noreferrer"><Linkedin className="mr-1.5 h-4 w-4" />LinkedIn</a>
+                <a href="https://linkedin.com/in/placeholder" target="_blank" rel="noreferrer"><Linkedin className="mr-1.5 h-4 w-4" />LinkedIn</a>
               </Button>
             </div>
           </div>
