@@ -128,7 +128,7 @@ function Home() {
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-balance text-lg text-muted-foreground">
               <EditableText
-                value={s.hero_description ?? "CodeForge is a personal portfolio, technical blog, and AI tools hub — engineered for developers, students and creators who ship."}
+                value={s.hero_description ?? "CodeForge is a personal portfolio and technical blog."}
                 onSave={(v) => saveSetting("hero_description", v)}
                 as="span"
                 multiline
