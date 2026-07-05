@@ -57,6 +57,11 @@ const AI_TOOLS = [
   { slug: "text-improver", title: "Text Improver", desc: "Refine tone, clarity and grammar without losing voice.", icon: Wand2, accent: "from-electric to-violet" },
 ];
 
+
+function Home() {
+  const qc = useQueryClient();
+  const { editMode } = useEditMode();
+
   const featuredProjects = useQuery({
     queryKey: ["projects", "featured"],
     queryFn: async () => {
@@ -65,10 +70,6 @@ const AI_TOOLS = [
       return data ?? [];
     },
   });
-
-function Home() {
-  const qc = useQueryClient();
-  const { editMode } = useEditMode();
 
   const settings = useQuery({
     queryKey: ["site_settings"],
