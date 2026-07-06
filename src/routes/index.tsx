@@ -137,11 +137,8 @@ function Home() {
             <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
               <Button asChild size="lg" className="rounded-xl bg-gradient-to-r from-violet to-electric text-white shadow-lg shadow-violet/30 hover:opacity-95">
                 <Link to="/projects">Explore Projects <ArrowRight className="ml-1.5 h-4 w-4" /></Link>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="rounded-xl border-border/60 bg-white/5 backdrop-blur hover:bg-white/10">
-                <Link to="/ai-tools">Try AI Tools</Link>
-              </Button>
-            </div>
+              </Button>            
+              </div>
             <div className="mx-auto mt-10 flex max-w-md items-center justify-center gap-6 text-xs text-muted-foreground">
               <div className="flex items-center gap-1.5"><Shield className="h-3.5 w-3.5 text-electric" />Modern Stack</div>
               <div className="flex items-center gap-1.5"><Zap className="h-3.5 w-3.5 text-electric" />Fast Performance</div>
