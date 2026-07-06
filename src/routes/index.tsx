@@ -258,24 +258,7 @@ function Home() {
         </div>
       </section>
 
-      {/* TESTIMONIALS */}
-      <section className="mx-auto max-w-7xl px-4 py-20">
-        <SectionHeading eyebrow="What people say" title="Trusted by builders" />
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
-          {[
-            { name: "Maya R.", role: "Frontend Engineer", quote: "CodeForge's AI tools shaved hours off my weekly study & writing routine. The Quiz Generator is unreal." },
-            { name: "Daniel K.", role: "CS Student", quote: "Used the Study Notes & Interview Q generators to land my first internship. Beautifully designed too." },
-            { name: "Priya S.", role: "Indie Dev", quote: "Honestly the cleanest personal portfolio + blog setup I've seen. Inspired me to ship mine." },
-          ].map((t, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="glass rounded-2xl p-6">
-              <div className="flex gap-0.5">{Array.from({ length: 5 }).map((_, n) => <Star key={n} className="h-4 w-4 fill-electric text-electric" />)}</div>
-              <p className="mt-4 text-sm leading-relaxed">"{t.quote}"</p>
-              <div className="mt-5 text-xs"><span className="font-semibold">{t.name}</span> · <span className="text-muted-foreground">{t.role}</span></div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
+      
       {/* CTA */}
       <section className="mx-auto max-w-7xl px-4 py-20">
         <div className="glass-strong gradient-border relative overflow-hidden rounded-3xl p-10 text-center md:p-16">
