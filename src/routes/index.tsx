@@ -108,7 +108,7 @@ function Home() {
           
             <div className="mx-auto inline-flex items-center gap-2 rounded-full glass px-3 py-1.5 text-xs font-medium">
               <Sparkles className="h-3.5 w-3.5 text-violet" />
-              <span className="text-muted-foreground">Welcome to the Future World</span>
+              <span className="text-muted-foreground">Building My Future</span>
             </div>
             <h1 className="mt-6 font-display text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
               {editMode ? (
@@ -128,7 +128,7 @@ function Home() {
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-balance text-lg text-muted-foreground">
               <EditableText
-                value={s.hero_description ?? "CodeForge is a personal portfolio and technical blog."}
+                value={s.hero_description ?? "Personal portfolio and technical blog."}
                 onSave={(v) => saveSetting("hero_description", v)}
                 as="span"
                 multiline
