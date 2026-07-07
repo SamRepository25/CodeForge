@@ -21,7 +21,7 @@ export const Route = createFileRoute("/")({
       { title: "CodeForge — Portfolio, Blog & AI Tools for Developers" },
       { name: "description", content: "Premium portfolio, technical blog and AI productivity tools hub for developers, students and creators. Built with React, TypeScript and TanStack." },
       { name: "keywords", content: "developer portfolio, technical blog, AI tools, resume builder, code explainer, React, TypeScript, TanStack" },
-      { property: "og:title", content: "CodeForge — Portfolio, Blog & AI Tools for Developers" },
+      { property: "og:title", content: "CodeForge — Portfolio and Blog." },
       { property: "og:description", content: "Portfolio · Blog · AI productivity tools, all in one place." },
       { property: "og:url", content: SITE_URL + "/" },
       { property: "og:image", content: OG_IMAGE },
