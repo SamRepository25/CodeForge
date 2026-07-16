@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { Heart, Bookmark, Clock, ArrowLeft, Send } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 
@@ -69,7 +69,22 @@ export const Route = createFileRoute("/blog_/$slug")({
 function PostPage() {
   const { slug } = Route.useParams();
   const router = useRouter();
-  const { user } = useAuth();
+  const [visitorId, setVisitorId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const storageKey = "codeforge_visitor_id";
+    const existingVisitorId = window.localStorage.getItem(storageKey);
+    if (existingVisitorId) {
+      setVisitorId(existingVisitorId);
+      return;
+    }
+
+    const newVisitorId = typeof crypto.randomUUID === "function"
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    window.localStorage.setItem(storageKey, newVisitorId);
+    setVisitorId(newVisitorId);
+  }, []);
 
 
 const post = useQuery({
@@ -96,34 +111,53 @@ const post = useQuery({
     queryKey: ["likes", post.data?.id],
     enabled: !!post.data?.id,
     queryFn: async () => {
-      const { data } = await supabase.rpc("get_post_like_count", { _post_id: post.data!.id });
-      return (data as number | null) ?? 0;
+      const { count, error } = await supabase
+        .from("guest_likes")
+        .select("id", { count: "exact", head: true })
+        .eq("post_id", post.data!.id);
+      if (error) throw error;
+      return count ?? 0;
     },
   });
 
   const myLike = useQuery({
-    queryKey: ["my-like", post.data?.id, user?.id],
-    enabled: !!post.data?.id && !!user,
+    queryKey: ["my-like", post.data?.id, visitorId],
+    enabled: !!post.data?.id && !!visitorId,
     queryFn: async () => {
-      const { data } = await supabase.from("likes").select("id").eq("post_id", post.data!.id).eq("user_id", user!.id).maybeSingle();
+      const { data } = await supabase
+        .from("guest_likes")
+        .select("id")
+        .eq("post_id", post.data!.id)
+        .eq("visitor_id", visitorId!)
+        .maybeSingle();
       return !!data;
     },
   });
 
   const myBookmark = useQuery({
-    queryKey: ["my-bookmark", post.data?.id, user?.id],
-    enabled: !!post.data?.id && !!user,
+    queryKey: ["my-bookmark", post.data?.id, visitorId],
+    enabled: !!post.data?.id && !!visitorId,
     queryFn: async () => {
-      const { data } = await supabase.from("bookmarks").select("id").eq("post_id", post.data!.id).eq("user_id", user!.id).maybeSingle();
+      const { data } = await supabase
+        .from("guest_bookmarks")
+        .select("id")
+        .eq("post_id", post.data!.id)
+        .eq("visitor_id", visitorId!)
+        .maybeSingle();
       return !!data;
     },
   });
 
   const comments = useQuery({
     queryKey: ["comments", post.data?.id],
-    enabled: !!post.data?.id && !!user,
+    enabled: !!post.data?.id,
     queryFn: async () => {
-      const { data, error } = await supabase.from("comments").select("*, profiles:author_id(display_name, username, avatar_url)").eq("post_id", post.data!.id).order("created_at", { ascending: false });
+      const { data, error } = await supabase
+        .from("guest_comments")
+        .select("id,name,content,created_at")
+        .eq("post_id", post.data!.id)
+        .eq("approved", true)
+        .order("created_at", { ascending: false });
       if (error) throw error;
       return data ?? [];
     },
@@ -152,24 +186,50 @@ const post = useQuery({
   const p = post.data;
 
   const toggleLike = async () => {
-    if (!user) { toast.error("Sign in to like posts"); return; }
+    if (!visitorId) {
+      toast.error("Please try again in a moment.");
+      return;
+    }
+
+    let error = null;
     if (myLike.data) {
-      await supabase.from("likes").delete().eq("post_id", p.id).eq("user_id", user.id);
+      const result = await supabase.from("guest_likes").delete().eq("post_id", p.id).eq("visitor_id", visitorId);
+      error = result.error;
     } else {
-      await supabase.from("likes").insert({ post_id: p.id, user_id: user.id });
+      const result = await supabase.from("guest_likes").insert({ post_id: p.id, visitor_id: visitorId });
+      error = result.error;
     }
-    likes.refetch(); myLike.refetch();
+
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+
+    await Promise.all([likes.refetch(), myLike.refetch()]);
   };
+
   const toggleBookmark = async () => {
-    if (!user) { toast.error("Sign in to bookmark"); return; }
-    if (myBookmark.data) {
-      await supabase.from("bookmarks").delete().eq("post_id", p.id).eq("user_id", user.id);
-      toast.success("Bookmark removed");
-    } else {
-      await supabase.from("bookmarks").insert({ post_id: p.id, user_id: user.id });
-      toast.success("Bookmarked");
+    if (!visitorId) {
+      toast.error("Please try again in a moment.");
+      return;
     }
-    myBookmark.refetch();
+
+    let error = null;
+    if (myBookmark.data) {
+      const result = await supabase.from("guest_bookmarks").delete().eq("post_id", p.id).eq("visitor_id", visitorId);
+      error = result.error;
+    } else {
+      const result = await supabase.from("guest_bookmarks").insert({ post_id: p.id, visitor_id: visitorId });
+      error = result.error;
+    }
+
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+
+    toast.success(myBookmark.data ? "Bookmark removed" : "Bookmarked");
+    await myBookmark.refetch();
   };
 
   return (
@@ -210,30 +270,22 @@ const post = useQuery({
         {/* Comments */}
         <section className="mt-16">
           <h2 className="font-display text-2xl font-bold">Comments</h2>
-          {!user ? (
-            <p className="mt-4 text-sm text-muted-foreground">
-              <Link to="/auth" className="text-electric hover:underline">Sign in</Link> to view and post comments.
-            </p>
-          ) : (
-            <>
-              <CommentForm postId={p.id} onPosted={() => comments.refetch()} />
-              <div className="mt-6 space-y-4">
-                {(comments.data ?? []).length === 0 && <p className="text-sm text-muted-foreground">Be the first to comment.</p>}
-                {(comments.data ?? []).map((c) => (
-                  <div key={c.id} className="glass rounded-2xl p-4">
-                    <div className="flex items-center gap-2 text-xs">
-                      <div className="grid h-7 w-7 place-items-center rounded-full bg-gradient-to-br from-violet to-electric text-[10px] font-bold text-white">
-                        {(c.profiles?.display_name ?? "?").slice(0,1).toUpperCase()}
-                      </div>
-                      <div className="font-medium">{c.profiles?.display_name ?? c.profiles?.username ?? "User"}</div>
-                      <span className="text-muted-foreground">· {new Date(c.created_at).toLocaleDateString()}</span>
-                    </div>
-                    <p className="mt-2 text-sm">{c.content}</p>
+          <CommentForm postId={p.id} onPosted={() => comments.refetch()} />
+          <div className="mt-6 space-y-4">
+            {(comments.data ?? []).length === 0 && <p className="text-sm text-muted-foreground">No approved comments yet. Be the first to comment.</p>}
+            {(comments.data ?? []).map((c) => (
+              <div key={c.id} className="glass rounded-2xl p-4">
+                <div className="flex items-center gap-2 text-xs">
+                  <div className="grid h-7 w-7 place-items-center rounded-full bg-gradient-to-br from-violet to-electric text-[10px] font-bold text-white">
+                    {(c.name ?? "?").slice(0, 1).toUpperCase()}
                   </div>
-                ))}
+                  <div className="font-medium">{c.name ?? "Guest"}</div>
+                  <span className="text-muted-foreground">· {new Date(c.created_at).toLocaleDateString()}</span>
+                </div>
+                <p className="mt-2 text-sm">{c.content}</p>
               </div>
-            </>
-          )}
+            ))}
+          </div>
         </section>
 
         {/* Related */}
@@ -256,24 +308,58 @@ const post = useQuery({
 }
 
 function CommentForm({ postId, onPosted }: { postId: string; onPosted: () => void }) {
-  const { user } = useAuth();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
-  if (!user) return <p className="mt-4 rounded-xl glass p-4 text-sm text-muted-foreground"><Link to="/auth" className="text-electric">Sign in</Link> to leave a comment.</p>;
+
   const submit = async () => {
-    if (!text.trim()) return;
+    if (!name.trim() || !email.trim() || !text.trim()) {
+      toast.error("Name, email, and comment are required.");
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
     setBusy(true);
-    const { error } = await supabase.from("comments").insert({ post_id: postId, author_id: user.id, content: text.trim() });
+    const { error } = await supabase.from("guest_comments").insert({
+      name: name.trim(),
+      email: email.trim(),
+      content: text.trim(),
+      post_id: postId,
+    });
     setBusy(false);
     if (error) { toast.error(error.message); return; }
+    setName("");
+    setEmail("");
     setText("");
+    toast.success("Comment submitted for review.");
     onPosted();
   };
   return (
     <div className="mt-4">
-      <Textarea value={text} onChange={(e) => setText(e.target.value)} placeholder="Add a thoughtful comment..." className="rounded-xl" rows={3} maxLength={1000} />
+      <div className="grid gap-3 sm:grid-cols-2">
+        <Input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Your name"
+          className="rounded-xl"
+          maxLength={100}
+        />
+        <Input
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          type="email"
+          placeholder="Your email"
+          className="rounded-xl"
+          maxLength={255}
+        />
+      </div>
+      <Textarea value={text} onChange={(e) => setText(e.target.value)} placeholder="Add a thoughtful comment..." className="mt-3 rounded-xl" rows={3} maxLength={1000} />
       <div className="mt-2 flex justify-end">
-        <Button onClick={submit} disabled={busy || !text.trim()} className="rounded-lg bg-gradient-to-r from-violet to-electric text-white">
+        <Button onClick={submit} disabled={busy || !name.trim() || !email.trim() || !text.trim()} className="rounded-lg bg-gradient-to-r from-violet to-electric text-white">
           <Send className="mr-1.5 h-3.5 w-3.5" />Post comment
         </Button>
       </div>
