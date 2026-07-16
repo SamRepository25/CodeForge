@@ -231,24 +231,30 @@ function Projects() {
                   ))}
                 </div>
                 <div className="mt-5 flex items-center gap-3">
-                  {p.github_url && (
-                    <a href={p.github_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-sm font-medium text-electric transition hover:opacity-80">
-                      <Github className="h-4 w-4" />GitHub
-                    </a>
-                  )}
-                  {p.live_url && (
-  <a
-    href={p.live_url}
-    target="_blank"
-    rel="noreferrer"
-    className="inline-flex items-center gap-1.5 text-sm font-medium text-electric transition hover:opacity-80"
-  >
-    <ExternalLink className="h-4 w-4" />
-    Live Demo
-  </a>
-)}
-)}
-                  )}
+  {p.github_url && (
+    <a
+      href={p.github_url}
+      target="_blank"
+      rel="noreferrer"
+      className="inline-flex items-center gap-1.5 text-sm font-medium text-electric transition hover:opacity-80"
+    >
+      <Github className="h-4 w-4" />
+      GitHub
+    </a>
+  )}
+
+  {p.live_url && (
+    <a
+      href={p.live_url}
+      target="_blank"
+      rel="noreferrer"
+      className="inline-flex items-center gap-1.5 text-sm font-medium text-electric transition hover:opacity-80"
+    >
+      <ExternalLink className="h-4 w-4" />
+      Live Demo
+    </a>
+  )}
+</div>
                 </div>
               </motion.div>
             ))}
