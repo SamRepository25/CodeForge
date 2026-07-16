@@ -255,7 +255,6 @@ function Projects() {
     </a>
   )}
 </div>
-                </div>
               </motion.div>
             ))}
           </div>
