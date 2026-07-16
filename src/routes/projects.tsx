@@ -236,23 +236,17 @@ function Projects() {
                       <Github className="h-4 w-4" />GitHub
                     </a>
                   )}
-                  {p.coming_soon ? (
-  <span className="inline-flex items-center gap-1.5 rounded-full border border-border/50 px-3 py-1 text-xs text-muted-foreground/60 cursor-default select-none">
-    <ExternalLink className="h-3 w-3" />
-    Coming Soon
-  </span>
-) : (
-  p.live_url && (
-    <a
-      href={p.live_url}
-      target="_blank"
-      rel="noreferrer"
-      className="inline-flex items-center gap-1.5 text-sm font-medium text-electric transition hover:opacity-80"
-    >
-      <ExternalLink className="h-4 w-4" />
-      Live Demo
-    </a>
-  )
+                  {p.live_url && (
+  <a
+    href={p.live_url}
+    target="_blank"
+    rel="noreferrer"
+    className="inline-flex items-center gap-1.5 text-sm font-medium text-electric transition hover:opacity-80"
+  >
+    <ExternalLink className="h-4 w-4" />
+    Live Demo
+  </a>
+)}
 )}
                   )}
                 </div>
