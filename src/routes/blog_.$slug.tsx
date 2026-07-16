@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/blog/$slug")({
+export const Route = createFileRoute("/blog_/$slug")({
   loader: async ({ params }) => {
     const { data } = await supabase
       .from("posts")
@@ -71,16 +71,27 @@ function PostPage() {
   const router = useRouter();
   const { user } = useAuth();
 
-  const post = useQuery({
-    queryKey: ["post", slug],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("posts").select("*, profiles:author_id(display_name, username, avatar_url, bio)").eq("slug", slug).maybeSingle();
-      if (error) throw error;
-      if (!data) throw notFound();
-      return data;
-    },
-  });
 
+const post = useQuery({
+  queryKey: ["post", slug],
+  queryFn: async () => {
+    const { data, error } = await supabase
+      .from("posts")
+      .select("*")
+      .eq("slug", slug)
+      .eq("published", true)
+      .maybeSingle();
+
+    if (error) {
+      console.error(error);
+      throw error;
+    }
+
+    if (!data) throw notFound();
+
+    return data;
+  },
+});
   const likes = useQuery({
     queryKey: ["likes", post.data?.id],
     enabled: !!post.data?.id,
@@ -172,7 +183,7 @@ function PostPage() {
 
         <div className="mt-6 flex items-center gap-3 border-b border-border/40 pb-6">
           <div className="grid h-10 w-10 place-items-center rounded-full bg-gradient-to-br from-violet to-electric text-sm font-bold text-white">
-            {(p.profiles?.display_name ?? "?").slice(0,1).toUpperCase()}
+            {"C"}
           </div>
           <div className="flex-1 text-sm">
             <div className="font-medium">{p.profiles?.display_name ?? p.profiles?.username ?? "Author"}</div>

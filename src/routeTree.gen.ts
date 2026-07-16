@@ -18,7 +18,7 @@ import { Route as AiToolsRouteImport } from './routes/ai-tools'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as BlogSlugRouteImport } from './routes/blog_.$slug'
 import { Route as AiToolsToolRouteImport } from './routes/ai-tools.$tool'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
@@ -70,9 +70,9 @@ const IndexRoute = IndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogSlugRoute = BlogSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => BlogRoute,
+  id: '/blog_/$slug',
+  path: '/blog/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AiToolsToolRoute = AiToolsToolRouteImport.update({
   id: '/$tool',
@@ -108,7 +108,7 @@ export interface FileRoutesByFullPath {
   '/ai-tools': typeof AiToolsRouteWithChildren
   '/auth': typeof AuthRoute
   '/auth_backup': typeof Auth_backupRoute
-  '/blog': typeof BlogRouteWithChildren
+  '/blog': typeof BlogRoute
   '/mfa-verify': typeof MfaVerifyRoute
   '/projects': typeof ProjectsRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -124,7 +124,7 @@ export interface FileRoutesByTo {
   '/ai-tools': typeof AiToolsRouteWithChildren
   '/auth': typeof AuthRoute
   '/auth_backup': typeof Auth_backupRoute
-  '/blog': typeof BlogRouteWithChildren
+  '/blog': typeof BlogRoute
   '/mfa-verify': typeof MfaVerifyRoute
   '/projects': typeof ProjectsRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -142,13 +142,13 @@ export interface FileRoutesById {
   '/ai-tools': typeof AiToolsRouteWithChildren
   '/auth': typeof AuthRoute
   '/auth_backup': typeof Auth_backupRoute
-  '/blog': typeof BlogRouteWithChildren
+  '/blog': typeof BlogRoute
   '/mfa-verify': typeof MfaVerifyRoute
   '/projects': typeof ProjectsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/ai-tools/$tool': typeof AiToolsToolRoute
-  '/blog/$slug': typeof BlogSlugRoute
+  '/blog_/$slug': typeof BlogSlugRoute
   '/_authenticated/dashboard/new': typeof AuthenticatedDashboardNewRoute
   '/_authenticated/dashboard/edit/$id': typeof AuthenticatedDashboardEditIdRoute
 }
@@ -199,7 +199,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
     | '/ai-tools/$tool'
-    | '/blog/$slug'
+    | '/blog_/$slug'
     | '/_authenticated/dashboard/new'
     | '/_authenticated/dashboard/edit/$id'
   fileRoutesById: FileRoutesById
@@ -211,9 +211,10 @@ export interface RootRouteChildren {
   AiToolsRoute: typeof AiToolsRouteWithChildren
   AuthRoute: typeof AuthRoute
   Auth_backupRoute: typeof Auth_backupRoute
-  BlogRoute: typeof BlogRouteWithChildren
+  BlogRoute: typeof BlogRoute
   MfaVerifyRoute: typeof MfaVerifyRoute
   ProjectsRoute: typeof ProjectsRoute
+  BlogSlugRoute: typeof BlogSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -281,12 +282,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/blog/$slug': {
-      id: '/blog/$slug'
-      path: '/$slug'
+    '/blog_/$slug': {
+      id: '/blog_/$slug'
+      path: '/blog/$slug'
       fullPath: '/blog/$slug'
       preLoaderRoute: typeof BlogSlugRouteImport
-      parentRoute: typeof BlogRoute
+      parentRoute: typeof rootRouteImport
     }
     '/ai-tools/$tool': {
       id: '/ai-tools/$tool'
@@ -366,16 +367,6 @@ const AiToolsRouteChildren: AiToolsRouteChildren = {
 const AiToolsRouteWithChildren =
   AiToolsRoute._addFileChildren(AiToolsRouteChildren)
 
-interface BlogRouteChildren {
-  BlogSlugRoute: typeof BlogSlugRoute
-}
-
-const BlogRouteChildren: BlogRouteChildren = {
-  BlogSlugRoute: BlogSlugRoute,
-}
-
-const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
@@ -383,9 +374,10 @@ const rootRouteChildren: RootRouteChildren = {
   AiToolsRoute: AiToolsRouteWithChildren,
   AuthRoute: AuthRoute,
   Auth_backupRoute: Auth_backupRoute,
-  BlogRoute: BlogRouteWithChildren,
+  BlogRoute: BlogRoute,
   MfaVerifyRoute: MfaVerifyRoute,
   ProjectsRoute: ProjectsRoute,
+  BlogSlugRoute: BlogSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
