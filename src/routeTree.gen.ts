@@ -14,12 +14,10 @@ import { Route as MfaVerifyRouteImport } from './routes/mfa-verify'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as Auth_backupRouteImport } from './routes/auth_backup'
 import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AiToolsRouteImport } from './routes/ai-tools'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogSlugRouteImport } from './routes/blog_.$slug'
-import { Route as AiToolsToolRouteImport } from './routes/ai-tools.$tool'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedDashboardNewRouteImport } from './routes/_authenticated/dashboard.new'
@@ -50,11 +48,6 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AiToolsRoute = AiToolsRouteImport.update({
-  id: '/ai-tools',
-  path: '/ai-tools',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -73,11 +66,6 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
   id: '/blog_/$slug',
   path: '/blog/$slug',
   getParentRoute: () => rootRouteImport,
-} as any)
-const AiToolsToolRoute = AiToolsToolRouteImport.update({
-  id: '/$tool',
-  path: '/$tool',
-  getParentRoute: () => AiToolsRoute,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
@@ -105,7 +93,6 @@ const AuthenticatedDashboardEditIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/ai-tools': typeof AiToolsRouteWithChildren
   '/auth': typeof AuthRoute
   '/auth_backup': typeof Auth_backupRoute
   '/blog': typeof BlogRoute
@@ -113,7 +100,6 @@ export interface FileRoutesByFullPath {
   '/projects': typeof ProjectsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
-  '/ai-tools/$tool': typeof AiToolsToolRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/dashboard/new': typeof AuthenticatedDashboardNewRoute
   '/dashboard/edit/$id': typeof AuthenticatedDashboardEditIdRoute
@@ -121,7 +107,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/ai-tools': typeof AiToolsRouteWithChildren
   '/auth': typeof AuthRoute
   '/auth_backup': typeof Auth_backupRoute
   '/blog': typeof BlogRoute
@@ -129,7 +114,6 @@ export interface FileRoutesByTo {
   '/projects': typeof ProjectsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
-  '/ai-tools/$tool': typeof AiToolsToolRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/dashboard/new': typeof AuthenticatedDashboardNewRoute
   '/dashboard/edit/$id': typeof AuthenticatedDashboardEditIdRoute
@@ -139,7 +123,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
-  '/ai-tools': typeof AiToolsRouteWithChildren
   '/auth': typeof AuthRoute
   '/auth_backup': typeof Auth_backupRoute
   '/blog': typeof BlogRoute
@@ -147,7 +130,6 @@ export interface FileRoutesById {
   '/projects': typeof ProjectsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
-  '/ai-tools/$tool': typeof AiToolsToolRoute
   '/blog_/$slug': typeof BlogSlugRoute
   '/_authenticated/dashboard/new': typeof AuthenticatedDashboardNewRoute
   '/_authenticated/dashboard/edit/$id': typeof AuthenticatedDashboardEditIdRoute
@@ -157,7 +139,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
-    | '/ai-tools'
     | '/auth'
     | '/auth_backup'
     | '/blog'
@@ -165,7 +146,6 @@ export interface FileRouteTypes {
     | '/projects'
     | '/admin'
     | '/dashboard'
-    | '/ai-tools/$tool'
     | '/blog/$slug'
     | '/dashboard/new'
     | '/dashboard/edit/$id'
@@ -173,7 +153,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
-    | '/ai-tools'
     | '/auth'
     | '/auth_backup'
     | '/blog'
@@ -181,7 +160,6 @@ export interface FileRouteTypes {
     | '/projects'
     | '/admin'
     | '/dashboard'
-    | '/ai-tools/$tool'
     | '/blog/$slug'
     | '/dashboard/new'
     | '/dashboard/edit/$id'
@@ -190,7 +168,6 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/about'
-    | '/ai-tools'
     | '/auth'
     | '/auth_backup'
     | '/blog'
@@ -198,7 +175,6 @@ export interface FileRouteTypes {
     | '/projects'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
-    | '/ai-tools/$tool'
     | '/blog_/$slug'
     | '/_authenticated/dashboard/new'
     | '/_authenticated/dashboard/edit/$id'
@@ -208,7 +184,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
-  AiToolsRoute: typeof AiToolsRouteWithChildren
   AuthRoute: typeof AuthRoute
   Auth_backupRoute: typeof Auth_backupRoute
   BlogRoute: typeof BlogRoute
@@ -254,13 +229,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/ai-tools': {
-      id: '/ai-tools'
-      path: '/ai-tools'
-      fullPath: '/ai-tools'
-      preLoaderRoute: typeof AiToolsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -288,13 +256,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/blog/$slug'
       preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/ai-tools/$tool': {
-      id: '/ai-tools/$tool'
-      path: '/$tool'
-      fullPath: '/ai-tools/$tool'
-      preLoaderRoute: typeof AiToolsToolRouteImport
-      parentRoute: typeof AiToolsRoute
     }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
@@ -356,22 +317,10 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
-interface AiToolsRouteChildren {
-  AiToolsToolRoute: typeof AiToolsToolRoute
-}
-
-const AiToolsRouteChildren: AiToolsRouteChildren = {
-  AiToolsToolRoute: AiToolsToolRoute,
-}
-
-const AiToolsRouteWithChildren =
-  AiToolsRoute._addFileChildren(AiToolsRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
-  AiToolsRoute: AiToolsRouteWithChildren,
   AuthRoute: AuthRoute,
   Auth_backupRoute: Auth_backupRoute,
   BlogRoute: BlogRoute,

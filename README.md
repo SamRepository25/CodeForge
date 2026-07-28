@@ -42,14 +42,6 @@ The project showcases modern full-stack web development using React, TypeScript,
 - Comment moderation
 - Search functionality
 
-### 🤖 AI Tools
-
-- AI Resume Builder
-- AI Study Notes Generator
-- AI Quiz Generator
-- AI Code Explainer
-- AI PDF Summarizer
-
 ### 🔐 Authentication
 
 - Email & Password Login

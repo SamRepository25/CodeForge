@@ -13,9 +13,9 @@ export const Route = createFileRoute("/blog")({
   head: () => ({
     meta: [
       { title: "Blog — CodeForge" },
-      { name: "description", content: "Technical articles, tutorials and reflections on building modern web apps and AI tools." },
+      { name: "description", content: "Technical articles, tutorials and reflections on building modern web apps." },
       { property: "og:title", content: "Blog — CodeForge" },
-      { property: "og:description", content: "Technical articles & tutorials on React, TypeScript, AI and modern web development." },
+      { property: "og:description", content: "Technical articles & tutorials on React, TypeScript and modern web development." },
       { property: "og:url", content: URL_BLOG },
       { property: "og:image", content: OG_IMAGE },
       { name: "twitter:image", content: OG_IMAGE },

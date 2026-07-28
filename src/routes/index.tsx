@@ -19,15 +19,15 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "CodeForge — Portfolio and Blog" },
-      { name: "description", content: "Premium portfolio, technical blog and AI productivity tools hub for developers, students and creators. Built with React, TypeScript and TanStack." },
-      { name: "keywords", content: "developer portfolio, technical blog, AI tools, resume builder, code explainer, React, TypeScript, TanStack" },
+      { name: "description", content: "Premium portfolio, technical blog, Built with React, TypeScript and TanStack." },
+      { name: "keywords", content: "developer portfolio, technical blog, resume builder, code explainer, React, TypeScript, TanStack" },
       { property: "og:title", content: "CodeForge — Portfolio and Blog." },
-      { property: "og:description", content: "Portfolio · Blog · AI productivity tools, all in one place." },
+      { property: "og:description", content: "Portfolio · Blog." },
       { property: "og:url", content: SITE_URL + "/" },
       { property: "og:image", content: OG_IMAGE },
       { name: "twitter:image", content: OG_IMAGE },
       { name: "twitter:title", content: "CodeForge — Portfolio and Blog" },
-      { name: "twitter:description", content: "Portfolio · Blog · AI productivity tools, all in one place." },
+      { name: "twitter:description", content: "Portfolio · Blog." },
     ],
     links: [{ rel: "canonical", href: SITE_URL + "/" }],
     scripts: [
@@ -146,20 +146,29 @@ function Home() {
             </div>
           </motion.div>
 
-          {/* Stat strip */}
-          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="glass-strong mx-auto mt-20 grid max-w-4xl grid-cols-2 gap-px overflow-hidden rounded-3xl md:grid-cols-4">
-            {[
-              { v: "4+", l: "Projects Built" },
-              { v: "15K+", l: "Lines of Code" },
-              { v: "8", l: "AI tools" },
-              { v: "24/7", l: "Always learning" },
-            ].map((s) => (
-              <div key={s.l} className="bg-card/80 p-5 text-center">
-                <div className="font-display text-2xl font-bold gradient-text">{s.v}</div>
-                <div className="mt-1 text-xs text-muted-foreground">{s.l}</div>
-              </div>
-            ))}
-          </motion.div>
+         {/* Stat strip */}
+<motion.div
+  initial={{ opacity: 0, y: 30 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  viewport={{ once: true }}
+  className="glass-strong mx-auto mt-20 grid max-w-4xl grid-cols-2 gap-px overflow-hidden rounded-3xl md:grid-cols-4"
+>
+  {[
+    { v: "6+", l: "Projects Built" },
+    { v: "15K+", l: "Lines of Code" },
+    { v: "5+", l: "Technologies" },
+    { v: "24/7", l: "Always Learning" },
+  ].map((s) => (
+    <div key={s.l} className="bg-card/80 p-5 text-center">
+      <div className="font-display text-2xl font-bold gradient-text">
+        {s.v}
+      </div>
+      <div className="mt-1 text-xs text-muted-foreground">
+        {s.l}
+      </div>
+    </div>
+  ))}
+</motion.div>
         </div>
       </section>
 
@@ -189,25 +198,7 @@ function Home() {
         </div>
       </section>
 
-      {/* AI TOOLS SHOWCASE */}
-      <section className="mx-auto max-w-7xl px-4 py-20">
-        <SectionHeading eyebrow="AI productivity" title="A toolbelt powered by AI" cta={{ to: "/ai-tools", label: "Open AI hub" }} />
-        <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {AI_TOOLS.map((t, i) => (
-            <motion.div key={t.slug} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}>
-              <Link to="/ai-tools/$tool" params={{ tool: t.slug }} className="group glass relative block h-full overflow-hidden rounded-2xl p-6 transition hover:-translate-y-1">
-                <div className={`mb-4 grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br ${t.accent} text-white`}>
-                  <t.icon className="h-5 w-5" />
-                </div>
-                <h3 className="font-display text-lg font-semibold">{t.title}</h3>
-                <p className="mt-1.5 text-sm text-muted-foreground">{t.desc}</p>
-                <div className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-electric">Launch tool <ArrowRight className="h-3 w-3" /></div>
-              </Link>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
+      
       {/* FEATURED BLOG */}
       <section className="mx-auto max-w-7xl px-4 py-20">
         <SectionHeading eyebrow="Writing" title="From the blog" cta={{ to: "/blog", label: "Read all posts" }} />
