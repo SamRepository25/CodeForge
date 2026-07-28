@@ -197,12 +197,17 @@ export function AboutPage() {
               </p>
             )}
           </div>
-          <div className="float-slow glass-strong gradient-border relative grid h-56 w-56 place-items-center rounded-[2.5rem] glow-violet">
-            <Code2 className="h-24 w-24 text-electric" />
-          </div>
-        </div>
-      </section>
+    <div className="float-slow relative h-56 w-56 overflow-hidden rounded-[2.5rem]">
+  <img
+    src="/images/about-illustration.png"
+    alt="CodeForge Illustration"
+    className="h-full w-full object-cover"
+  />
+</div>
 
+</div> {/* closes grid */}
+
+</section>
       <EntrySection table="experience" icon={Briefcase} title="Experience" gradient="from-violet to-electric" />
       <EntrySection table="education" icon={GraduationCap} title="Education" gradient="from-electric to-violet" />
 
