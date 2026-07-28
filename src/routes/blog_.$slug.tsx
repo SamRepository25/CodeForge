@@ -1,3 +1,5 @@
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -257,10 +259,11 @@ const post = useQuery({
           </button>
         </div>
 
-        <div className="prose-content mt-10 whitespace-pre-wrap text-base leading-relaxed">
-          {p.content}
-        </div>
-
+       <div className="prose-content mt-10 text-base leading-relaxed">
+  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+    {p.content}
+  </ReactMarkdown>
+</div>
         <div className="mt-8 flex flex-wrap gap-1.5">
           {(p.tags ?? []).map((t) => (
             <span key={t} className="rounded-md border border-border/60 px-2 py-0.5 text-[10px] font-mono text-muted-foreground">#{t}</span>
