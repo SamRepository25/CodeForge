@@ -16,7 +16,6 @@ CodeForge is a full-stack developer platform that combines:
 
 - 🌐 Personal Portfolio
 - 📝 Technical Blog
-- 🤖 AI-powered Developer Tools
 - 🔐 Secure Authentication
 - 👨‍💼 Admin Dashboard
 - 📱 Responsive Modern UI
