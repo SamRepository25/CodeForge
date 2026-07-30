@@ -137,8 +137,7 @@ npm run dev
 docs/
 ├── home.png
 ├── dashboard.png
-├── blog.png
-└── ai-tools.png
+└── blog.png
 ```
 
 ---
