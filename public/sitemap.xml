@@ -26,12 +26,6 @@
   </url>
 
   <url>
-    <loc>https://codeforgedev.vercel.app/ai-tools</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
     <loc>https://codeforgedev.vercel.app/blog/building-codeforge-my-journey-creating-my-first-full-stack-portfolio</loc>
     <lastmod>2026-06-26</lastmod>
     <changefreq>weekly</changefreq>
@@ -39,51 +33,17 @@
   </url>
 
   <url>
-    <loc>https://codeforgedev.vercel.app/ai-tools/resume-builder</loc>
+    <loc>https://codeforgedev.vercel.app/blog/linux-commands-every-computer-science-student-should-know</loc>
+    <lastmod>2026-07-28</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://codeforgedev.vercel.app/ai-tools/study-notes</loc>
+    <loc>https://codeforgedev.vercel.app/blog/why-every-computer-science-student-should-learn-git-and-github</loc>
+    <lastmod>2026-07-28</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <url>
-    <loc>https://codeforgedev.vercel.app/ai-tools/quiz-generator</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <url>
-    <loc>https://codeforgedev.vercel.app/ai-tools/code-explainer</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <url>
-    <loc>https://codeforgedev.vercel.app/ai-tools/pdf-summarizer</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <url>
-    <loc>https://codeforgedev.vercel.app/ai-tools/interview-questions</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <url>
-    <loc>https://codeforgedev.vercel.app/ai-tools/text-improver</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <url>
-    <loc>https://codeforgedev.vercel.app/ai-tools/programming-assistant</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.7</priority>
   </url>
 
 </urlset>
