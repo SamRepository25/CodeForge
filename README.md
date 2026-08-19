@@ -217,26 +217,10 @@ CodeForge/
 │   └── project.json
 │
 ├── migration/
-│   └── codeforge_schema.sql
 │
 ├── public/
-│   ├── images/
-│   ├── favicon.ico
-│   ├── robots.txt
-│   └── sitemap.xml
 │
 ├── src/
-│   ├── components/
-│   ├── contexts/
-│   ├── hooks/
-│   ├── integrations/
-│   ├── lib/
-│   ├── routes/
-│   ├── router.tsx
-│   ├── routeTree.gen.ts
-│   ├── server.ts
-│   ├── start.ts
-│   └── styles.css
 │
 ├── supabase/
 │   ├── migrations/
@@ -358,21 +342,21 @@ The production application is connected to the CodeForge GitHub repository.
 
 # 📸 Screenshots
 
-The CodeForge website currently includes:
+### 🏠 Home
 
-- 🏠 Home
-- <img width="1918" height="1078" alt="Home" src="https://github.com/user-attachments/assets/3e1df4b1-59ca-4866-bf09-72c040ac0fa8" />
+<img width="1918" height="1078" alt="CodeForge Home" src="https://github.com/user-attachments/assets/3e1df4b1-59ca-4866-bf09-72c040ac0fa8" />
 
-- 👨‍💻 About
-- <img width="1917" height="1078" alt="About" src="https://github.com/user-attachments/assets/5e661a29-9e38-4d0a-95e3-258945605ca8" />
+### 👨‍💻 About
 
-- 💼 Projects
-- <img width="1918" height="1078" alt="Projects" src="https://github.com/user-attachments/assets/a251de55-e2b0-4261-a35b-fffdf37c0bf6" />
+<img width="1917" height="1078" alt="CodeForge About" src="https://github.com/user-attachments/assets/5e661a29-9e38-4d0a-95e3-258945605ca8" />
 
-- 📝 Blog
-- <img width="1918" height="1078" alt="Blog" src="https://github.com/user-attachments/assets/874fd185-8cd8-4461-8aec-1557dbe3be0d" />
+### 💼 Projects
 
+<img width="1918" height="1078" alt="CodeForge Projects" src="https://github.com/user-attachments/assets/a251de55-e2b0-4261-a35b-fffdf37c0bf6" />
 
+### 📝 Blog
+
+<img width="1918" height="1078" alt="CodeForge Blog" src="https://github.com/user-attachments/assets/874fd185-8cd8-4461-8aec-1557dbe3be0d" />
 
 ---
 
