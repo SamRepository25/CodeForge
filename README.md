@@ -7,7 +7,6 @@ A modern **personal developer portfolio and technical blog** built to showcase p
 CodeForge is built with **React, TypeScript, Tailwind CSS, TanStack, Supabase, and PostgreSQL**, with production deployment on **Vercel**.
 
 🌐 **Live Website:** https://codeforgedev.vercel.app  
-💻 **GitHub Repository:** https://github.com/SamRepository25/CodeForge
 
 ---
 
