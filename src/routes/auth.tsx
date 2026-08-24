@@ -43,7 +43,7 @@ function AuthPage() {
 
     if (error) {
       setBusy(false);
-      toast.info("Only admins can access this page", {
+      toast.error("Only admins can access this page", {
   icon: <Info className="h-4 w-4" />,
 });
       return;
