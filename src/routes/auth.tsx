@@ -43,7 +43,7 @@ function AuthPage() {
 
     if (error) {
       setBusy(false);
-      toast.success("Only admins can access this page");
+      toast.info("Only admins can access this page");
       return;
     }
 
