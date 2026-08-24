@@ -3,10 +3,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEditMode } from "@/contexts/EditModeContext";
 
 export function EditModeButton() {
-  const { editMode, isAdmin, toggleEditMode, exitEditMode } = useEditMode();
+  const { editMode, canEdit, toggleEditMode, exitEditMode } = useEditMode();
 
-  // Never render for non-admins — zero DOM footprint for visitors
-  if (!isAdmin) return null;
+  // Never render when edit capability is unavailable — zero DOM footprint
+  if (!canEdit) return null;
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
