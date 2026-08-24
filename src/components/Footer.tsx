@@ -1,6 +1,19 @@
 import { Link } from "@tanstack/react-router";
 import { Code2, Github, Linkedin, Mail } from "lucide-react";
 
+function XLogo({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+      className={className}
+    >
+      <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932L18.901 1.153Zm-1.29 19.5h2.039L6.486 3.24H4.298L17.61 20.653Z" />
+    </svg>
+  );
+}
+
 export function Footer() {
   return (
     <footer className="mt-32 border-t border-border/50">
@@ -34,6 +47,11 @@ export function Footer() {
                   label: "Follow us on LinkedIn",
                 },
                 {
+                  icon: XLogo,
+                  href: "https://x.com/X",
+                  label: "Follow us on X",
+                },
+                {
                   icon: Mail,
                   href: "mailto:simakahmed@outlook.com",
                   label: "Email us",
@@ -42,7 +60,7 @@ export function Footer() {
                 <a
                   key={i}
                   href={href}
-                  target="_blank"
+                  target={href.startsWith("mailto:") ? undefined : "_blank"}
                   rel="noreferrer"
                   aria-label={label}
                   className="grid h-9 w-9 place-items-center rounded-lg border border-border/60 text-muted-foreground transition hover:border-violet/60 hover:text-foreground"
