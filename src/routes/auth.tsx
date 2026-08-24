@@ -7,7 +7,7 @@
  */
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Code2, Mail, Lock } from "lucide-react";
+import { Code2, Mail, Lock, Info } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
