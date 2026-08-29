@@ -2,8 +2,10 @@
  * /auth — Admin Login
  *
  * Flow after successful password login:
- *   - If user has a verified TOTP factor → /mfa-verify (must pass MFA before dashboard)
- *   - If user has NO TOTP factor → /dashboard (MFA is optional, enrolled via Security tab)
+ *   - Only the configured admin email can continue
+ *   - Non-admin users are signed out immediately
+ *   - If the admin has a verified TOTP factor → /mfa-verify
+ *   - Otherwise → /dashboard
  */
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
@@ -14,6 +16,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+
+const ADMIN_EMAIL = "simakahmed002@gmail.com";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -36,12 +40,13 @@ function AuthPage() {
     const f = new FormData(e.currentTarget);
     setBusy(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: String(f.get("email")),
       password: String(f.get("password")),
     });
 
-    if (error) {
+    // Authentication failed: the email/password combination is invalid.
+    if (error || !data.user) {
       setBusy(false);
       toast.error("Invalid email or password", {
         icon: <Info className="h-4 w-4" />,
@@ -49,18 +54,28 @@ function AuthPage() {
       return;
     }
 
-    // Check if user has MFA enrolled
-    // data.totp only contains VERIFIED factors
+    // Authentication succeeded, but only the configured admin can continue.
+    if (data.user.email?.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+      await supabase.auth.signOut();
+      setBusy(false);
+      toast.error("Only admins can access this page", {
+        icon: <Info className="h-4 w-4" />,
+      });
+      return;
+    }
+
+    // Check if the authenticated admin has MFA enrolled.
+    // data.totp only contains VERIFIED factors.
     const { data: factors } = await supabase.auth.mfa.listFactors();
     const hasTotp = (factors?.totp ?? []).length > 0;
 
     setBusy(false);
 
     if (hasTotp) {
-      // Must verify MFA before accessing dashboard
+      // Must verify MFA before accessing dashboard.
       navigate({ to: "/mfa-verify" });
     } else {
-      // No MFA enrolled → go straight to dashboard
+      // No MFA enrolled → go straight to dashboard.
       navigate({ to: "/dashboard" });
     }
   };
