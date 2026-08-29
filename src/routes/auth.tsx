@@ -43,9 +43,9 @@ function AuthPage() {
 
     if (error) {
       setBusy(false);
-      toast.error("Only admins can access this page", {
-  icon: <Info className="h-4 w-4" />,
-});
+      toast.error("Invalid email or password", {
+        icon: <Info className="h-4 w-4" />,
+      });
       return;
     }
 
