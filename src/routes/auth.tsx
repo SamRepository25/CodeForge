@@ -45,10 +45,10 @@ function AuthPage() {
       password: String(f.get("password")),
     });
 
-    // Authentication failed: the email/password combination is invalid.
+    // Authentication failed: do not reveal whether an account exists.
     if (error || !data.user) {
       setBusy(false);
-      toast.error("Invalid email or password", {
+      toast.error("Only admins can access this page", {
         icon: <Info className="h-4 w-4" />,
       });
       return;
