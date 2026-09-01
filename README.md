@@ -214,17 +214,12 @@ CodeForge/
 │
 ├── .main/
 │   └── project.json
-│
 ├── migration/
-│
 ├── public/
-│
 ├── src/
-│
 ├── supabase/
 │   ├── migrations/
 │   └── config.toml
-│
 ├── .env.example
 ├── .gitignore
 ├── .prettierignore
@@ -394,7 +389,7 @@ If you discover an issue:
 
 This project is licensed under the **MIT License**.
 
-See the `LICENSE` file for details.
+See the [**LICENSE**](./LICENSE) file for details.
 
 ---
 
