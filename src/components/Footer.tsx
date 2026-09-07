@@ -92,6 +92,12 @@ export function Footer() {
                   About
                 </Link>
               </li>
+
+              <li>
+                <Link to="/sitemap" className="hover:text-foreground">
+                  Sitemap
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
