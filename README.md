@@ -387,7 +387,7 @@ If you discover an issue:
 
 # 📄 License
 
-This project is licensed under the **MIT License**.
+This project is licensed under the **Proprietary License**.
 
 See the [**LICENSE**](./LICENSE) file for details.
 
