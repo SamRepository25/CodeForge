@@ -3,12 +3,7 @@ import { Code2, Github, Linkedin, Mail } from "lucide-react";
 
 function XLogo({ className }: { className?: string }) {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-      className={className}
-    >
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
       <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932L18.901 1.153Zm-1.29 19.5h2.039L6.486 3.24H4.298L17.61 20.653Z" />
     </svg>
   );
@@ -16,104 +11,89 @@ function XLogo({ className }: { className?: string }) {
 
 export function Footer() {
   return (
-    <footer className="mt-32 border-t border-border/50">
-      <div className="mx-auto max-w-7xl px-4 py-12">
-        <div className="grid gap-8 md:grid-cols-3">
-          <div className="md:col-span-2">
-            <Link to="/" className="flex items-center gap-2.5">
-              <div className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-violet to-electric">
-                <Code2 className="h-5 w-5 text-white" />
-              </div>
-
-              <span className="font-display text-lg font-bold">
-                CodeForge
-              </span>
-            </Link>
-
-            <p className="mt-3 max-w-sm text-sm text-muted-foreground">
-              Forge ideas into reality. A personal portfolio, technical blog.
-            </p>
-
-            <div className="mt-4 flex items-center gap-2">
-              {[
-                {
-                  icon: Github,
-                  href: "https://github.com/SamRepository25/",
-                  label: "Follow us on GitHub",
-                },
-                {
-                  icon: Linkedin,
-                  href: "https://www.linkedin.com/in/simakahmed",
-                  label: "Follow us on LinkedIn",
-                },
-                {
-                  icon: XLogo,
-                  href: "https://x.com/X",
-                  label: "Follow us on X",
-                },
-                {
-                  icon: Mail,
-                  href: "mailto:simakahmed@outlook.com",
-                  label: "Email us",
-                },
-              ].map(({ icon: Icon, href, label }, i) => (
-                <a
-                  key={i}
-                  href={href}
-                  target={href.startsWith("mailto:") ? undefined : "_blank"}
-                  rel="noreferrer"
-                  aria-label={label}
-                  className="grid h-9 w-9 place-items-center rounded-lg border border-border/60 text-muted-foreground transition hover:border-violet/60 hover:text-foreground"
-                >
-                  <Icon className="h-4 w-4" />
-                </a>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <h4 className="text-sm font-semibold">Explore</h4>
-
-            <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-              <li>
-                <Link to="/projects" className="hover:text-foreground">
-                  Projects
-                </Link>
-              </li>
-
-              <li>
-                <Link to="/blog" className="hover:text-foreground">
-                  Blog
-                </Link>
-              </li>
-
-              <li>
-                <Link to="/about" className="hover:text-foreground">
-                  About
-                </Link>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="mt-10 flex flex-col items-start gap-4 border-t border-border/40 pt-6 text-xs text-muted-foreground">
-          <span>
-            © {new Date().getFullYear()} CodeForge. All Rights Reserved.
-          </span>
-
-          <div className="flex flex-col items-start gap-2">
-            <span className="font-medium text-foreground/80">
-              Built with
+    <footer className="site-footer">
+      <div className="page-shell footer-grid">
+        <div>
+          <Link to="/" className="brand-mark">
+            <span className="brand-icon">
+              <Code2 size={21} />
             </span>
-
-            <ul className="space-y-1">
-              <li>React</li>
-              <li>TypeScript</li>
-              <li>Tailwind CSS</li>
-              <li>TanStack Router / React Start</li>
-            </ul>
+            <span>
+              <strong>CODEFORGE</strong>
+              <small>SOFTWARE LAB</small>
+            </span>
+          </Link>
+          <p className="footer-copy">
+            Personal software development portfolio and technical lab. Synthesizing formal systems
+            thinking with practical, full-stack application development.
+          </p>
+          <div className="social-row">
+            <a
+              href="https://github.com/SamRepository25/"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="GitHub"
+            >
+              <Github size={16} />
+            </a>
+            <a
+              href="https://www.linkedin.com/in/simakahmed"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="LinkedIn"
+            >
+              <Linkedin size={16} />
+            </a>
+            <a href="https://x.com/X" target="_blank" rel="noreferrer" aria-label="X">
+              <XLogo className="icon-small" />
+            </a>
+            <a href="mailto:simakahmed@outlook.com" aria-label="Email">
+              <Mail size={16} />
+            </a>
           </div>
         </div>
+        <div>
+          <span className="footer-heading">[ NAVIGATION ]</span>
+          <Link to="/projects">/01_PROJECTS</Link>
+          <a href="/#technologies">/02_TECHNOLOGIES</a>
+          <Link to="/blog">/03_ARTICLES_AND_BLOG</Link>
+          <Link to="/about">/04_ABOUT_AND_BIO</Link>
+          <a href="/#contact">/05_CONTACT</a>
+        </div>
+        <div>
+          <span className="footer-heading">[ CONNECT ]</span>
+          <a href="https://github.com/SamRepository25/" target="_blank" rel="noreferrer">
+            GITHUB <strong>@SamRepository25</strong>
+          </a>
+          <a href="https://www.linkedin.com/in/simakahmed" target="_blank" rel="noreferrer">
+            LINKEDIN <strong>/in/simakahmed</strong>
+          </a>
+          <a href="mailto:simakahmed@outlook.com">
+            EMAIL <strong>simakahmed@outlook.com</strong>
+          </a>
+          <span className="accent-text">
+            STATUS <strong>OPEN TO OFFERS</strong>
+          </span>
+        </div>
+        <div>
+          <span className="footer-heading">[ COLOPHON &amp; SPECS ]</span>
+          <span>STACK: REACT, TYPESCRIPT, TAILWIND, SUPABASE &amp; POSTGRESQL</span>
+          <span>TYPOGRAPHY: INTER + JETBRAINS MONO</span>
+          <span>GRID: SWISS CONSTRUCTIVIST SYSTEM</span>
+          <span>FEED: RSS / SITEMAP AVAILABLE</span>
+        </div>
+      </div>
+      <div className="footer-bottom page-shell">
+        <span>© {new Date().getFullYear()} CODEFORGE. BUILT WITH MODERN WEB STANDARDS.</span>
+        <span>
+          <a href="https://github.com/SamRepository25/" target="_blank" rel="noreferrer">
+            GITHUB
+          </a>
+          <a href="https://www.linkedin.com/in/simakahmed" target="_blank" rel="noreferrer">
+            LINKEDIN
+          </a>
+          <a href="#hero">TOP ↑</a>
+        </span>
       </div>
     </footer>
   );

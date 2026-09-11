@@ -1,0 +1,752 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "surface-container-lowest": "#ffffff",
+          "tertiary-container": "#1f1b16",
+          "inverse-on-surface": "#f1effa",
+          "primary": "#000000",
+          "tertiary": "#000000",
+          "on-secondary-fixed": "#3e0500",
+          "on-secondary-fixed-variant": "#8c1800",
+          "on-primary-fixed": "#1b1b1f",
+          "on-background": "#1a1b22",
+          "surface-dim": "#dad9e3",
+          "on-secondary-container": "#fffbff",
+          "on-primary": "#ffffff",
+          "on-surface-variant": "#46464b",
+          "surface-tint": "#5e5e62",
+          "inverse-surface": "#2f3038",
+          "secondary-container": "#e02c00",
+          "primary-fixed-dim": "#c7c6ca",
+          "on-tertiary-fixed": "#1f1b16",
+          "on-surface": "#1a1b22",
+          "secondary": "#b32100",
+          "on-primary-container": "#848387",
+          "outline-variant": "#c7c6cb",
+          "error-container": "#ffdad6",
+          "outline": "#77777b",
+          "error": "#ba1a1a",
+          "secondary-fixed-dim": "#ffb4a4",
+          "on-primary-fixed-variant": "#46464a",
+          "surface-container": "#eeedf7",
+          "on-tertiary": "#ffffff",
+          "surface": "#fbf8ff",
+          "on-tertiary-fixed-variant": "#4c4640",
+          "primary-container": "#1b1b1f",
+          "surface-container-low": "#f4f2fd",
+          "surface-container-high": "#e8e7f1",
+          "surface-container-highest": "#e3e1ec",
+          "inverse-primary": "#c7c6ca",
+          "on-tertiary-container": "#8a827c",
+          "on-error": "#ffffff",
+          "secondary-fixed": "#ffdad3",
+          "primary-fixed": "#e3e2e6",
+          "on-secondary": "#ffffff",
+          "surface-variant": "#e3e1ec",
+          "surface-bright": "#fbf8ff",
+          "tertiary-fixed": "#ebe1d9",
+          "background": "#fbf8ff",
+          "tertiary-fixed-dim": "#cec5be",
+          "on-error-container": "#93000a"
+        },
+        "borderRadius": {
+          "DEFAULT": "0.25rem",
+          "lg": "0.5rem",
+          "xl": "0.75rem",
+          "full": "9999px"
+        },
+        "spacing": {
+          "space-xs": "0.25rem",
+          "margin-desktop": "3rem",
+          "margin": "1.25rem",
+          "space-lg": "1.5rem",
+          "gutter": "1.5rem",
+          "gutter-desktop": "2rem",
+          "space-sm": "0.5rem",
+          "space-xl": "3rem",
+          "space-md": "1rem"
+        },
+        "fontFamily": {
+          "display": [
+            "Inter"
+          ],
+          "display-mobile": [
+            "Inter"
+          ],
+          "caption": [
+            "Inter"
+          ],
+          "body-lg": [
+            "Inter"
+          ],
+          "headline-sm": [
+            "Inter"
+          ],
+          "body-sm": [
+            "Inter"
+          ],
+          "body-md": [
+            "Inter"
+          ],
+          "headline-md": [
+            "Inter"
+          ],
+          "label-index": [
+            "JetBrains Mono"
+          ],
+          "label-mono": [
+            "JetBrains Mono"
+          ],
+          "headline-lg-mobile": [
+            "Inter"
+          ],
+          "headline-lg": [
+            "Inter"
+          ]
+        },
+        "fontSize": {
+          "display": [
+            "4.5rem",
+            {
+              "lineHeight": "4.5rem",
+              "letterSpacing": "-0.04em",
+              "fontWeight": "800"
+            }
+          ],
+          "display-mobile": [
+            "2.75rem",
+            {
+              "lineHeight": "2.875rem",
+              "letterSpacing": "-0.035em",
+              "fontWeight": "800"
+            }
+          ],
+          "caption": [
+            "0.75rem",
+            {
+              "lineHeight": "1rem",
+              "letterSpacing": "0.01em",
+              "fontWeight": "500"
+            }
+          ],
+          "body-lg": [
+            "1.125rem",
+            {
+              "lineHeight": "1.75rem",
+              "letterSpacing": "-0.01em",
+              "fontWeight": "400"
+            }
+          ],
+          "headline-sm": [
+            "1.375rem",
+            {
+              "lineHeight": "1.75rem",
+              "letterSpacing": "-0.015em",
+              "fontWeight": "600"
+            }
+          ],
+          "body-sm": [
+            "0.875rem",
+            {
+              "lineHeight": "1.25rem",
+              "letterSpacing": "0em",
+              "fontWeight": "400"
+            }
+          ],
+          "body-md": [
+            "1rem",
+            {
+              "lineHeight": "1.5rem",
+              "letterSpacing": "-0.005em",
+              "fontWeight": "400"
+            }
+          ],
+          "headline-md": [
+            "2rem",
+            {
+              "lineHeight": "2.375rem",
+              "letterSpacing": "-0.02em",
+              "fontWeight": "600"
+            }
+          ],
+          "label-index": [
+            "0.75rem",
+            {
+              "lineHeight": "1rem",
+              "letterSpacing": "0.08em",
+              "fontWeight": "500"
+            }
+          ],
+          "label-mono": [
+            "0.8125rem",
+            {
+              "lineHeight": "1.125rem",
+              "letterSpacing": "0.02em",
+              "fontWeight": "400"
+            }
+          ],
+          "headline-lg-mobile": [
+            "2rem",
+            {
+              "lineHeight": "2.25rem",
+              "letterSpacing": "-0.025em",
+              "fontWeight": "700"
+            }
+          ],
+          "headline-lg": [
+            "3rem",
+            {
+              "lineHeight": "3.25rem",
+              "letterSpacing": "-0.03em",
+              "fontWeight": "700"
+            }
+          ]
+        }
+      }
+    }
+  }</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased selection:bg-secondary selection:text-on-secondary"><header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant/30"><div class="hidden lg:flex w-full border-b border-outline-variant/20 px-margin-desktop py-space-xs justify-between items-center bg-surface-container-low font-label-index text-label-index tracking-widest text-on-surface-variant"><div class="flex items-center gap-space-md"><span class="inline-block w-1.5 h-1.5 bg-secondary"></span><span class="">CODEFORGE // DEVELOPER PORTFOLIO &amp; SOFTWARE LAB</span><span class="text-outline-variant">|</span><span class="">STACK: TYPESCRIPT // PYTHON // REACT // NODE // GO // NEXT.JS</span></div><div class="flex items-center gap-space-lg font-label-mono text-label-mono"><a class="hover:text-primary transition-colors" href="https://github.com/codeforge" target="_blank">GITHUB</a><span class="">•</span><a class="hover:text-primary transition-colors" href="https://linkedin.com/in/codeforge" target="_blank">LINKEDIN</a><span class="">•</span><a class="hover:text-primary transition-colors" href="#blog">BLOG</a><span class="">•</span><span class="text-secondary font-medium">STATUS: AVAILABLE FOR INTERNSHIPS &amp; FULL-TIME ROLES</span></div></div><div class="h-20 max-w-7xl mx-auto px-margin-desktop flex items-center justify-between"><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-sm"><div class="h-9 w-9 flex-shrink-0 flex items-center justify-center bg-[#0C0D10] border border-outline-variant/40"><img alt="CodeForge Logo" class="h-8 w-8 object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1Uz-elMaNxgc4X_iqzjCZyGcvnlngFHipaGCy60G-TY1vf9MHHDgEEhw8OvkiDWRXl90WLquiORGDRWLRCcP2syS4-x2BlI0fggx7hCj-NiWS0hmcrO9ixRFS32CJYxR2tdSuHQjh0zkb_I7rKCzUcFI6RYnTIXTElXF3HvG_NgK2vcGNL9aUDV-dLFhRiL-teLAKrB_OPkLVdAnSBcMXp6eK3FE_UvK2x24_mHZDO5SniSc8YlhEtLnFE"></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm tracking-tight text-primary leading-none uppercase">CodeForge</span><span class="font-label-index text-label-index uppercase tracking-widest text-on-surface-variant">Software Lab</span></div></div><div class="hidden xl:flex items-center gap-space-xs pl-space-md border-l border-outline-variant/40 font-label-index text-label-index text-on-surface-variant"><span class="w-2 h-2 bg-secondary inline-block"></span><span class="">STATUS: OPEN TO CS OPPORTUNITIES</span></div></div><nav class="hidden lg:flex items-center border border-outline-variant/30 divide-x divide-outline-variant/30" data-active-classes="bg-primary-container text-on-primary font-bold"><a class="px-space-md py-space-sm font-label-index text-label-index uppercase tracking-wider text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" href="#projects">01. Projects</a><a class="px-space-md py-space-sm font-label-index text-label-index uppercase tracking-wider text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" href="#technologies">02. Technologies</a><a class="px-space-md py-space-sm font-label-index text-label-index uppercase tracking-wider text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" href="#blog">03. Articles &amp; Blog</a><a class="px-space-md py-space-sm font-label-index text-label-index uppercase tracking-wider text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" href="#about">04. About / Bio</a><a class="px-space-md py-space-sm font-label-index text-label-index uppercase tracking-wider text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" href="#contact">05. Contact</a></nav><div class="flex items-center gap-space-md"><a class="hidden sm:inline-flex items-center justify-center px-space-md py-space-sm bg-primary text-on-primary font-label-index text-label-index uppercase tracking-widest border border-primary hover:bg-secondary hover:border-secondary hover:text-on-secondary transition-colors" href="#contact">[ GET IN TOUCH -&gt; ]</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">terminal</span></div></div></div></header><main class="w-full pt-20 bg-surface"><div class="w-full border-b border-outline-variant/20 bg-surface-container-lowest"><div class="max-w-7xl mx-auto px-margin-desktop py-space-xs flex justify-between items-center font-label-index text-label-index text-on-surface-variant"><span class="">PORTFOLIO // INDEX 0.0.1</span><span class="">SYS_ID: CF-DEV-2025 // SWISS MODULAR DISCIPLINE</span></div></div><div class="flex flex-col w-full">
+<!-- Top Telemetry Ribbon -->
+<div class="w-full bg-surface-container-low border-b border-outline-variant/30">
+<div class="max-w-7xl mx-auto px-margin-desktop py-space-xs flex flex-wrap items-center justify-between font-label-mono text-label-mono text-on-surface-variant">
+<div class="flex items-center gap-space-md">
+<span class="inline-flex items-center gap-space-xs font-semibold text-secondary">
+<span class="w-1.5 h-1.5 rounded-none bg-secondary animate-pulse"></span>
+          SYS_STATUS: AVAILABLE FOR 2025 ROLES
+        </span>
+<span class="text-outline-variant">/</span>
+<span class="">CORE: TYPESCRIPT / PYTHON / GO</span>
+<span class="text-outline-variant">/</span>
+<span class="">STACK: NEXT.JS / REACT / NODE</span>
+</div>
+<div class="flex items-center gap-space-lg font-label-index text-label-index">
+<span class="text-primary font-bold">[ PORTFOLIO // 2025 EDITION ]</span>
+<span class="hidden sm:inline">FULL-STACK ENGINEERING &amp; MODERN WEB APPLICATIONS</span>
+<span class="text-secondary font-medium">// CLEAN ARCHITECTURE &amp; APPLIED CS</span>
+</div>
+</div>
+</div>
+<!-- SECTION 01: HERO & STUDIO THESIS -->
+<section class="w-full bg-surface" id="hero">
+<div class="max-w-7xl mx-auto px-margin-desktop pt-space-xl pb-space-xl border-b border-outline-variant/30">
+<!-- Meta Header Labeling -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-space-xs font-label-index text-label-index text-on-surface-variant mb-space-lg">
+<div class="flex items-center gap-space-sm">
+<span class="px-space-xs py-0.5 bg-primary text-on-primary font-bold">[ PORTFOLIO // 2025 EDITION ]</span>
+<span class="tracking-widest">FULL-STACK ENGINEERING &amp; MODERN WEB APPLICATIONS // CLEAN ARCHITECTURE &amp; APPLIED CS</span>
+</div>
+<div class="font-label-mono text-label-mono text-secondary">
+          SYS_STATUS: READY FOR NEW OPPORTUNITIES
+        </div>
+</div>
+<!-- Hero Typographic Statement -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter mb-space-xl items-start">
+<div class="lg:col-span-12">
+<h1 class="font-display text-display uppercase tracking-tight text-primary leading-none">
+            BUILDING PURPOSEFUL FULL-STACK APPLICATIONS &amp; INTUITIVE DIGITAL EXPERIENCES.
+          </h1>
+</div>
+</div>
+<!-- Asymmetric Editorial Spread: Mission & Taxonomy -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter pt-space-md border-t border-outline-variant/30 items-start" id="technologies">
+<div class="lg:col-span-4 flex flex-col gap-space-sm font-label-index text-label-index text-on-surface-variant">
+<span class="text-primary font-bold uppercase tracking-widest">[ 00. THESIS STATEMENT ]</span>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+            CodeForge is a personal software development portfolio and technical lab dedicated to crafting robust web applications, exploring networking and automation tools, and building software with clean modular code, performance awareness, and thoughtful interaction design.
+          </p>
+</div>
+<div class="lg:col-span-8 flex flex-col justify-between">
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-gutter font-label-mono text-label-mono">
+<div class="flex flex-col gap-space-xs p-space-md bg-surface-container-lowest border border-outline-variant/30">
+<span class="text-secondary font-bold font-headline-sm text-headline-sm tracking-tight leading-tight uppercase">FULL-STACK WEB</span>
+<span class="font-label-index text-label-index text-on-surface-variant uppercase mt-1">Next.js, TypeScript &amp; APIs</span>
+</div>
+<div class="flex flex-col gap-space-xs p-space-md bg-surface-container-lowest border border-outline-variant/30">
+<span class="text-primary font-bold font-headline-sm text-headline-sm tracking-tight leading-tight uppercase">CORE LANGUAGES</span>
+<span class="font-label-index text-label-index text-on-surface-variant uppercase mt-1">TypeScript, Python, Go, SQL</span>
+</div>
+<div class="flex flex-col gap-space-xs p-space-md bg-surface-container-lowest border border-outline-variant/30">
+<span class="text-primary font-bold font-headline-sm text-headline-sm tracking-tight leading-tight uppercase">BOTS &amp; AUTOMATION</span>
+<span class="font-label-index text-label-index text-on-surface-variant uppercase mt-1">Telegram Bots &amp; Security APIs</span>
+</div>
+<div class="flex flex-col gap-space-xs p-space-md bg-surface-container-lowest border border-outline-variant/30">
+<span class="text-secondary font-bold font-headline-sm text-headline-sm tracking-tight leading-tight uppercase">OPEN SOURCE</span>
+<span class="font-label-index text-label-index text-on-surface-variant uppercase mt-1">CS Utilities &amp; Study Tools</span>
+</div>
+</div>
+<!-- Quick Filter Switcher -->
+<div class="mt-space-lg pt-space-md border-t border-outline-variant/20 flex flex-wrap items-center justify-between gap-space-sm" id="projects">
+<div class="flex items-center flex-wrap gap-space-xs font-label-index text-label-index">
+<span class="text-on-surface-variant uppercase tracking-wider mr-space-xs">REGISTER:</span>
+<button class="px-space-sm py-1 bg-primary text-on-primary font-bold border border-primary">ALL PROJECTS</button>
+<button class="px-space-sm py-1 bg-surface-container-lowest text-on-surface hover:bg-surface-container-high border border-outline-variant/30 transition-colors">FULL-STACK APPS</button>
+<button class="px-space-sm py-1 bg-surface-container-lowest text-on-surface hover:bg-surface-container-high border border-outline-variant/30 transition-colors">BOTS &amp; AUTOMATION</button>
+<button class="px-space-sm py-1 bg-surface-container-lowest text-on-surface hover:bg-surface-container-high border border-outline-variant/30 transition-colors">STUDY TOOLS</button>
+</div>
+<span class="font-label-mono text-label-mono text-on-surface-variant">SYS_INDEX // 2025 PROD</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 02: FEATURED PROJECT 01 — CODEFORGE -->
+<section class="w-full bg-surface-container-lowest"><div class="max-w-7xl mx-auto px-margin-desktop py-space-xl border-b border-outline-variant/30">
+<!-- Monograph Header Bar -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-space-sm pb-space-md border-b border-outline-variant/30">
+<div>
+<span class="font-label-index text-label-index text-secondary font-bold uppercase tracking-widest">[ CASE FILE // CF-PRJ-01 ]</span>
+<h2 class="font-headline-lg text-headline-lg text-primary tracking-tight uppercase mt-space-xs">
+            HARDENHQ // AUTOMATED LINUX SECURITY &amp; SYSTEM HARDENING PLATFORM
+          </h2>
+</div>
+<div class="font-label-mono text-label-mono text-on-surface-variant text-left md:text-right">
+<div class="">APPLICATION TYPE: LINUX SECURITY // SYSTEM HARDENING</div>
+<div class="text-primary font-medium">DISCIPLINE: AUTOMATION &amp; SECURITY COMPLIANCE</div>
+</div>
+</div>
+<!-- Visual Stage: Dashboard Artifact -->
+<div class="mt-space-lg bg-primary-container p-space-xs sm:p-space-sm border border-outline-variant/40">
+<div class="flex justify-between items-center px-space-sm py-space-xs bg-primary text-on-primary font-label-mono text-label-mono mb-space-xs">
+<div class="flex items-center gap-space-sm">
+<span class="w-2 h-2 bg-secondary inline-block"></span>
+<span class="">HARDENHQ CONSOLE // AUTOMATED HARDENING &amp; SECURITY AUDITING PLATFORM</span>
+</div>
+<span class="hidden sm:inline text-on-primary-container">ENGINEERING SYSTEM // VERSION 2025</span>
+</div>
+<div class="relative overflow-hidden bg-surface-container-lowest">
+<img alt="HardenHQ Automated Linux Security and Hardening Interface" class="w-full h-auto object-cover block" src="https://lh3.googleusercontent.com/aida/AEtjO1VSc4H7qIVCtwZq6aoXlHMAgkOs3D5hTvI-0nKi33-oOJf-p_MpQK1vSxsXs0XOyr-aH-9WAOLPWjIhtb6m1JeodpYjFJH6FCjGSRyaoff7r3SMNUYdu_E9nXJi5HE2Zlp_LwxgQgfO6OU-7Ztfcoy5sVFMpsgPjhoO21gVRJdt0fQ5UlzeqKqO9K1jzxsC_B1b7B4k2X_yBGOCAXKfLtofmNwEDB7N9SryisZMAYYGlny38aIQ0RaikSo">
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter px-space-sm py-space-xs bg-surface-container-low font-label-mono text-label-mono text-on-surface-variant border-t border-outline-variant/20">
+<div class=""><span class="text-primary font-bold">TECH STACK:</span> BASH, PYTHON, LINUX (UBUNTU / DEBIAN), SYSTEMD, SECURITY BENCHMARKS (CIS / NIST)</div>
+<div class="text-left md:text-right text-secondary font-medium"><span class="text-primary font-bold">DEPLOYMENT:</span> CLI ENGINE &amp; AUTOMATED AUDIT SCRIPTS</div>
+</div>
+</div>
+<!-- Three-Column Technical Breakdown -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter mt-space-lg font-body-sm text-body-sm">
+<div class="flex flex-col gap-space-xs p-space-md border border-outline-variant/30 bg-surface">
+<span class="font-label-index text-label-index text-primary font-bold tracking-widest uppercase">[ 01. OVERVIEW &amp; PURPOSE ]</span>
+<p class="text-on-surface-variant leading-relaxed">
+            Automated Linux security audit and hardening engine designed to inspect system configuration, identify vulnerabilities, and apply baseline security controls according to industry standards.
+          </p>
+</div>
+<div class="flex flex-col gap-space-xs p-space-md border border-outline-variant/30 bg-surface">
+<span class="font-label-index text-label-index text-primary font-bold tracking-widest uppercase">[ 02. TECHNICAL ARCHITECTURE ]</span>
+<p class="text-on-surface-variant leading-relaxed">
+            Authored with modular bash and Python routines for kernel tuning, permissions enforcement, firewall automation (UFW/iptables), SSH hardening, and automated service auditing with zero external dependencies.
+          </p>
+</div>
+<div class="flex flex-col gap-space-xs p-space-md border border-outline-variant/30 bg-surface">
+<span class="font-label-index text-label-index text-primary font-bold tracking-widest uppercase">[ 03. KEY FEATURES &amp; IMPACT ]</span>
+<p class="text-on-surface-variant leading-relaxed">
+            Generates structured compliance scorecards, automated remediation scripts, rollback configurations, and non-destructive dry-run evaluations for server environments.
+          </p>
+</div>
+</div>
+<!-- Actions Bar -->
+<div class="mt-space-md flex flex-wrap items-center justify-between gap-space-md pt-space-md border-t border-outline-variant/30">
+<div class="flex items-center gap-space-sm flex-wrap">
+<a class="px-space-md py-space-sm bg-primary text-on-primary font-label-index text-label-index uppercase tracking-wider hover:bg-secondary transition-colors" href="https://github.com/codeforge" target="_blank">
+            [ VIEW PROJECT REPOSITORY -&gt; ]
+          </a>
+<a class="px-space-md py-space-sm border border-primary text-primary font-label-index text-label-index uppercase tracking-wider hover:bg-primary hover:text-on-primary transition-colors" href="https://github.com/codeforge" target="_blank">
+            [ BROWSE SECURITY SCRIPTS ]
+          </a>
+</div>
+<span class="font-label-mono text-label-mono text-on-surface-variant">STATUS: ACTIVE // OPEN SOURCE</span>
+</div>
+</div></section>
+<!-- SECTION 03: FEATURED PROJECT 02 — ADAPTIVE LEARNING SCHEDULE PLANNER -->
+<section class="w-full bg-surface"><div class="max-w-7xl mx-auto px-margin-desktop py-space-xl border-b border-outline-variant/30">
+<!-- Monograph Header Bar -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-space-sm pb-space-md border-b border-outline-variant/30">
+<div>
+<span class="font-label-index text-label-index text-secondary font-bold uppercase tracking-widest">[ CASE FILE // CF-PRJ-02 ]</span>
+<h2 class="font-headline-lg text-headline-lg text-primary tracking-tight uppercase mt-space-xs">
+            LINUX SYSTEM MONITOR // REAL-TIME RESOURCE TELEMETRY &amp; PROCESS ENGINE
+          </h2>
+</div>
+<div class="font-label-mono text-label-mono text-on-surface-variant text-left md:text-right">
+<div class="">APPLICATION TYPE: SYSTEM UTILITY // TELEMETRY</div>
+<div class="text-secondary font-medium">DOMAIN: KERNEL METRICS &amp; RESOURCE MONITORING</div>
+</div>
+</div>
+<!-- Visual Stage: Generative Studio Screenshot -->
+<div class="mt-space-lg bg-surface-container-lowest p-space-xs sm:p-space-sm border border-outline-variant/40">
+<div class="flex justify-between items-center px-space-sm py-space-xs bg-surface-container-high text-on-surface font-label-mono text-label-mono mb-space-xs border-b border-outline-variant/30">
+<div class="flex items-center gap-space-sm">
+<span class="w-2 h-2 bg-secondary inline-block"></span>
+<span class="">LINUX SYSTEM MONITOR // REAL-TIME KERNEL &amp; PROCESS DASHBOARD</span>
+</div>
+<span class="text-on-surface-variant">TARGET: KERNEL PERFORMANCE &amp; HOST TELEMETRY</span>
+</div>
+<div class="relative overflow-hidden">
+<img alt="Linux System Monitor Real-Time Resource Telemetry and Process Engine" class="w-full h-auto object-cover block" src="https://lh3.googleusercontent.com/aida/AEtjO1VRNqWaV5YgWN3aWjftltaZVVL3f-f40fZK_x998pYODDLcleySPmABXBTRB77f5ZAffbqgB2kXFvt7IyYW20xTfrveEfjlHEQpbu1funXSZ1szUcrDm8V2lEv-6ogvcZqVA4b8fBq1WP6YLK2eAOJbJqmR4BAymP5wPZ6dyTTnsrJ2-4nlOTBeqdGf3wOepiKI4LfIz7B7U0yFIojJpTpLEr-K58n2b2Be0n_BhzcZ6dgUEyTtRl7ZZg">
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter px-space-sm py-space-xs bg-surface-container-low font-label-mono text-label-mono text-on-surface-variant border-t border-outline-variant/20">
+<div class=""><span class="text-primary font-bold">TECH STACK:</span> PYTHON / C, /PROC VIRTUAL FILESYSTEM, SYSTEMD, NORM / NCURSES / WEB TELEMETRY</div>
+<div class="text-left md:text-right text-secondary font-medium"><span class="text-primary font-bold">METRICS:</span> REAL-TIME CPU, MEMORY, DISK I/O &amp; NETWORK INTERFACES</div>
+</div>
+</div>
+<!-- Three-Column Technical Breakdown -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter mt-space-lg font-body-sm text-body-sm">
+<div class="flex flex-col gap-space-xs p-space-md border border-outline-variant/30 bg-surface-container-lowest">
+<span class="font-label-index text-label-index text-primary font-bold tracking-widest uppercase">[ 01. OVERVIEW &amp; PURPOSE ]</span>
+<p class="text-on-surface-variant leading-relaxed">
+            Lightweight Linux performance monitoring utility built to provide granular visibility into live host health, kernel task scheduling, memory consumption, and I/O bottlenecks without system overhead.
+          </p>
+</div>
+<div class="flex flex-col gap-space-xs p-space-md border border-outline-variant/30 bg-surface-container-lowest">
+<span class="font-label-index text-label-index text-primary font-bold tracking-widest uppercase">[ 02. SYSTEM IMPLEMENTATION ]</span>
+<p class="text-on-surface-variant leading-relaxed">
+            Interfaces directly with the Linux `/proc` and `/sys` virtual filesystems, capturing process states, thread hierarchies, load averages, and network socket statistics in real time.
+          </p>
+</div>
+<div class="flex flex-col gap-space-xs p-space-md border border-outline-variant/30 bg-surface-container-lowest">
+<span class="font-label-index text-label-index text-primary font-bold tracking-widest uppercase">[ 03. KEY FEATURES &amp; CAPABILITIES ]</span>
+<p class="text-on-surface-variant leading-relaxed">
+            Dynamic terminal dashboard and web visualizer with interactive process filtering, signal dispatch (SIGTERM/SIGKILL), threshold alerting, and low-latency metrics collection.
+          </p>
+</div>
+</div>
+<!-- Actions Bar -->
+<div class="mt-space-md flex flex-wrap items-center justify-between gap-space-md pt-space-md border-t border-outline-variant/30">
+<div class="flex items-center gap-space-sm flex-wrap">
+<a class="px-space-md py-space-sm bg-primary text-on-primary font-label-index text-label-index uppercase tracking-wider hover:bg-secondary transition-colors" href="#">
+            [ LAUNCH TELEMETRY DEMO -&gt; ]
+          </a>
+<a class="px-space-md py-space-sm border border-primary text-primary font-label-index text-label-index uppercase tracking-wider hover:bg-primary hover:text-on-primary transition-colors" href="https://github.com/codeforge" target="_blank">
+            [ VIEW GITHUB REPOSITORY ]
+          </a>
+</div>
+<span class="font-label-mono text-label-mono text-on-surface-variant">OPEN SOURCE UTILITY // RELEASED UNDER MIT</span>
+</div>
+</div></section>
+<!-- SECTION 04: ACTIVE BENCH // PROJECTS & EXPERIMENTS -->
+<section class="w-full bg-surface-container-low"><div class="max-w-7xl mx-auto px-margin-desktop py-space-xl border-b border-outline-variant/30">
+<!-- Section Header -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-space-xs pb-space-sm border-b border-outline-variant/30 mb-space-lg">
+<div>
+<span class="font-label-index text-label-index text-secondary font-bold uppercase tracking-widest">[ PROJECTS &amp; EXPERIMENTS // ACTIVE LAB WORK ]</span>
+<h3 class="font-headline-md text-headline-md text-primary tracking-tight uppercase mt-space-xs">
+            Open-Source Utilities &amp; Practical Prototypes
+          </h3>
+</div>
+<span class="font-label-mono text-label-mono text-on-surface-variant">3 CONCURRENT EXPERIMENTS RUNNING</span>
+</div>
+<!-- 3-Column Experimental Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Card 1 -->
+<div class="flex flex-col justify-between p-space-md bg-surface-container-lowest border border-outline-variant/30 hover:border-primary transition-colors">
+<div>
+<div class="flex justify-between items-start font-label-mono text-label-mono text-on-surface-variant mb-space-sm">
+<span class="text-primary font-bold">[ PRJ // FULL-STACK LAB ]</span>
+<span class="text-secondary">WEB PLATFORM</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-primary uppercase mb-space-xs">CODEFORGE STUDIO</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mb-space-md">
+              Personal software development portfolio and technical systems lab featuring production web applications, architectural monographs, and developer utilities.
+            </p>
+</div>
+<div class="pt-space-sm border-t border-outline-variant/20 font-label-mono text-label-mono flex flex-col gap-1">
+<div class="flex justify-between text-on-surface-variant">
+<span class="">STACK:</span>
+<span class="text-primary font-bold">React // TypeScript // Supabase</span>
+</div>
+<div class="flex justify-between text-on-surface-variant">
+<span class="">BACKEND:</span>
+<span class="text-secondary">POSTGRESQL &amp; TAILWIND CSS</span>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="flex flex-col justify-between p-space-md bg-surface-container-lowest border border-outline-variant/30 hover:border-primary transition-colors">
+<div>
+<div class="flex justify-between items-start font-label-mono text-label-mono text-on-surface-variant mb-space-sm">
+<span class="text-primary font-bold">[ PRJ // OPTIMIZATION ]</span>
+<span class="text-secondary">STUDY PLANNER</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-primary uppercase mb-space-xs">ADAPTIVE LEARNING PLANNER (ALP)</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mb-space-md">
+              Intelligent academic workload schedule planner that automatically balances study intervals, syllabus milestones, and exam prep with dynamic constraint solving.
+            </p>
+</div>
+<div class="pt-space-sm border-t border-outline-variant/20 font-label-mono text-label-mono flex flex-col gap-1">
+<div class="flex justify-between text-on-surface-variant">
+<span class="">STACK:</span>
+<span class="text-primary font-bold">Python // Flask // SQLite</span>
+</div>
+<div class="flex justify-between text-on-surface-variant">
+<span class="">DATABASE:</span>
+<span class="text-secondary">FLASK-SQLALCHEMY &amp; RELATIONAL</span>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="flex flex-col justify-between p-space-md bg-surface-container-lowest border border-outline-variant/30 hover:border-primary transition-colors">
+<div>
+<div class="flex justify-between items-start font-label-mono text-label-mono text-on-surface-variant mb-space-sm">
+<span class="text-primary font-bold">[ PRJ // CYBERSECURITY ]</span>
+<span class="text-secondary">TELEGRAM BOTS</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-primary uppercase mb-space-xs">THREATSCOPE &amp; CCNAHELPERBOT</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mb-space-md">
+              Automated Telegram bots delivering real-time CVE vulnerability intelligence feeds and interactive Cisco CCNA routing, switching, and procedural subnetting quizzes.
+            </p>
+</div>
+<div class="pt-space-sm border-t border-outline-variant/20 font-label-mono text-label-mono flex flex-col gap-1">
+<div class="flex justify-between text-on-surface-variant">
+<span class="">STACK:</span>
+<span class="text-primary font-bold">Python // Telegram API // CVE Feeds</span>
+</div>
+<div class="flex justify-between text-on-surface-variant">
+<span class="">DISTRIBUTION:</span>
+<span class="text-secondary">TELEGRAM BOTS &amp; GITHUB</span>
+</div>
+</div>
+</div>
+</div>
+</div></section>
+<!-- SECTION 05: ABOUT & PHILOSOPHY -->
+<section class="w-full bg-surface" id="about">
+<div class="max-w-7xl mx-auto px-margin-desktop py-space-xl border-b border-outline-variant/30">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<!-- Left Column: Leadership Portrait Artifact -->
+<div class="lg:col-span-5 flex flex-col gap-space-sm">
+<div class="border border-outline-variant/40 bg-surface-container-lowest p-space-xs">
+<div class="relative overflow-hidden">
+<img alt="CodeForge Developer and Computer Science Student" class="w-full h-auto object-cover block" src="https://lh3.googleusercontent.com/aida/AEtjO1WhsdHYb5S69tSN407k4NXjI_ONdFmYHZtC8X_6hlE1Vcw0wCnOghu8L4qO-FUhuqeOLoVv6D6R6WOiwFGk_k0FvRRT3KUpno4fC3VTsfHe9nfUvtQr3_HsDn5c5HNF62AbwgnuA4Sd8IxpmbftQrpy6M7eguTt_HnjQjyVdIHJuQSQACGZYkmyUPJytTr_QknzlGeDXM1gje4WQl3zHI9oK6SsqQ716IAv3cK6YXTmjvXuHijgNaMhR2g">
+</div>
+<div class="pt-space-xs px-space-xs pb-1 font-label-mono text-label-mono text-on-surface-variant flex flex-col gap-0.5">
+<div class="flex justify-between text-primary font-bold">
+<span class="">CODEFORGE</span>
+<span class="">SOFTWARE DEVELOPER &amp; CS STUDENT</span>
+</div>
+<div class="text-[0.7rem] text-on-surface-variant">
+                FOCUS: FULL-STACK &amp; NETWORKING // TOOLS: TYPESCRIPT, REACT, PYTHON, GO
+              </div>
+</div>
+</div>
+<div class="font-label-index text-label-index text-on-surface-variant flex flex-col gap-1 pl-space-xs">
+<div class="">FOCUS: FULL-STACK WEB &amp; AUTOMATION TOOLS</div>
+<div class="">TOOLS: TYPESCRIPT, REACT, PYTHON, GO, SQL</div>
+<div class="text-secondary font-medium">STATUS: OPEN TO NEW OPPORTUNITIES (INTERNSHIP &amp; FULL-TIME)</div>
+</div>
+</div>
+<!-- Right Column: Manifesto & Applied Philosophy -->
+<div class="lg:col-span-7 flex flex-col gap-space-md lg:pl-space-md">
+<div class="border-b border-outline-variant/30 pb-space-sm">
+<span class="font-label-index text-label-index text-secondary font-bold uppercase tracking-widest">[ 04. DEVELOPER DOSSIER ]</span>
+<h3 class="font-headline-lg text-headline-lg text-primary uppercase tracking-tight mt-space-xs leading-tight">
+              PASSIONATE ABOUT SCALABLE ARCHITECTURE &amp; THOUGHTFUL PRODUCT DESIGN.
+            </h3>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface leading-relaxed">
+            I am a Computer Science student and software developer passionate about building reliable web systems, intuitive developer tools, and clean user interfaces. With a solid foundation in computer science and a love for modern web standards, I strive to write maintainable code that solves real-world problems.
+          </p>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+            Whether developing full-stack web platforms like CodeForge and ALP, scripting automated bots for cybersecurity and networking studies, or refining user interactions, I focus on performance, accessibility, and craft. I approach engineering with a commitment to simplicity, clear separation of concerns, and disciplined execution.
+          </p>
+<!-- Core Tenets Checklist -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-space-sm pt-space-sm border-t border-outline-variant/30 font-label-index text-label-index">
+<div class="flex items-start gap-space-xs">
+<span class="w-3 h-3 bg-secondary flex-shrink-0 mt-0.5"></span>
+<div>
+<span class="text-primary font-bold uppercase">[ ROBUST ENGINEERING ]:</span>
+<p class="text-on-surface-variant font-body-sm text-body-sm mt-0.5">Clean, tested, modular code prioritizing reliability, maintainability, and clear separation of concerns.</p>
+</div>
+</div>
+<div class="flex items-start gap-space-xs">
+<span class="w-3 h-3 bg-primary flex-shrink-0 mt-0.5"></span>
+<div>
+<span class="text-primary font-bold uppercase">[ USER-CENTRIC DESIGN ]:</span>
+<p class="text-on-surface-variant font-body-sm text-body-sm mt-0.5">Interfaces inspired by Swiss clarity, disciplined typographic hierarchy, and intuitive user workflows.</p>
+</div>
+</div>
+<div class="flex items-start gap-space-xs">
+<span class="w-3 h-3 bg-secondary flex-shrink-0 mt-0.5"></span>
+<div>
+<span class="text-primary font-bold uppercase">[ CONTINUOUS LEARNING ]:</span>
+<p class="text-on-surface-variant font-body-sm text-body-sm mt-0.5">Actively exploring networking protocols, system design fundamentals, and modern developer tooling.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 06: BLOG & WRITING ARCHIVE -->
+<section class="w-full bg-surface-container-lowest" id="blog"><div class="max-w-7xl mx-auto px-margin-desktop py-space-xl border-b border-outline-variant/30">
+<!-- Monograph Header Bar -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-space-sm pb-space-md border-b border-outline-variant/30">
+<div>
+<span class="font-label-index text-label-index text-secondary font-bold uppercase tracking-widest">[ CASE FILE // CF-PRJ-01 ]</span>
+<h2 class="font-headline-lg text-headline-lg text-primary tracking-tight uppercase mt-space-xs">
+            HARDENHQ // AUTOMATED LINUX SECURITY &amp; SYSTEM HARDENING PLATFORM
+          </h2>
+</div>
+<div class="font-label-mono text-label-mono text-on-surface-variant text-left md:text-right">
+<div class="">APPLICATION TYPE: LINUX SECURITY // SYSTEM HARDENING</div>
+<div class="text-primary font-medium">DISCIPLINE: AUTOMATION &amp; SECURITY COMPLIANCE</div>
+</div>
+</div>
+<!-- Visual Stage: Dashboard Artifact -->
+<div class="mt-space-lg bg-primary-container p-space-xs sm:p-space-sm border border-outline-variant/40">
+<div class="flex justify-between items-center px-space-sm py-space-xs bg-primary text-on-primary font-label-mono text-label-mono mb-space-xs">
+<div class="flex items-center gap-space-sm">
+<span class="w-2 h-2 bg-secondary inline-block"></span>
+<span class="">HARDENHQ CONSOLE // AUTOMATED HARDENING &amp; SECURITY AUDITING PLATFORM</span>
+</div>
+<span class="hidden sm:inline text-on-primary-container">ENGINEERING SYSTEM // VERSION 2025</span>
+</div>
+<div class="relative overflow-hidden bg-surface-container-lowest">
+<img alt="HardenHQ Automated Linux Security and Hardening Interface" class="w-full h-auto object-cover block" src="https://lh3.googleusercontent.com/aida/AEtjO1VSc4H7qIVCtwZq6aoXlHMAgkOs3D5hTvI-0nKi33-oOJf-p_MpQK1vSxsXs0XOyr-aH-9WAOLPWjIhtb6m1JeodpYjFJH6FCjGSRyaoff7r3SMNUYdu_E9nXJi5HE2Zlp_LwxgQgfO6OU-7Ztfcoy5sVFMpsgPjhoO21gVRJdt0fQ5UlzeqKqO9K1jzxsC_B1b7B4k2X_yBGOCAXKfLtofmNwEDB7N9SryisZMAYYGlny38aIQ0RaikSo">
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter px-space-sm py-space-xs bg-surface-container-low font-label-mono text-label-mono text-on-surface-variant border-t border-outline-variant/20">
+<div class=""><span class="text-primary font-bold">TECH STACK:</span> BASH, PYTHON, LINUX (UBUNTU / DEBIAN), SYSTEMD, SECURITY BENCHMARKS (CIS / NIST)</div>
+<div class="text-left md:text-right text-secondary font-medium"><span class="text-primary font-bold">DEPLOYMENT:</span> CLI ENGINE &amp; AUTOMATED AUDIT SCRIPTS</div>
+</div>
+</div>
+<!-- Three-Column Technical Breakdown -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter mt-space-lg font-body-sm text-body-sm">
+<div class="flex flex-col gap-space-xs p-space-md border border-outline-variant/30 bg-surface">
+<span class="font-label-index text-label-index text-primary font-bold tracking-widest uppercase">[ 01. OVERVIEW &amp; PURPOSE ]</span>
+<p class="text-on-surface-variant leading-relaxed">
+            Automated Linux security audit and hardening engine designed to inspect system configuration, identify vulnerabilities, and apply baseline security controls according to industry standards.
+          </p>
+</div>
+<div class="flex flex-col gap-space-xs p-space-md border border-outline-variant/30 bg-surface">
+<span class="font-label-index text-label-index text-primary font-bold tracking-widest uppercase">[ 02. TECHNICAL ARCHITECTURE ]</span>
+<p class="text-on-surface-variant leading-relaxed">
+            Authored with modular bash and Python routines for kernel tuning, permissions enforcement, firewall automation (UFW/iptables), SSH hardening, and automated service auditing with zero external dependencies.
+          </p>
+</div>
+<div class="flex flex-col gap-space-xs p-space-md border border-outline-variant/30 bg-surface">
+<span class="font-label-index text-label-index text-primary font-bold tracking-widest uppercase">[ 03. KEY FEATURES &amp; IMPACT ]</span>
+<p class="text-on-surface-variant leading-relaxed">
+            Generates structured compliance scorecards, automated remediation scripts, rollback configurations, and non-destructive dry-run evaluations for server environments.
+          </p>
+</div>
+</div>
+<!-- Actions Bar -->
+<div class="mt-space-md flex flex-wrap items-center justify-between gap-space-md pt-space-md border-t border-outline-variant/30">
+<div class="flex items-center gap-space-sm flex-wrap">
+<a class="px-space-md py-space-sm bg-primary text-on-primary font-label-index text-label-index uppercase tracking-wider hover:bg-secondary transition-colors" href="https://github.com/codeforge" target="_blank">
+            [ VIEW PROJECT REPOSITORY -&gt; ]
+          </a>
+<a class="px-space-md py-space-sm border border-primary text-primary font-label-index text-label-index uppercase tracking-wider hover:bg-primary hover:text-on-primary transition-colors" href="https://github.com/codeforge" target="_blank">
+            [ BROWSE SECURITY SCRIPTS ]
+          </a>
+</div>
+<span class="font-label-mono text-label-mono text-on-surface-variant">STATUS: ACTIVE // OPEN SOURCE</span>
+</div>
+</div></section>
+<!-- SECTION 07: CONTACT & CONNECT -->
+<section class="w-full bg-surface" id="contact">
+<div class="max-w-7xl mx-auto px-margin-desktop py-space-xl">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<!-- Left Column: Contact Protocol Terms -->
+<div class="lg:col-span-5 flex flex-col gap-space-md">
+<div>
+<span class="font-label-index text-label-index text-secondary font-bold uppercase tracking-widest">[ GET IN TOUCH // CONTACT &amp; COLLABORATION ]</span>
+<h3 class="font-headline-lg text-headline-lg text-primary uppercase tracking-tight mt-space-xs">
+              LET'S BUILD SOMETHING TOGETHER.
+            </h3>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+            I am currently open to software engineering internships, junior developer roles, and open-source collaborations. If you have an exciting team, a technical project, or want to connect about code, feel free to send a message.
+          </p>
+<div class="p-space-md bg-surface-container-low border border-outline-variant/30 flex flex-col gap-space-xs font-label-mono text-label-mono text-on-surface-variant">
+<div class="flex justify-between">
+<span class="text-primary font-bold">EMAIL:</span>
+<a class="text-secondary font-medium hover:underline" href="mailto:contact@codeforge.dev">contact@codeforge.dev</a>
+</div>
+<div class="flex justify-between">
+<span class="text-primary font-bold">GITHUB:</span>
+<a class="hover:underline" href="https://github.com/codeforge" target="_blank">github.com/codeforge</a>
+</div>
+<div class="flex justify-between">
+<span class="text-primary font-bold">LINKEDIN:</span>
+<a class="hover:underline" href="https://linkedin.com/in/codeforge" target="_blank">linkedin.com/in/codeforge</a>
+</div>
+<div class="flex justify-between">
+<span class="text-primary font-bold">LOCATION:</span>
+<span class="">Available for Remote &amp; Hybrid Roles</span>
+</div>
+<div class="flex justify-between pt-space-xs border-t border-outline-variant/20">
+<span class="text-primary font-bold">STATUS:</span>
+<span class="text-secondary font-bold">Open to 2025 Opportunities</span>
+</div>
+</div>
+</div>
+<!-- Right Column: Interactive Contact Form -->
+<div class="lg:col-span-7 bg-surface-container-lowest border border-outline-variant/40 p-space-lg">
+<div class="flex justify-between items-center pb-space-sm border-b border-outline-variant/30 mb-space-md font-label-mono text-label-mono">
+<span class="text-primary font-bold">[ TRANSMIT MESSAGE TO DEVELOPER ]</span>
+<span class="text-secondary">READY: INBOX ACTIVE</span>
+</div>
+<form class="flex flex-col gap-space-md" onsubmit="event.preventDefault(); document.getElementById('dispatch-ack').classList.remove('hidden');">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+<div class="flex flex-col gap-1">
+<label class="font-label-index text-label-index text-on-surface-variant uppercase tracking-wider">01. YOUR NAME</label>
+<input class="w-full bg-surface border-b-2 border-primary focus:border-secondary p-space-xs font-body-md text-body-md text-on-surface outline-none transition-colors" placeholder="Alex Morgan" required="" type="text">
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-index text-label-index text-on-surface-variant uppercase tracking-wider">02. YOUR EMAIL</label>
+<input class="w-full bg-surface border-b-2 border-primary focus:border-secondary p-space-xs font-body-md text-body-md text-on-surface outline-none transition-colors" placeholder="alex@company.com" required="" type="email">
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+<div class="flex flex-col gap-1">
+<label class="font-label-index text-label-index text-on-surface-variant uppercase tracking-wider">03. SUBJECT / TOPIC</label>
+<select class="w-full bg-surface border-b-2 border-primary focus:border-secondary p-space-xs font-label-mono text-label-mono text-on-surface outline-none cursor-pointer">
+<option>INTERNSHIP OR CO-OP POSITION</option>
+<option>FULL-TIME JUNIOR DEVELOPER ROLE</option>
+<option>OPEN SOURCE COLLABORATION</option>
+<option>GENERAL INQUIRY / HELLO</option>
+</select>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-index text-label-index text-on-surface-variant uppercase tracking-wider">04. TIMELINE / START DATE (OPTIONAL)</label>
+<input class="w-full bg-surface border-b-2 border-primary focus:border-secondary p-space-xs font-body-md text-body-md text-on-surface outline-none transition-colors" placeholder="e.g. Summer 2025 / Immediate" type="text">
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-index text-label-index text-on-surface-variant uppercase tracking-wider">05. MESSAGE CONTENT</label>
+<textarea class="w-full bg-surface border-b-2 border-primary focus:border-secondary p-space-xs font-body-md text-body-md text-on-surface outline-none transition-colors resize-none" placeholder="Tell me about your team, the role or project, tech stack requirements, and how we can work together..." required="" rows="4"></textarea>
+</div>
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-space-sm pt-space-xs">
+<div class="flex items-center gap-space-md font-label-mono text-label-mono text-on-surface-variant">
+<a class="hover:text-primary transition-colors flex items-center gap-1" href="https://github.com/codeforge" target="_blank"><span class="">↗ GITHUB</span></a>
+<span class="text-outline-variant">|</span>
+<a class="hover:text-primary transition-colors flex items-center gap-1" href="https://linkedin.com/in/codeforge" target="_blank"><span class="">↗ LINKEDIN</span></a>
+</div>
+<button class="px-space-lg py-space-sm bg-primary text-on-primary font-label-index text-label-index uppercase tracking-widest hover:bg-secondary hover:text-on-secondary transition-colors cursor-pointer" type="submit">
+                [ TRANSMIT MESSAGE -&gt; ]
+              </button>
+</div>
+<div class="hidden p-space-sm bg-surface-container-high border border-secondary font-label-mono text-label-mono text-secondary" id="dispatch-ack">
+              MESSAGE TRANSMITTED // THANK YOU FOR REACHING OUT! I WILL RESPOND SHORTLY.
+            </div>
+</form>
+</div>
+</div>
+</div>
+</section>
+</div>
+<script>
+  // Filter simulator
+  document.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      if (this.innerText.includes('ALL PROJECTS') || this.innerText.includes('FULL-STACK') || this.innerText.includes('BOTS') || this.innerText.includes('STUDY TOOLS')) {
+        this.parentElement.querySelectorAll('button').forEach(b => {
+          b.className = 'px-space-sm py-1 bg-surface-container-lowest text-on-surface hover:bg-surface-container-high border border-outline-variant/30 transition-colors';
+        });
+        this.className = 'px-space-sm py-1 bg-primary text-on-primary font-bold border border-primary';
+      }
+    });
+  });
+</script></main><footer class="w-full bg-surface-container-low border-t border-outline-variant/30 mt-space-xl"><div class="max-w-7xl mx-auto px-margin-desktop py-space-xl"><div class="grid grid-cols-1 md:grid-cols-4 gap-gutter border-b border-outline-variant/30 pb-space-lg"><div class="flex flex-col gap-space-sm"><div class="flex items-center gap-space-sm"><div class="h-8 w-8 flex-shrink-0 flex items-center justify-center bg-[#0C0D10] border border-outline-variant/40"><img alt="CodeForge Logo" class="h-7 w-7 object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1Uz-elMaNxgc4X_iqzjCZyGcvnlngFHipaGCy60G-TY1vf9MHHDgEEhw8OvkiDWRXl90WLquiORGDRWLRCcP2syS4-x2BlI0fggx7hCj-NiWS0hmcrO9ixRFS32CJYxR2tdSuHQjh0zkb_I7rKCzUcFI6RYnTIXTElXF3HvG_NgK2vcGNL9aUDV-dLFhRiL-teLAKrB_OPkLVdAnSBcMXp6eK3FE_UvK2x24_mHZDO5SniSc8YlhEtLnFE"></div><span class="font-headline-sm text-headline-sm uppercase text-primary">CodeForge</span></div><p class="font-body-sm text-body-sm text-on-surface-variant">Personal software development portfolio and technical lab. Synthesizing formal Swiss typographic discipline with practical, full-stack application development.</p></div><div class="flex flex-col gap-space-xs font-label-index text-label-index"><span class="text-primary font-bold tracking-widest uppercase mb-space-xs">[ NAVIGATION ]</span><a class="text-on-surface-variant hover:text-secondary" href="#projects">/01_PROJECTS</a><a class="text-on-surface-variant hover:text-secondary" href="#technologies">/02_TECHNOLOGIES</a><a class="text-on-surface-variant hover:text-secondary" href="#blog">/03_ARTICLES_AND_BLOG</a><a class="text-on-surface-variant hover:text-secondary" href="#about">/04_ABOUT_AND_BIO</a><a class="text-on-surface-variant hover:text-secondary" href="#contact">/05_CONTACT</a></div><div class="flex flex-col gap-space-xs font-label-mono text-label-mono"><span class="text-primary font-bold tracking-widest uppercase mb-space-xs">[ CONNECT ]</span><div class="flex justify-between text-on-surface-variant"><span class="">GITHUB</span><a class="text-on-surface font-medium hover:text-secondary" href="https://github.com/codeforge" target="_blank">@codeforge</a></div><div class="flex justify-between text-on-surface-variant"><span class="">LINKEDIN</span><a class="text-on-surface font-medium hover:text-secondary" href="https://linkedin.com/in/codeforge" target="_blank">in/codeforge</a></div><div class="flex justify-between text-on-surface-variant"><span class="">EMAIL</span><a class="text-on-surface font-medium hover:text-secondary" href="mailto:contact@codeforge.dev">contact@codeforge.dev</a></div><div class="flex justify-between text-on-surface-variant pt-space-xs border-t border-outline-variant/20"><span class="text-secondary">STATUS</span><span class="text-secondary font-medium">OPEN TO OFFERS</span></div></div><div class="flex flex-col gap-space-xs font-label-index text-label-index"><span class="text-primary font-bold tracking-widest uppercase mb-space-xs">[ COLOPHON &amp; SPECS ]</span><span class="text-on-surface-variant">STACK: REACT, TYPESCRIPT, TAILWIND, SUPABASE &amp; POSTGRESQL</span><span class="text-on-surface-variant">TYPOGRAPHY: INTER + JETBRAINS MONO</span><span class="text-on-surface-variant">GRID: SWISS CONSTRUCTIVIST SYSTEM</span><span class="text-on-surface-variant">FEED: RSS / SITEMAP AVAILABLE</span></div></div><div class="pt-space-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-space-sm font-label-index text-label-index text-on-surface-variant"><div class="">© 2025 CODEFORGE. BUILT WITH MODERN WEB STANDARDS. DESIGNED WITH SWISS TYPOGRAPHIC DISCIPLINE.</div><div class="flex gap-space-md"><a class="hover:text-primary" href="https://github.com/codeforge" target="_blank">GITHUB</a><a class="hover:text-primary" href="https://linkedin.com/in/codeforge" target="_blank">LINKEDIN</a><a class="hover:text-primary" href="#hero">TOP ↑</a></div></div></div></footer>
+
+</body></html>

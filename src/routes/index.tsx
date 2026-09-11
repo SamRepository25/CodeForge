@@ -1,27 +1,29 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import {
-  Sparkles, ArrowRight, Code2, Cpu, Layers, Rocket, BookOpen, Brain,
-  FileText, MessageSquareCode, GraduationCap, Wand2, Github, Linkedin,
-  Star, Zap, Shield,
-} from "lucide-react";
+import { ArrowUpRight, Github, Linkedin } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
-import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useEditMode } from "@/contexts/EditModeContext";
-import { EditableText, EditZone } from "@/components/edit/EditableText";
+import { EditableText } from "@/components/edit/EditableText";
 
 const SITE_URL = "https://codeforgedev.vercel.app";
-const OG_IMAGE = "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/cb2daafa-ef7b-443c-91ff-56bf8bc32259";
+const OG_IMAGE =
+  "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/cb2daafa-ef7b-443c-91ff-56bf8bc32259";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "CodeForge — Portfolio and Blog" },
-      { name: "description", content: "Premium portfolio, technical blog, Built with React, TypeScript and TanStack." },
-      { name: "keywords", content: "developer portfolio, technical blog, resume builder, code explainer, React, TypeScript, TanStack" },
-      { property: "og:title", content: "CodeForge — Portfolio and Blog." },
+      {
+        name: "description",
+        content: "Portfolio, technical writing, and software experiments by CodeForge.",
+      },
+      {
+        name: "keywords",
+        content: "developer portfolio, technical blog, React, TypeScript, TanStack",
+      },
+      { property: "og:title", content: "CodeForge — Portfolio and Blog" },
       { property: "og:description", content: "Portfolio · Blog." },
       { property: "og:url", content: SITE_URL + "/" },
       { property: "og:image", content: OG_IMAGE },
@@ -47,17 +49,6 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
-
-const AI_TOOLS = [
-  { slug: "resume-builder", title: "AI Resume Builder", desc: "Craft ATS-ready resumes from your raw experience.", icon: FileText, accent: "from-violet to-fuchsia-500" },
-  { slug: "study-notes", title: "Study Notes Generator", desc: "Turn any topic into structured notes & summaries.", icon: BookOpen, accent: "from-sky-500 to-electric" },
-  { slug: "quiz-generator", title: "Quiz Generator", desc: "10-question MCQ quizzes for any subject in seconds.", icon: GraduationCap, accent: "from-emerald-500 to-electric" },
-  { slug: "code-explainer", title: "Code Explainer", desc: "Decode snippets line-by-line with senior-dev clarity.", icon: MessageSquareCode, accent: "from-violet to-pink-500" },
-  { slug: "interview-questions", title: "Interview Q Generator", desc: "Targeted interview prep questions for any role.", icon: Brain, accent: "from-amber-500 to-rose-500" },
-  { slug: "text-improver", title: "Text Improver", desc: "Refine tone, clarity and grammar without losing voice.", icon: Wand2, accent: "from-electric to-violet" },
-];
-
-
 function Home() {
   const qc = useQueryClient();
   const { editMode } = useEditMode();
@@ -65,7 +56,11 @@ function Home() {
   const featuredProjects = useQuery({
     queryKey: ["projects", "featured"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("projects").select("*").eq("featured", true).order("order_index");
+      const { data, error } = await supabase
+        .from("projects")
+        .select("*")
+        .eq("featured", true)
+        .order("order_index");
       if (error) throw error;
       return data ?? [];
     },
@@ -77,195 +72,280 @@ function Home() {
       const { data, error } = await supabase.from("site_settings").select("key,value");
       if (error) throw error;
       const map: Record<string, string> = {};
-      (data ?? []).forEach((r) => { map[r.key] = r.value ?? ""; });
+      (data ?? []).forEach((row) => {
+        map[row.key] = row.value ?? "";
+      });
       return map;
     },
   });
 
-  const saveSetting = async (key: string, value: string) => {
-    await supabase.from("site_settings").upsert({ key, value, updated_at: new Date().toISOString() });
-    qc.invalidateQueries({ queryKey: ["site_settings"] });
-  };
-
-  const s = settings.data ?? {};
-
   const posts = useQuery({
     queryKey: ["posts", "featured"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("posts").select("id,slug,title,excerpt,cover_image,category,reading_time,created_at").eq("published", true).order("created_at", { ascending: false }).limit(3);
+      const { data, error } = await supabase
+        .from("posts")
+        .select("id,slug,title,excerpt,cover_image,category,reading_time,created_at")
+        .eq("published", true)
+        .order("created_at", { ascending: false })
+        .limit(3);
       if (error) throw error;
       return data ?? [];
     },
   });
 
+  const saveSetting = async (key: string, value: string) => {
+    await supabase
+      .from("site_settings")
+      .upsert({ key, value, updated_at: new Date().toISOString() });
+    qc.invalidateQueries({ queryKey: ["site_settings"] });
+  };
+
+  const s = settings.data ?? {};
+  const projects = featuredProjects.data ?? [];
+  const leadProject = projects[0];
+  const secondProject = projects[1];
+
   return (
     <SiteLayout>
-      {/* HERO */}
-      <section className="relative overflow-hidden pt-20 pb-32">
-        <div className="absolute inset-0 grid-bg" aria-hidden />
-        <div className="relative mx-auto max-w-7xl px-4">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="mx-auto max-w-4xl text-center">
-          
-            <div className="mx-auto inline-flex items-center gap-2 rounded-full glass px-3 py-1.5 text-xs font-medium">
-              <Sparkles className="h-3.5 w-3.5 text-violet" />
-              <span className="text-muted-foreground">Building My Future</span>
-            </div>
-            <h1 className="mt-6 font-display text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
+      <section className="editorial-section hero-section" id="hero">
+        <div className="page-shell">
+          <div className="hero-meta editorial-grid">
+            <span className="index-tag inverse">[ PORTFOLIO // 2025 EDITION ]</span>
+            <span className="mono-label">
+              FULL-STACK ENGINEERING &amp; MODERN WEB APPLICATIONS // CLEAN ARCHITECTURE &amp;
+              APPLIED CS
+            </span>
+            <span className="status-text">SYS_STATUS: READY FOR NEW OPPORTUNITIES</span>
+          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <h1 className="display-heading hero-heading">
               {editMode ? (
                 <EditableText
-                  value={s.hero_title ?? "Forge ideas into reality."}
-                  onSave={(v) => saveSetting("hero_title", v)}
+                  value={
+                    s.hero_title ??
+                    "Building purposeful full-stack applications & intuitive digital experiences."
+                  }
+                  onSave={(value) => saveSetting("hero_title", value)}
                   as="span"
-                  className="font-display text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl"
+                  className="display-heading"
                 />
-              ) : (() => {
-                const title = s.hero_title ?? "Forge ideas into reality.";
-                const spaceIdx = title.indexOf(" ");
-                const first = spaceIdx === -1 ? title : title.slice(0, spaceIdx);
-                const rest  = spaceIdx === -1 ? ""    : title.slice(spaceIdx);
-                return <><span className="gradient-text">{first}</span>{rest}</>;
-              })()}
+              ) : (
+                (s.hero_title ??
+                "Building purposeful full-stack applications & intuitive digital experiences.")
+              )}
             </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-balance text-lg text-muted-foreground">
-              <EditableText
-                value={s.hero_description ?? "Personal portfolio and technical blog."}
-                onSave={(v) => saveSetting("hero_description", v)}
-                as="span"
-                multiline
-              />
-            </p>
-            <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-              <Button asChild size="lg" className="rounded-xl bg-gradient-to-r from-violet to-electric text-white shadow-lg shadow-violet/30 hover:opacity-95">
-                <Link to="/projects">Explore Projects <ArrowRight className="ml-1.5 h-4 w-4" /></Link>
-              </Button>            
-              </div>
-            <div className="mx-auto mt-10 flex max-w-md items-center justify-center gap-6 text-xs text-muted-foreground">
-              <div className="flex items-center gap-1.5"><Shield className="h-3.5 w-3.5 text-electric" />Modern Stack</div>
-              <div className="flex items-center gap-1.5"><Zap className="h-3.5 w-3.5 text-electric" />Fast Performance</div>
-              <div className="flex items-center gap-1.5"><Cpu className="h-3.5 w-3.5 text-electric" />AI Powered</div>
-            </div>
           </motion.div>
-
-         {/* Stat strip */}
-<motion.div
-  initial={{ opacity: 0, y: 30 }}
-  whileInView={{ opacity: 1, y: 0 }}
-  viewport={{ once: true }}
-  className="glass-strong mx-auto mt-20 grid max-w-4xl grid-cols-2 gap-px overflow-hidden rounded-3xl md:grid-cols-4"
->
-  {[
-    { v: "6+", l: "Projects Built" },
-    { v: "15K+", l: "Lines of Code" },
-    { v: "5+", l: "Technologies" },
-    { v: "24/7", l: "Always Learning" },
-  ].map((s) => (
-    <div key={s.l} className="bg-card/80 p-5 text-center">
-      <div className="font-display text-2xl font-bold gradient-text">
-        {s.v}
-      </div>
-      <div className="mt-1 text-xs text-muted-foreground">
-        {s.l}
-      </div>
-    </div>
-  ))}
-</motion.div>
-        </div>
-      </section>
-
-      {/* FEATURED PROJECTS */}
-      <section className="mx-auto max-w-7xl px-4 py-20">
-        <SectionHeading eyebrow="Selected work" title="Featured projects" cta={{ to: "/projects", label: "All projects" }} />
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
-          {(featuredProjects.data ?? []).map((p, i) => (
-            <motion.div key={p.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="group glass relative flex h-full flex-col rounded-2xl p-6 transition hover:-translate-y-1">
-              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet to-transparent opacity-40" />
-              <div className="mb-4 inline-flex w-fit items-center gap-1.5 rounded-full bg-white/5 px-2.5 py-1 text-[10px] uppercase tracking-wider text-muted-foreground">
-                {p.category}
-              </div>
-              <h3 className="font-display text-xl font-semibold">{p.title}</h3>
-              <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">{p.description}</p>
-              <div className="mt-4 flex flex-wrap gap-1.5">
-                {(p.tags ?? []).map((t: string) => (
-                  <span key={t} className="rounded-md border border-border/60 px-2 py-0.5 text-[10px] font-mono text-muted-foreground">{t}</span>
-                ))}
-              </div>
-              <Link to="/projects" className="mt-5 inline-flex items-center gap-1 text-sm font-medium text-electric group-hover:gap-2">
-                View case study <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-              </Link>
-            </motion.div>
-          ))}
-          {featuredProjects.isLoading && Array.from({ length: 3 }).map((_, i) => <div key={i} className="glass h-56 rounded-2xl animate-pulse" />)}
-        </div>
-      </section>
-
-      
-      {/* FEATURED BLOG */}
-      <section className="mx-auto max-w-7xl px-4 py-20">
-        <SectionHeading eyebrow="Writing" title="From the blog" cta={{ to: "/blog", label: "Read all posts" }} />
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
-          {posts.data && posts.data.length > 0 ? (
-            posts.data.map((p, i) => (
-              <motion.div key={p.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="glass rounded-2xl p-6">
-                <div className="text-[10px] uppercase tracking-wider text-electric">{p.category ?? "Article"}</div>
-                <h3 className="mt-2 font-display text-lg font-semibold">
-                  <Link to="/blog/$slug" params={{ slug: p.slug }} className="hover:gradient-text">{p.title}</Link>
-                </h3>
-                <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">{p.excerpt}</p>
-                <div className="mt-4 text-xs text-muted-foreground">{p.reading_time} min read</div>
-              </motion.div>
-            ))
-          ) : (
-            <div className="glass md:col-span-3 rounded-2xl p-10 text-center text-sm text-muted-foreground">
-              No posts yet.
+          <div className="hero-lower editorial-grid" id="technologies">
+            <div className="thesis-block">
+              <span className="index-tag">[ 00. THESIS STATEMENT ]</span>
+              <p>
+                <EditableText
+                  value={
+                    s.hero_description ??
+                    "CodeForge is a personal software development portfolio and technical lab dedicated to crafting robust web applications, exploring networking and automation tools, and building software with clean modular code, performance awareness, and thoughtful interaction design."
+                  }
+                  onSave={(value) => saveSetting("hero_description", value)}
+                  as="span"
+                  multiline
+                />
+              </p>
             </div>
-          )}
-        </div>
-      </section>
-
-      {/* SKILLS */}
-      <section className="mx-auto max-w-7xl px-4 py-20">
-        <SectionHeading eyebrow="Stack" title="The tech I forge with" />
-        <div className="mt-10 grid gap-4 md:grid-cols-3">
-          {[
-            { title: "Frontend", icon: Layers, items: ["React", "TypeScript", "Tailwind", "Framer Motion", "TanStack"] },
-            { title: "Backend", icon: Code2, items: ["Node.js", "PostgreSQL", "Supabase", "Edge Functions", "REST/GraphQL"] },
-            { title: "AI / ML", icon: Cpu, items: ["OpenAI", "Gemini", "LangChain", "Vector DBs", "Prompt Engineering"] },
-          ].map((g) => (
-            <div key={g.title} className="glass gradient-border rounded-2xl p-6">
-              <div className="flex items-center gap-2">
-                <g.icon className="h-4 w-4 text-electric" />
-                <h3 className="font-display text-base font-semibold">{g.title}</h3>
+            <div className="taxonomy-block">
+              <div className="taxonomy-grid">
+                <Taxonomy title="FULL-STACK WEB" detail="Next.js, TypeScript & APIs" accent />
+                <Taxonomy title="CORE LANGUAGES" detail="TypeScript, Python, Go, SQL" />
+                <Taxonomy title="BOTS & AUTOMATION" detail="Telegram Bots & Security APIs" />
+                <Taxonomy title="OPEN SOURCE" detail="CS Utilities & Study Tools" accent />
               </div>
-              <ul className="mt-4 flex flex-wrap gap-2">
-                {g.items.map((it) => (
-                  <li key={it} className="rounded-md bg-white/5 px-2.5 py-1 text-xs font-mono">{it === "React" ? `This website is built with React\n` : it}</li>
-                ))}
-              </ul>
+              <div className="register-row">
+                <span className="mono-label">REGISTER:</span>
+                <Link className="filter-button active" to="/projects">
+                  ALL PROJECTS
+                </Link>
+                <Link className="filter-button" to="/projects">
+                  FULL-STACK APPS
+                </Link>
+                <Link className="filter-button" to="/projects">
+                  BOTS &amp; AUTOMATION
+                </Link>
+                <Link className="filter-button" to="/projects">
+                  STUDY TOOLS
+                </Link>
+              </div>
             </div>
-          ))}
+          </div>
         </div>
       </section>
 
-      
-      {/* CTA */}
-      <section className="mx-auto max-w-7xl px-4 py-20">
-        <div className="glass-strong gradient-border relative overflow-hidden rounded-3xl p-10 text-center md:p-16">
-          <div className="absolute -top-32 left-1/2 h-72 w-[40rem] -translate-x-1/2 rounded-full bg-violet/30 blur-[120px]" aria-hidden />
-          <div className="relative">
-            <Rocket className="mx-auto mb-4 h-8 w-8 text-electric" />
-            <h2 className="font-display text-3xl font-bold md:text-5xl">Let's Connect</h2>
-            <p className="mx-auto mt-3 max-w-xl text-muted-foreground">Interested in collaborating, discussing technology, or checking out more of my work? Feel free to get in touch.</p>
-            <div className="mt-7 flex flex-wrap justify-center gap-3">
-              <Button asChild size="lg" className="rounded-xl bg-gradient-to-r from-violet to-electric text-white">
-                <a href="mailto:simakahmed@outlook.com">Contact</a>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="rounded-xl">
-                <a href="https://github.com/SamRepository25" target="_blank" rel="noreferrer"><Github className="mr-1.5 h-4 w-4" />GitHub</a>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="rounded-xl">
-                <a href="https://linkedin.com/in/simakahmed" target="_blank" rel="noreferrer"><Linkedin className="mr-1.5 h-4 w-4" />LinkedIn</a>
-              </Button>
+      <ProjectCaseFile
+        project={leadProject}
+        index="01"
+        fallbackTitle="Featured project"
+        tone="dark"
+        loading={featuredProjects.isLoading}
+      />
+      <ProjectCaseFile
+        project={secondProject}
+        index="02"
+        fallbackTitle="Systems project"
+        loading={featuredProjects.isLoading}
+      />
+
+      <section className="editorial-section section-muted" id="projects">
+        <div className="page-shell">
+          <SectionIntro
+            index="03"
+            eyebrow="PROJECTS & EXPERIMENTS // ACTIVE LAB WORK"
+            title="Open-source utilities & practical prototypes"
+            aside={`${projects.length || 3} FEATURED WORKS REGISTERED`}
+          />
+          <div className="experiment-grid">
+            {projects.length > 0 ? (
+              projects.map((project, index) => (
+                <article className="experiment-card" key={project.id}>
+                  <div className="card-meta">
+                    <span>[ PRJ // {String(index + 1).padStart(2, "0")} ]</span>
+                    <span className="accent-text">{project.category ?? "SOFTWARE LAB"}</span>
+                  </div>
+                  <h3>{project.title}</h3>
+                  <p>
+                    {project.description ??
+                      "A practical software project developed with an emphasis on clear architecture and useful outcomes."}
+                  </p>
+                  <div className="card-specs">
+                    <span>STACK:</span>
+                    <strong>
+                      {(project.tags ?? []).slice(0, 4).join(" // ") || "REACT // TYPESCRIPT"}
+                    </strong>
+                  </div>
+                  <Link className="text-link" to="/projects">
+                    VIEW PROJECT <ArrowUpRight size={14} />
+                  </Link>
+                </article>
+              ))
+            ) : (
+              <div className="empty-state">FEATURED PROJECT REGISTER IS CURRENTLY EMPTY.</div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <section className="editorial-section dossier-section" id="about">
+        <div className="page-shell dossier-grid">
+          <div className="dossier-placeholder" aria-label="CodeForge developer dossier">
+            CODEFORGE
+            <br />
+            <span>SOFTWARE DEVELOPER &amp; CS STUDENT</span>
+          </div>
+          <div>
+            <span className="index-tag accent-text">[ 04. DEVELOPER DOSSIER ]</span>
+            <h2 className="display-heading dossier-heading">
+              Passionate about scalable architecture &amp; thoughtful product design.
+            </h2>
+            <p className="lead-copy">
+              I am a Computer Science student and software developer passionate about building
+              reliable web systems, intuitive developer tools, and clean user interfaces.
+            </p>
+            <p className="body-copy">
+              Whether developing full-stack platforms, scripting automation tools, or refining user
+              interactions, I focus on performance, accessibility, and maintainable code with clear
+              separation of concerns.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="editorial-section contact-section" id="contact">
+        <div className="page-shell contact-grid">
+          <div>
+            <span className="index-tag accent-text">
+              [ GET IN TOUCH // CONTACT &amp; COLLABORATION ]
+            </span>
+            <h2 className="display-heading contact-heading">Let's build something together.</h2>
+            <p className="lead-copy">
+              I am open to software engineering opportunities, junior developer roles, and
+              open-source collaborations.
+            </p>
+            <div className="contact-registry">
+              <span>EMAIL:</span>
+              <a href="mailto:simakahmed@outlook.com">simakahmed@outlook.com</a>
+              <span>GITHUB:</span>
+              <a href="https://github.com/SamRepository25/" target="_blank" rel="noreferrer">
+                github.com/SamRepository25
+              </a>
+              <span>LINKEDIN:</span>
+              <a href="https://www.linkedin.com/in/simakahmed" target="_blank" rel="noreferrer">
+                linkedin.com/in/simakahmed
+              </a>
+              <span>STATUS:</span>
+              <strong>OPEN TO OPPORTUNITIES</strong>
             </div>
+          </div>
+          <div className="contact-panel">
+            <div className="panel-heading">
+              <span>[ TRANSMIT MESSAGE TO DEVELOPER ]</span>
+              <span className="status-text">READY: INBOX ACTIVE</span>
+            </div>
+            <p>
+              For collaboration, project discussions, or technical questions, use the direct
+              channels listed here.
+            </p>
+            <div className="contact-actions">
+              <a className="button-primary" href="mailto:simakahmed@outlook.com">
+                [ SEND EMAIL -&gt; ]
+              </a>
+              <a
+                className="button-secondary"
+                href="https://github.com/SamRepository25/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                [ <Github size={14} /> GITHUB ]
+              </a>
+              <a
+                className="button-secondary"
+                href="https://www.linkedin.com/in/simakahmed"
+                target="_blank"
+                rel="noreferrer"
+              >
+                [ <Linkedin size={14} /> LINKEDIN ]
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="editorial-section blog-section" id="blog">
+        <div className="page-shell">
+          <SectionIntro
+            index="05"
+            eyebrow="ARTICLES & TECHNICAL NOTES"
+            title="From the blog"
+            aside="LATEST FIELD NOTES"
+          />
+          <div className="blog-grid">
+            {posts.data?.length ? (
+              posts.data.map((post) => (
+                <article className="blog-item" key={post.id}>
+                  <span className="index-tag accent-text">{post.category ?? "ARTICLE"}</span>
+                  <h3>
+                    <Link to="/blog/$slug" params={{ slug: post.slug }}>
+                      {post.title}
+                    </Link>
+                  </h3>
+                  <p>{post.excerpt}</p>
+                  <span className="mono-label">
+                    {post.reading_time} MIN READ <ArrowUpRight size={14} />
+                  </span>
+                </article>
+              ))
+            ) : (
+              <div className="empty-state">NO PUBLISHED ARTICLES YET.</div>
+            )}
           </div>
         </div>
       </section>
@@ -273,18 +353,134 @@ function Home() {
   );
 }
 
-function SectionHeading({ eyebrow, title, cta }: { eyebrow: string; title: string; cta?: { to: string; label: string } }) {
+function Taxonomy({
+  title,
+  detail,
+  accent = false,
+}: {
+  title: string;
+  detail: string;
+  accent?: boolean;
+}) {
   return (
-    <div className="flex flex-wrap items-end justify-between gap-4">
+    <div className="taxonomy-card">
+      <h3 className={accent ? "accent-text" : undefined}>{title}</h3>
+      <span>{detail}</span>
+    </div>
+  );
+}
+
+function SectionIntro({
+  index,
+  eyebrow,
+  title,
+  aside,
+}: {
+  index: string;
+  eyebrow: string;
+  title: string;
+  aside: string;
+}) {
+  return (
+    <div className="section-intro">
       <div>
-        <div className="text-xs uppercase tracking-[0.18em] text-electric">{eyebrow}</div>
-        <h2 className="mt-2 font-display text-3xl font-bold md:text-4xl">{title}</h2>
+        <span className="index-tag accent-text">
+          [ {index}. {eyebrow} ]
+        </span>
+        <h2>{title}</h2>
       </div>
-      {cta && (
-        <Link to={cta.to} className="group inline-flex items-center gap-1 rounded-lg border border-border/60 bg-white/5 px-3 py-1.5 text-sm hover:border-violet/60">
-          {cta.label} <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-        </Link>
-      )}
+      <span className="mono-label">{aside}</span>
+    </div>
+  );
+}
+
+function ProjectCaseFile({
+  project,
+  index,
+  fallbackTitle,
+  tone = "light",
+  loading,
+}: {
+  project?: any;
+  index: string;
+  fallbackTitle: string;
+  tone?: "light" | "dark";
+  loading: boolean;
+}) {
+  const title = project?.title ?? fallbackTitle;
+  const description =
+    project?.description ??
+    "A featured CodeForge project focused on practical software engineering, modular design, and reliable delivery.";
+  const image = project?.cover_image;
+  return (
+    <section className={`editorial-section case-section ${tone === "dark" ? "section-paper" : ""}`}>
+      <div className="page-shell">
+        <div className="case-heading">
+          <div>
+            <span className="index-tag accent-text">[ CASE FILE // CF-PRJ-{index} ]</span>
+            <h2>{loading ? "LOADING PROJECT REGISTER..." : title}</h2>
+          </div>
+          <span className="mono-label">
+            APPLICATION TYPE: SOFTWARE PROJECT
+            <br />
+            DISCIPLINE: FULL-STACK ENGINEERING
+          </span>
+        </div>
+        <div className="case-artifact">
+          <div className="artifact-bar">
+            <span>
+              <i /> {title.toUpperCase()} // CODEFORGE PROJECT REGISTER
+            </span>
+            <span>ENGINEERING SYSTEM // CURRENT</span>
+          </div>
+          {image ? (
+            <img src={image} alt={title} />
+          ) : (
+            <div className="artifact-placeholder">
+              <span>NO PROJECT ARTIFACT AVAILABLE</span>
+              <strong>{title.toUpperCase()}</strong>
+            </div>
+          )}
+          <div className="artifact-meta">
+            <span>
+              <strong>TECH STACK:</strong>{" "}
+              {(project?.tags ?? []).join(", ") || "REACT, TYPESCRIPT, SUPABASE"}
+            </span>
+            <span className="accent-text">
+              <strong>STATUS:</strong> FEATURED PROJECT
+            </span>
+          </div>
+        </div>
+        <div className="breakdown-grid">
+          <Breakdown title="OVERVIEW & PURPOSE" text={description} />
+          <Breakdown
+            title="TECHNICAL ARCHITECTURE"
+            text="Modular implementation with a focus on readable interfaces, reusable systems, and dependable data flow."
+          />
+          <Breakdown
+            title="KEY FEATURES & IMPACT"
+            text="Built to solve a practical problem with thoughtful interaction design and a clear path from idea to usable software."
+          />
+        </div>
+        <div className="case-actions">
+          <Link className="button-primary" to="/projects">
+            [ VIEW PROJECT REPOSITORY -&gt; ]
+          </Link>
+          <Link className="button-secondary" to="/projects">
+            [ BROWSE ALL PROJECTS ]
+          </Link>
+          <span className="mono-label">STATUS: ACTIVE // CODEFORGE REGISTER</span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Breakdown({ title, text }: { title: string; text: string }) {
+  return (
+    <div className="breakdown-card">
+      <span className="index-tag">[ {title} ]</span>
+      <p>{text}</p>
     </div>
   );
 }
