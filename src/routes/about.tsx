@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { AboutPage } from "@/components/AboutPage";
 
 const URL_ABOUT = "https://codeforgedev.vercel.app/about";
-const OG_IMAGE = "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/cb2daafa-ef7b-443c-91ff-56bf8bc32259";
+const OG_IMAGE = "https://codeforgedev.vercel.app/og-image.png";
 
 export const Route = createFileRoute("/about")({
   head: () => ({

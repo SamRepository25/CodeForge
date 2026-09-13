@@ -1,0 +1,13 @@
+{
+  "name": "CodeForge — Developer Portfolio & Technical Blog",
+  "short_name": "CodeForge",
+  "description": "Projects, experiments, technical notes, and things worth building.",
+  "icons": [
+    { "src": "/android-chrome-192x192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/android-chrome-512x512.png", "sizes": "512x512", "type": "image/png" }
+  ],
+  "theme_color": "#0b0b14",
+  "background_color": "#0b0b14",
+  "display": "standalone",
+  "start_url": "/"
+}

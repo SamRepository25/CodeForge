@@ -9,7 +9,7 @@ import { useEditMode } from "@/contexts/EditModeContext";
 import { EditableText } from "@/components/edit/EditableText";
 
 const SITE_URL = "https://codeforgedev.vercel.app";
-const OG_IMAGE = "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/cb2daafa-ef7b-443c-91ff-56bf8bc32259";
+const OG_IMAGE = "https://codeforgedev.vercel.app/og-image.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({

@@ -26,7 +26,7 @@ export const Route = createFileRoute("/blog_/$slug")({
     const m = loaderData?.meta;
     const title = m?.title ? `${m.title} — CodeForge` : "Article — CodeForge";
     const description = m?.excerpt ?? "Technical article on the CodeForge blog.";
-    const image = m?.cover_image ?? "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/cb2daafa-ef7b-443c-91ff-56bf8bc32259";
+    const image = m?.cover_image ?? "https://codeforgedev.vercel.app/og-image.png";
     return {
       meta: [
         { title },

@@ -9,7 +9,9 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as ProjectsRouteImport } from './routes/projects'
+import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as MfaVerifyRouteImport } from './routes/mfa-verify'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as Auth_backupRouteImport } from './routes/auth_backup'
@@ -23,9 +25,19 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedDashboardNewRouteImport } from './routes/_authenticated/dashboard.new'
 import { Route as AuthenticatedDashboardEditIdRouteImport } from './routes/_authenticated/dashboard.edit.$id'
 
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProjectsRoute = ProjectsRouteImport.update({
   id: '/projects',
   path: '/projects',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
+  id: '/privacy-policy',
+  path: '/privacy-policy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MfaVerifyRoute = MfaVerifyRouteImport.update({
@@ -97,7 +109,9 @@ export interface FileRoutesByFullPath {
   '/auth_backup': typeof Auth_backupRoute
   '/blog': typeof BlogRoute
   '/mfa-verify': typeof MfaVerifyRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/projects': typeof ProjectsRoute
+  '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
@@ -111,7 +125,9 @@ export interface FileRoutesByTo {
   '/auth_backup': typeof Auth_backupRoute
   '/blog': typeof BlogRoute
   '/mfa-verify': typeof MfaVerifyRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/projects': typeof ProjectsRoute
+  '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
@@ -127,7 +143,9 @@ export interface FileRoutesById {
   '/auth_backup': typeof Auth_backupRoute
   '/blog': typeof BlogRoute
   '/mfa-verify': typeof MfaVerifyRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/projects': typeof ProjectsRoute
+  '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/blog_/$slug': typeof BlogSlugRoute
@@ -143,7 +161,9 @@ export interface FileRouteTypes {
     | '/auth_backup'
     | '/blog'
     | '/mfa-verify'
+    | '/privacy-policy'
     | '/projects'
+    | '/terms'
     | '/admin'
     | '/dashboard'
     | '/blog/$slug'
@@ -157,7 +177,9 @@ export interface FileRouteTypes {
     | '/auth_backup'
     | '/blog'
     | '/mfa-verify'
+    | '/privacy-policy'
     | '/projects'
+    | '/terms'
     | '/admin'
     | '/dashboard'
     | '/blog/$slug'
@@ -172,7 +194,9 @@ export interface FileRouteTypes {
     | '/auth_backup'
     | '/blog'
     | '/mfa-verify'
+    | '/privacy-policy'
     | '/projects'
+    | '/terms'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
     | '/blog_/$slug'
@@ -188,17 +212,33 @@ export interface RootRouteChildren {
   Auth_backupRoute: typeof Auth_backupRoute
   BlogRoute: typeof BlogRoute
   MfaVerifyRoute: typeof MfaVerifyRoute
+  PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   ProjectsRoute: typeof ProjectsRoute
+  TermsRoute: typeof TermsRoute
   BlogSlugRoute: typeof BlogSlugRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/projects': {
       id: '/projects'
       path: '/projects'
       fullPath: '/projects'
       preLoaderRoute: typeof ProjectsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy-policy': {
+      id: '/privacy-policy'
+      path: '/privacy-policy'
+      fullPath: '/privacy-policy'
+      preLoaderRoute: typeof PrivacyPolicyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mfa-verify': {
@@ -325,7 +365,9 @@ const rootRouteChildren: RootRouteChildren = {
   Auth_backupRoute: Auth_backupRoute,
   BlogRoute: BlogRoute,
   MfaVerifyRoute: MfaVerifyRoute,
+  PrivacyPolicyRoute: PrivacyPolicyRoute,
   ProjectsRoute: ProjectsRoute,
+  TermsRoute: TermsRoute,
   BlogSlugRoute: BlogSlugRoute,
 }
 export const routeTree = rootRouteImport

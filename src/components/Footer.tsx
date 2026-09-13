@@ -13,23 +13,37 @@ export function Footer() {
   return (
     <footer className="mt-32 border-t border-border/50">
       <div className="mx-auto max-w-7xl px-4 py-12">
-        <div className="grid gap-8 md:grid-cols-3">
+        <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4">
           <div className="md:col-span-2">
             <Link to="/" className="flex items-center gap-2.5">
-              <div className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-violet to-electric"><Code2 className="h-5 w-5 text-white" /></div>
+              <div className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-violet to-electric">
+                <Code2 className="h-5 w-5 text-white" />
+              </div>
               <span className="font-display text-lg font-bold">CodeForge</span>
             </Link>
             <p className="mt-3 max-w-sm text-sm leading-6 text-muted-foreground">
-              A personal space for projects, technical notes, experiments, and things worth building.
+              A personal space for projects, technical notes, experiments, and things worth
+              building.
             </p>
             <div className="mt-4 flex items-center gap-2">
               {[
                 { icon: Github, href: "https://github.com/SamRepository25/", label: "GitHub" },
-                { icon: Linkedin, href: "https://www.linkedin.com/in/simakahmed", label: "LinkedIn" },
+                {
+                  icon: Linkedin,
+                  href: "https://www.linkedin.com/in/simakahmed",
+                  label: "LinkedIn",
+                },
                 { icon: XLogo, href: "https://x.com/X", label: "X" },
                 { icon: Mail, href: "mailto:simakahmed@outlook.com", label: "Email" },
               ].map(({ icon: Icon, href, label }) => (
-                <a key={label} href={href} target={href.startsWith("mailto:") ? undefined : "_blank"} rel="noreferrer" aria-label={label} className="grid h-9 w-9 place-items-center rounded-lg border border-border/60 text-muted-foreground transition hover:border-violet/60 hover:text-foreground">
+                <a
+                  key={label}
+                  href={href}
+                  target={href.startsWith("mailto:") ? undefined : "_blank"}
+                  rel="noreferrer"
+                  aria-label={label}
+                  className="grid h-9 w-9 place-items-center rounded-lg border border-border/60 text-muted-foreground transition hover:border-violet/60 hover:text-foreground"
+                >
                   <Icon className="h-4 w-4" />
                 </a>
               ))}
@@ -38,9 +52,36 @@ export function Footer() {
           <div>
             <h4 className="text-sm font-semibold">Explore</h4>
             <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-              <li><Link to="/projects" className="hover:text-foreground">Projects</Link></li>
-              <li><Link to="/blog" className="hover:text-foreground">Blog</Link></li>
-              <li><Link to="/about" className="hover:text-foreground">About</Link></li>
+              <li>
+                <Link to="/projects" className="hover:text-foreground">
+                  Projects
+                </Link>
+              </li>
+              <li>
+                <Link to="/blog" className="hover:text-foreground">
+                  Blog
+                </Link>
+              </li>
+              <li>
+                <Link to="/about" className="hover:text-foreground">
+                  About
+                </Link>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-sm font-semibold">Legal</h4>
+            <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+              <li>
+                <Link to="/privacy-policy" className="hover:text-foreground">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/terms" className="hover:text-foreground">
+                  Terms & Conditions
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
