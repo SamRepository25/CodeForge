@@ -14,6 +14,129 @@ export type Database = {
   }
   public: {
     Tables: {
+            ai_tools: {
+        Row: {
+          id: string
+          slug: string
+          title: string
+          description: string
+          icon: string
+          accent: string
+          enabled: boolean | null
+          order_index: number | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          slug: string
+          title: string
+          description: string
+          icon: string
+          accent: string
+          enabled?: boolean | null
+          order_index?: number | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          slug?: string
+          title?: string
+          description?: string
+          icon?: string
+          accent?: string
+          enabled?: boolean | null
+          order_index?: number | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      education: {
+        Row: {
+          id: string
+          year: string
+          title: string
+          org: string
+          description: string
+          order_index: number | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          year: string
+          title: string
+          org: string
+          description: string
+          order_index?: number | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          year?: string
+          title?: string
+          org?: string
+          description?: string
+          order_index?: number | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      experience: {
+        Row: {
+          id: string
+          year: string
+          title: string
+          org: string
+          description: string
+          order_index: number | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          year: string
+          title: string
+          org: string
+          description: string
+          order_index?: number | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          year?: string
+          title?: string
+          org?: string
+          description?: string
+          order_index?: number | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      site_settings: {
+        Row: {
+          key: string
+          value: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          key: string
+          value?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          key?: string
+          value?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       bookmarks: {
         Row: {
           created_at: string
