@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { X, Mail } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
+import { Link } from "@tanstack/react-router";
 
 const DISMISS_KEY = "cf_sticky_cta_dismissed";
 
@@ -38,13 +39,13 @@ export function StickyMobileCta() {
           aria-label="Contact call to action"
         >
           <div className="flex items-center gap-3">
-            <a
-              href="mailto:simakahmed@outlook.com"
+            <Link
+              to="/contact"
               className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet to-electric px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-violet/25"
             >
               <Mail className="h-4 w-4" />
               Get in touch
-            </a>
+            </Link>
             <button
               onClick={dismiss}
               aria-label="Dismiss"

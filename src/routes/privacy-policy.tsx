@@ -60,9 +60,21 @@ function PrivacyPolicyPage() {
                 names, emails, or IP addresses in a form that identifies you.
               </li>
               <li>
-                <strong className="text-foreground">Contact via email.</strong> The "Contact" / "Get
-                in touch" links open your own email client (mailto). Anything you choose to send by
-                email is handled as a normal email and is not stored in any CodeForge database.
+                <strong className="text-foreground">Contact form.</strong> The{" "}
+                <a href="/contact" className="text-violet underline underline-offset-2">
+                  Contact page
+                </a>{" "}
+                lets you send a name, email, subject, message, and optional file attachments
+                (images, PDF, DOC/DOCX, PPT/PPTX, XLS/XLSX, or TXT — up to 3 files, 8MB each). This
+                is stored so the message can be read and responded to, and is only visible to the
+                site owner. Attachments are kept in a private file store that is never publicly
+                accessible. You can also email directly instead — see below.
+              </li>
+              <li>
+                <strong className="text-foreground">Spam protection.</strong> The contact form uses
+                Cloudflare Turnstile, a cookieless bot-check, to reduce spam submissions. A hashed
+                (not plaintext) version of your IP address may be kept briefly to prevent abuse of
+                the form.
               </li>
               <li>
                 <strong className="text-foreground">Admin authentication.</strong> The dashboard
@@ -105,7 +117,20 @@ function PrivacyPolicyPage() {
                 analytics.
               </li>
               <li>
-                <strong className="text-foreground">Supabase</strong> — database and authentication.
+                <strong className="text-foreground">Supabase</strong> — database, authentication,
+                and private file storage for contact form attachments.
+              </li>
+              <li>
+                <strong className="text-foreground">Cloudflare Turnstile</strong> — a cookieless
+                bot-check used on the contact form to reduce spam. Turnstile may process your IP
+                address and browser signals to assess whether the submission is automated; it does
+                not use tracking cookies.
+              </li>
+              <li>
+                <strong className="text-foreground">Resend</strong> — used to email the site owner a
+                notification when a contact form message is received. The content of your message is
+                included in that notification email so it can be read and replied to; it is not
+                shared with anyone beyond the site owner.
               </li>
               <li>
                 <strong className="text-foreground">Google Fonts</strong> — web font delivery for

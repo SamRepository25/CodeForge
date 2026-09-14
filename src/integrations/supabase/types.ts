@@ -166,6 +166,77 @@ export type Database = {
           },
         ]
       }
+      contact_attachments: {
+        Row: {
+          created_at: string
+          file_name: string
+          id: string
+          message_id: string
+          mime_type: string
+          size_bytes: number
+          storage_path: string
+        }
+        Insert: {
+          created_at?: string
+          file_name: string
+          id?: string
+          message_id: string
+          mime_type: string
+          size_bytes: number
+          storage_path: string
+        }
+        Update: {
+          created_at?: string
+          file_name?: string
+          id?: string
+          message_id?: string
+          mime_type?: string
+          size_bytes?: number
+          storage_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_attachments_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "contact_messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contact_messages: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          ip_hash: string | null
+          message: string
+          name: string
+          status: string
+          subject: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          ip_hash?: string | null
+          message: string
+          name: string
+          status?: string
+          subject?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          ip_hash?: string | null
+          message?: string
+          name?: string
+          status?: string
+          subject?: string | null
+        }
+        Relationships: []
+      }
       comments: {
         Row: {
           author_id: string

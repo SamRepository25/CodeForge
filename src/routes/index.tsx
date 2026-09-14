@@ -196,7 +196,7 @@ function Home() {
             <h2 className="font-display text-3xl font-bold md:text-5xl">Have a project in mind?</h2>
             <p className="mx-auto mt-3 max-w-xl text-muted-foreground">I'm interested in useful problems, interesting technical conversations, and things worth building.</p>
             <div className="mt-7 flex flex-wrap justify-center gap-3">
-              <Button asChild size="lg" className="rounded-xl bg-gradient-to-r from-violet to-electric text-white"><a href="mailto:simakahmed@outlook.com">Get in touch</a></Button>
+              <Button asChild size="lg" className="rounded-xl bg-gradient-to-r from-violet to-electric text-white"><Link to="/contact">Get in touch</Link></Button>
               <Button asChild size="lg" variant="outline" className="rounded-xl"><a href="https://github.com/SamRepository25" target="_blank" rel="noreferrer"><Github className="mr-1.5 h-4 w-4" />GitHub</a></Button>
               <Button asChild size="lg" variant="outline" className="rounded-xl"><a href="https://linkedin.com/in/simakahmed" target="_blank" rel="noreferrer"><Linkedin className="mr-1.5 h-4 w-4" />LinkedIn</a></Button>
             </div>

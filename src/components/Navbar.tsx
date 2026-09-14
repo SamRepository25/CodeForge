@@ -9,6 +9,7 @@ const NAV = [
   { to: "/about", label: "About" },
   { to: "/projects", label: "Projects" },
   { to: "/blog", label: "Blog" },
+  { to: "/contact", label: "Contact" },
 ] as const;
 
 export function Navbar() {

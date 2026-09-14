@@ -9,10 +9,12 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ThankYouRouteImport } from './routes/thank-you'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as MfaVerifyRouteImport } from './routes/mfa-verify'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as Auth_backupRouteImport } from './routes/auth_backup'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -25,6 +27,11 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedDashboardNewRouteImport } from './routes/_authenticated/dashboard.new'
 import { Route as AuthenticatedDashboardEditIdRouteImport } from './routes/_authenticated/dashboard.edit.$id'
 
+const ThankYouRoute = ThankYouRouteImport.update({
+  id: '/thank-you',
+  path: '/thank-you',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
@@ -43,6 +50,11 @@ const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
 const MfaVerifyRoute = MfaVerifyRouteImport.update({
   id: '/mfa-verify',
   path: '/mfa-verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogRoute = BlogRouteImport.update({
@@ -108,10 +120,12 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/auth_backup': typeof Auth_backupRoute
   '/blog': typeof BlogRoute
+  '/contact': typeof ContactRoute
   '/mfa-verify': typeof MfaVerifyRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/projects': typeof ProjectsRoute
   '/terms': typeof TermsRoute
+  '/thank-you': typeof ThankYouRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
@@ -124,10 +138,12 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/auth_backup': typeof Auth_backupRoute
   '/blog': typeof BlogRoute
+  '/contact': typeof ContactRoute
   '/mfa-verify': typeof MfaVerifyRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/projects': typeof ProjectsRoute
   '/terms': typeof TermsRoute
+  '/thank-you': typeof ThankYouRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
@@ -142,10 +158,12 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/auth_backup': typeof Auth_backupRoute
   '/blog': typeof BlogRoute
+  '/contact': typeof ContactRoute
   '/mfa-verify': typeof MfaVerifyRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/projects': typeof ProjectsRoute
   '/terms': typeof TermsRoute
+  '/thank-you': typeof ThankYouRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/blog_/$slug': typeof BlogSlugRoute
@@ -160,10 +178,12 @@ export interface FileRouteTypes {
     | '/auth'
     | '/auth_backup'
     | '/blog'
+    | '/contact'
     | '/mfa-verify'
     | '/privacy-policy'
     | '/projects'
     | '/terms'
+    | '/thank-you'
     | '/admin'
     | '/dashboard'
     | '/blog/$slug'
@@ -176,10 +196,12 @@ export interface FileRouteTypes {
     | '/auth'
     | '/auth_backup'
     | '/blog'
+    | '/contact'
     | '/mfa-verify'
     | '/privacy-policy'
     | '/projects'
     | '/terms'
+    | '/thank-you'
     | '/admin'
     | '/dashboard'
     | '/blog/$slug'
@@ -193,10 +215,12 @@ export interface FileRouteTypes {
     | '/auth'
     | '/auth_backup'
     | '/blog'
+    | '/contact'
     | '/mfa-verify'
     | '/privacy-policy'
     | '/projects'
     | '/terms'
+    | '/thank-you'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
     | '/blog_/$slug'
@@ -211,15 +235,24 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   Auth_backupRoute: typeof Auth_backupRoute
   BlogRoute: typeof BlogRoute
+  ContactRoute: typeof ContactRoute
   MfaVerifyRoute: typeof MfaVerifyRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   ProjectsRoute: typeof ProjectsRoute
   TermsRoute: typeof TermsRoute
+  ThankYouRoute: typeof ThankYouRoute
   BlogSlugRoute: typeof BlogSlugRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/thank-you': {
+      id: '/thank-you'
+      path: '/thank-you'
+      fullPath: '/thank-you'
+      preLoaderRoute: typeof ThankYouRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/terms': {
       id: '/terms'
       path: '/terms'
@@ -246,6 +279,13 @@ declare module '@tanstack/react-router' {
       path: '/mfa-verify'
       fullPath: '/mfa-verify'
       preLoaderRoute: typeof MfaVerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog': {
@@ -364,10 +404,12 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   Auth_backupRoute: Auth_backupRoute,
   BlogRoute: BlogRoute,
+  ContactRoute: ContactRoute,
   MfaVerifyRoute: MfaVerifyRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
   ProjectsRoute: ProjectsRoute,
   TermsRoute: TermsRoute,
+  ThankYouRoute: ThankYouRoute,
   BlogSlugRoute: BlogSlugRoute,
 }
 export const routeTree = rootRouteImport
