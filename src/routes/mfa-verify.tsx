@@ -75,11 +75,13 @@ function MfaVerify() {
     return () => { cancelled = true; };
   }, [navigate, createChallenge]);
 
-  const verify = async () => {
+  const verify = useCallback(async () => {
     if (!/^\d{6}$/.test(code)) {
       toast.error("Enter a valid 6-digit code.");
       return;
     }
+    if (!factorId || !challengeId || verifying) return;
+
     setVerifying(true);
     const { error } = await supabase.auth.mfa.verify({ factorId, challengeId, code });
     if (error) {
@@ -94,7 +96,14 @@ function MfaVerify() {
       return;
     }
     navigate({ to: "/dashboard" });
-  };
+  }, [code, factorId, challengeId, verifying, createChallenge, navigate]);
+
+  // Automatically verify as soon as all 6 digits have been entered.
+  useEffect(() => {
+    if (code.length === 6 && factorId && challengeId && !verifying) {
+      void verify();
+    }
+  }, [code, factorId, challengeId, verifying, verify]);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
