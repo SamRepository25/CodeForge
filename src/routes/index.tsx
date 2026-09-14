@@ -102,9 +102,9 @@ function Home() {
             </div>
             <h1 className="mt-6 font-display text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
               {editMode ? (
-                <EditableText value={s.hero_title ?? "I build things, learn from them, and share what works."} onSave={(v) => saveSetting("hero_title", v)} as="span" className="font-display text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl" />
+                <EditableText value={s.hero_title ?? "Build, learn, and share."} onSave={(v) => saveSetting("hero_title", v)} as="span" className="font-display text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl" />
               ) : (() => {
-                const title = s.hero_title ?? "I build things, learn from them, and share what works.";
+                const title = s.hero_title ?? "Build, learn, and share.";
                 const spaceIdx = title.indexOf(" ");
                 const first = spaceIdx === -1 ? title : title.slice(0, spaceIdx);
                 const rest = spaceIdx === -1 ? "" : title.slice(spaceIdx);
