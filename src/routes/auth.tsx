@@ -9,7 +9,7 @@
  */
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Code2, Mail, Lock, Info } from "lucide-react";
+import { Code2, Mail, Lock, Eye, EyeOff, Info } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -93,9 +93,23 @@ function AuthPage() {
               Secure access to the CodeForge administration dashboard.
             </p>
           </div>
-          <form onSubmit={signIn} className="space-y-4">
-            <Field name="email" label="Email" type="email" icon={Mail} required />
-            <Field name="password" label="Password" type="password" icon={Lock} required />
+          <form onSubmit={signIn} className="space-y-5">
+            <Field
+              name="email"
+              label="Email / Username"
+              type="email"
+              icon={Mail}
+              placeholder="you@example.com"
+              required
+            />
+            <Field
+              name="password"
+              label="Password"
+              type="password"
+              icon={Lock}
+              placeholder="••••••••••••"
+              required
+            />
             <Button
               type="submit"
               disabled={busy}
@@ -111,17 +125,59 @@ function AuthPage() {
 }
 
 function Field({
-  name, label, type, icon: Icon, required,
+  name,
+  label,
+  type,
+  icon: Icon,
+  placeholder,
+  required,
 }: {
-  name: string; label: string; type: string;
-  icon: React.ComponentType<{ className?: string }>; required?: boolean;
+  name: string;
+  label: string;
+  type: string;
+  icon: React.ComponentType<{ className?: string }>;
+  placeholder?: string;
+  required?: boolean;
 }) {
+  const [showPassword, setShowPassword] = useState(false);
+  const isPassword = type === "password";
+  const inputType = isPassword && showPassword ? "text" : type;
+
   return (
     <div>
-      <Label htmlFor={name} className="text-xs">{label}</Label>
+      <Label
+        htmlFor={name}
+        className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+      >
+        {label}
+      </Label>
       <div className="relative mt-1.5">
-        <Icon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input id={name} name={name} type={type} required={required} className="rounded-xl pl-9" />
+        <Icon className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          id={name}
+          name={name}
+          type={inputType}
+          placeholder={placeholder}
+          required={required}
+          autoComplete={isPassword ? "current-password" : "username"}
+          className={`h-13 rounded-xl border-border/80 bg-background/60 pl-11 ${
+            isPassword ? "pr-11" : "pr-4"
+          }`}
+        />
+        {isPassword && (
+          <button
+            type="button"
+            onClick={() => setShowPassword((visible) => !visible)}
+            aria-label={showPassword ? "Hide password" : "Show password"}
+            className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-muted-foreground transition-colors hover:text-foreground"
+          >
+            {showPassword ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
+          </button>
+        )}
       </div>
     </div>
   );
