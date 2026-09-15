@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
+import { getMfaLockout, verifyMfaCode } from "@/lib/mfa.functions";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/mfa-verify")({
@@ -22,23 +23,25 @@ export const Route = createFileRoute("/mfa-verify")({
     ],
   }),
   beforeLoad: async () => {
-    // Must be logged in
     const { data: userData } = await supabase.auth.getUser();
     if (!userData.user) throw redirect({ to: "/auth" });
 
-    // Must have a verified TOTP factor to be here
     const { data: factors } = await supabase.auth.mfa.listFactors();
     if ((factors?.totp ?? []).length === 0) {
-      // No MFA enrolled — go straight to dashboard
       throw redirect({ to: "/dashboard" });
     }
 
-    // Already at AAL2? Skip verify
     const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
     if (aal?.currentLevel === "aal2") throw redirect({ to: "/dashboard" });
   },
   component: MfaVerify,
 });
+
+function formatRemaining(seconds: number) {
+  const minutes = Math.floor(seconds / 60);
+  const remainder = seconds % 60;
+  return `${minutes}:${String(remainder).padStart(2, "0")}`;
+}
 
 function MfaVerify() {
   const navigate = useNavigate();
@@ -47,6 +50,9 @@ function MfaVerify() {
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(true);
   const [verifying, setVerifying] = useState(false);
+  const [lockedUntil, setLockedUntil] = useState<string | null>(null);
+  const [remainingSeconds, setRemainingSeconds] = useState(0);
+  const [failedAttempts, setFailedAttempts] = useState(0);
 
   const createChallenge = useCallback(async (fId: string) => {
     const { data: challenge, error } = await supabase.auth.mfa.challenge({ factorId: fId });
@@ -55,6 +61,24 @@ function MfaVerify() {
       return;
     }
     setChallengeId(challenge.id);
+  }, []);
+
+  const refreshLockout = useCallback(async () => {
+    const { data: sessionData } = await supabase.auth.getSession();
+    const accessToken = sessionData.session?.access_token;
+    if (!accessToken) return false;
+
+    const result = await getMfaLockout({ data: { accessToken } });
+    if (result.locked && result.lockedUntil) {
+      setLockedUntil(result.lockedUntil);
+      setRemainingSeconds(Math.max(0, Math.ceil((new Date(result.lockedUntil).getTime() - Date.now()) / 1000)));
+      setFailedAttempts(3);
+      return true;
+    }
+    setLockedUntil(null);
+    setRemainingSeconds(0);
+    setFailedAttempts(0);
+    return false;
   }, []);
 
   useEffect(() => {
@@ -68,42 +92,94 @@ function MfaVerify() {
       if (!totp) { navigate({ to: "/dashboard" }); return; }
 
       setFactorId(totp.id);
-      await createChallenge(totp.id);
-      setLoading(false);
+      const locked = await refreshLockout();
+      if (!locked && !cancelled) await createChallenge(totp.id);
+      if (!cancelled) setLoading(false);
     }
     init();
     return () => { cancelled = true; };
-  }, [navigate, createChallenge]);
+  }, [navigate, createChallenge, refreshLockout]);
+
+  useEffect(() => {
+    if (!lockedUntil) return;
+
+    const timer = window.setInterval(() => {
+      const seconds = Math.max(0, Math.ceil((new Date(lockedUntil).getTime() - Date.now()) / 1000));
+      setRemainingSeconds(seconds);
+      if (seconds === 0) {
+        setLockedUntil(null);
+        setFailedAttempts(0);
+        setCode("");
+        if (factorId) void createChallenge(factorId);
+      }
+    }, 1000);
+
+    return () => window.clearInterval(timer);
+  }, [lockedUntil, factorId, createChallenge]);
 
   const verify = useCallback(async () => {
     if (!/^\d{6}$/.test(code)) {
       toast.error("Enter a valid 6-digit code.");
       return;
     }
-    if (!factorId || !challengeId || verifying) return;
+    if (!factorId || !challengeId || verifying || lockedUntil) return;
 
-    setVerifying(true);
-    const { error } = await supabase.auth.mfa.verify({ factorId, challengeId, code });
-    if (error) {
-      if (error.message.toLowerCase().includes("expired")) {
-        toast.error("Challenge expired — refreshing…");
-        await createChallenge(factorId);
-      } else {
-        toast.error("Invalid code. Check your authenticator app.");
-      }
-      setCode("");
-      setVerifying(false);
+    const { data: sessionData } = await supabase.auth.getSession();
+    const accessToken = sessionData.session?.access_token;
+    if (!accessToken) {
+      toast.error("Your session has expired. Please sign in again.");
+      navigate({ to: "/auth" });
       return;
     }
-    navigate({ to: "/dashboard" });
-  }, [code, factorId, challengeId, verifying, createChallenge, navigate]);
 
-  // Automatically verify as soon as all 6 digits have been entered.
+    setVerifying(true);
+    try {
+      const result = await verifyMfaCode({
+        data: { accessToken, factorId, challengeId, code },
+      });
+
+      if (result.success) {
+        if (result.session) {
+          const { error: sessionError } = await supabase.auth.setSession(result.session);
+          if (sessionError) {
+            toast.error("Verification succeeded, but the session could not be updated. Please sign in again.");
+            setVerifying(false);
+            return;
+          }
+        } else {
+          await supabase.auth.refreshSession();
+        }
+        navigate({ to: "/dashboard" });
+        return;
+      }
+
+      if (result.expired) {
+        toast.error("Challenge expired — refreshing…");
+        await createChallenge(factorId);
+      } else if (result.locked && result.lockedUntil) {
+        setLockedUntil(result.lockedUntil);
+        setRemainingSeconds(Math.max(0, Math.ceil((new Date(result.lockedUntil).getTime() - Date.now()) / 1000)));
+        setFailedAttempts(3);
+        setCode("");
+        toast.error("Security lockout. Please try again after 3 minutes.");
+      } else {
+        setFailedAttempts(result.failedAttempts ?? failedAttempts + 1);
+        setCode("");
+        toast.error("Invalid code. Check your authenticator app.");
+      }
+    } catch (error) {
+      console.error("[mfa] verification failed", error);
+      toast.error("Unable to verify the code. Please try again.");
+    } finally {
+      setVerifying(false);
+    }
+  }, [code, factorId, challengeId, verifying, lockedUntil, failedAttempts, createChallenge, navigate]);
+
   useEffect(() => {
-    if (code.length === 6 && factorId && challengeId && !verifying) {
+    if (code.length === 6 && factorId && challengeId && !verifying && !lockedUntil) {
       void verify();
     }
-  }, [code, factorId, challengeId, verifying, verify]);
+  }, [code, factorId, challengeId, verifying, lockedUntil, verify]);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -128,6 +204,24 @@ function MfaVerify() {
               <div className="h-8 w-8 animate-spin rounded-full border-2 border-violet border-t-transparent" />
               <p className="text-sm text-muted-foreground">Preparing verification…</p>
             </div>
+          ) : lockedUntil ? (
+            <div className="space-y-4 text-center">
+              <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-5">
+                <p className="font-semibold text-red-300">Security lockout</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Please try again after 3 minutes.
+                </p>
+                <p className="mt-3 font-mono text-2xl font-semibold tracking-wider text-foreground">
+                  {formatRemaining(remainingSeconds)}
+                </p>
+              </div>
+              <button
+                onClick={handleSignOut}
+                className="w-full text-center text-xs text-muted-foreground underline-offset-2 hover:underline"
+              >
+                Cancel and sign out
+              </button>
+            </div>
           ) : (
             <div className="space-y-4">
               <div>
@@ -140,19 +234,25 @@ function MfaVerify() {
                   placeholder="000000"
                   value={code}
                   onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                  onKeyDown={(e) => { if (e.key === "Enter") verify(); }}
+                  onKeyDown={(e) => { if (e.key === "Enter") void verify(); }}
                   className="mt-1.5 rounded-xl text-center font-mono text-lg tracking-[0.5em]"
                   autoComplete="one-time-code"
                   autoFocus
+                  disabled={verifying}
                 />
               </div>
               <Button
-                onClick={verify}
+                onClick={() => void verify()}
                 disabled={verifying || code.length !== 6}
                 className="w-full rounded-xl bg-gradient-to-r from-violet to-electric text-white"
               >
                 {verifying ? "Verifying…" : "Verify & Continue"}
               </Button>
+              {failedAttempts > 0 && (
+                <p className="text-center text-xs text-muted-foreground">
+                  {3 - failedAttempts} attempt{3 - failedAttempts === 1 ? "" : "s"} remaining
+                </p>
+              )}
               <button
                 onClick={handleSignOut}
                 className="w-full text-center text-xs text-muted-foreground underline-offset-2 hover:underline"
