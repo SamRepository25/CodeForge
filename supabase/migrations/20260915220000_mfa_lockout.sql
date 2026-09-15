@@ -29,12 +29,18 @@ BEGIN
       WHEN public.mfa_lockouts.locked_until IS NOT NULL
            AND public.mfa_lockouts.locked_until > now()
         THEN public.mfa_lockouts.failed_attempts
+      WHEN public.mfa_lockouts.locked_until IS NOT NULL
+           AND public.mfa_lockouts.locked_until <= now()
+        THEN 1
       ELSE LEAST(public.mfa_lockouts.failed_attempts + 1, 3)
     END,
     locked_until = CASE
       WHEN public.mfa_lockouts.locked_until IS NOT NULL
            AND public.mfa_lockouts.locked_until > now()
         THEN public.mfa_lockouts.locked_until
+      WHEN public.mfa_lockouts.locked_until IS NOT NULL
+           AND public.mfa_lockouts.locked_until <= now()
+        THEN NULL
       WHEN public.mfa_lockouts.failed_attempts + 1 >= 3
         THEN now() + interval '3 minutes'
       ELSE NULL
