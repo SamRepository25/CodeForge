@@ -14,6 +14,8 @@ import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { TurnstileWidget } from "@/components/TurnstileWidget";
+import { verifyLoginTurnstile } from "@/lib/auth.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -34,11 +36,29 @@ export const Route = createFileRoute("/auth")({
 function AuthPage() {
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileResetKey, setTurnstileResetKey] = useState(0);
+
+  const resetTurnstile = () => {
+    setTurnstileToken("");
+    setTurnstileResetKey((key) => key + 1);
+  };
 
   const signIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
     setBusy(true);
+
+    try {
+      await verifyLoginTurnstile({ data: { token: turnstileToken } });
+    } catch {
+      resetTurnstile();
+      setBusy(false);
+      toast.error("Human verification failed. Please try again.", {
+        icon: <Info className="h-4 w-4" />,
+      });
+      return;
+    }
 
     const { data, error } = await supabase.auth.signInWithPassword({
       email: String(f.get("email")),
@@ -47,6 +67,7 @@ function AuthPage() {
 
     // Authentication failed: do not reveal whether an account exists.
     if (error || !data.user) {
+      resetTurnstile();
       setBusy(false);
       toast.error("Only admins can access this page", {
         icon: <Info className="h-4 w-4" />,
@@ -57,6 +78,7 @@ function AuthPage() {
     // Authentication succeeded, but only the configured admin can continue.
     if (data.user.email?.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
       await supabase.auth.signOut();
+      resetTurnstile();
       setBusy(false);
       toast.error("Only admins can access this page", {
         icon: <Info className="h-4 w-4" />,
@@ -110,9 +132,13 @@ function AuthPage() {
               placeholder="••••••••••••"
               required
             />
+            <TurnstileWidget
+              key={turnstileResetKey}
+              onToken={setTurnstileToken}
+            />
             <Button
               type="submit"
-              disabled={busy}
+              disabled={busy || !turnstileToken}
               className="w-full rounded-xl bg-gradient-to-r from-violet to-electric text-white"
             >
               {busy ? "Signing in…" : "Login"}
