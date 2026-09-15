@@ -47,6 +47,9 @@ function AuthPage() {
   const signIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
+    const email = String(f.get("email")).trim();
+    const password = String(f.get("password"));
+    const isAdminEmail = email.toLowerCase() === ADMIN_EMAIL.toLowerCase();
     setBusy(true);
 
     try {
@@ -61,15 +64,14 @@ function AuthPage() {
     }
 
     const { data, error } = await supabase.auth.signInWithPassword({
-      email: String(f.get("email")),
-      password: String(f.get("password")),
+      email,
+      password,
     });
 
-    // Authentication failed: do not reveal whether an account exists.
     if (error || !data.user) {
       resetTurnstile();
       setBusy(false);
-      toast.error("Only admins can access this page", {
+      toast.error(isAdminEmail ? "Invalid username or password." : "Only admins can access this page", {
         icon: <Info className="h-4 w-4" />,
       });
       return;
