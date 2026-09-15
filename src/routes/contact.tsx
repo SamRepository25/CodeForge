@@ -263,7 +263,7 @@ function ContactPage() {
             href="mailto:simakahmed@outlook.com"
             className="text-violet underline underline-offset-2"
           >
-            simakahmed@outlook.com
+            Email me
           </a>
         </p>
       </section>
