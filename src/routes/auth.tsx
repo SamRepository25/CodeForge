@@ -3,23 +3,29 @@
  *
  * Flow after successful password login:
  *   - Only the configured admin email can continue
- *   - Non-admin users are signed out immediately
+ *   - Five invalid admin password attempts trigger a 10-minute server-side lockout
  *   - If the admin has a verified TOTP factor → /mfa-verify
  *   - Otherwise → /dashboard
  */
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Code2, Mail, Lock, Eye, EyeOff, Info } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { TurnstileWidget } from "@/components/TurnstileWidget";
-import { verifyLoginTurnstile } from "@/lib/auth.functions";
+import { getLoginLockout, loginWithProtection } from "@/lib/login.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 const ADMIN_EMAIL = "simakahmed002@gmail.com";
+
+function formatRemaining(seconds: number) {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${String(minutes).padStart(2, "0")}:${String(remainingSeconds).padStart(2, "0")}`;
+}
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -38,71 +44,119 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState("");
   const [turnstileResetKey, setTurnstileResetKey] = useState(0);
+  const [lockedUntil, setLockedUntil] = useState<string | null>(null);
+  const [remainingSeconds, setRemainingSeconds] = useState(0);
 
   const resetTurnstile = () => {
     setTurnstileToken("");
     setTurnstileResetKey((key) => key + 1);
   };
 
+  useEffect(() => {
+    let active = true;
+
+    getLoginLockout({ data: {} })
+      .then((result) => {
+        if (active && result.locked && result.lockedUntil) {
+          setLockedUntil(result.lockedUntil);
+        }
+      })
+      .catch(() => {
+        // Do not block the login screen if the initial lockout status check fails.
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!lockedUntil) {
+      setRemainingSeconds(0);
+      return;
+    }
+
+    const update = () => {
+      const seconds = Math.max(
+        0,
+        Math.ceil((new Date(lockedUntil).getTime() - Date.now()) / 1000),
+      );
+      setRemainingSeconds(seconds);
+      if (seconds === 0) setLockedUntil(null);
+    };
+
+    update();
+    const timer = window.setInterval(update, 1000);
+    return () => window.clearInterval(timer);
+  }, [lockedUntil]);
+
   const signIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (lockedUntil && remainingSeconds > 0) return;
+
     const f = new FormData(e.currentTarget);
     const email = String(f.get("email")).trim();
     const password = String(f.get("password"));
-    const isAdminEmail = email.toLowerCase() === ADMIN_EMAIL.toLowerCase();
     setBusy(true);
 
     try {
-      await verifyLoginTurnstile({ data: { token: turnstileToken } });
-    } catch {
+      const result = await loginWithProtection({
+        data: {
+          email,
+          password,
+          turnstileToken,
+        },
+      });
+
+      resetTurnstile();
+
+      if (!result.success) {
+        setBusy(false);
+
+        if (result.locked && result.lockedUntil) {
+          setLockedUntil(result.lockedUntil);
+        }
+
+        toast.error(result.error, {
+          icon: <Info className="h-4 w-4" />,
+        });
+        return;
+      }
+
+      const { error: sessionError } = await supabase.auth.setSession(result.session);
+      if (sessionError) {
+        setBusy(false);
+        toast.error("Unable to establish your session. Please try again.", {
+          icon: <Info className="h-4 w-4" />,
+        });
+        return;
+      }
+
+      // Check if the authenticated admin has MFA enrolled.
+      // data.totp only contains VERIFIED factors.
+      const { data: factors } = await supabase.auth.mfa.listFactors();
+      const hasTotp = (factors?.totp ?? []).length > 0;
+
+      setBusy(false);
+
+      if (hasTotp) {
+        // Must verify MFA before accessing dashboard.
+        navigate({ to: "/mfa-verify" });
+      } else {
+        // No MFA enrolled → go straight to dashboard.
+        navigate({ to: "/dashboard" });
+      }
+    } catch (error) {
       resetTurnstile();
       setBusy(false);
-      toast.error("Human verification failed. Please try again.", {
+      const message = error instanceof Error ? error.message : "Unable to sign in. Please try again.";
+      toast.error(message, {
         icon: <Info className="h-4 w-4" />,
       });
-      return;
-    }
-
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error || !data.user) {
-      resetTurnstile();
-      setBusy(false);
-      toast.error(isAdminEmail ? "Invalid username or password." : "Only admins can access this page", {
-        icon: <Info className="h-4 w-4" />,
-      });
-      return;
-    }
-
-    // Authentication succeeded, but only the configured admin can continue.
-    if (data.user.email?.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
-      await supabase.auth.signOut();
-      resetTurnstile();
-      setBusy(false);
-      toast.error("Only admins can access this page", {
-        icon: <Info className="h-4 w-4" />,
-      });
-      return;
-    }
-
-    // Check if the authenticated admin has MFA enrolled.
-    // data.totp only contains VERIFIED factors.
-    const { data: factors } = await supabase.auth.mfa.listFactors();
-    const hasTotp = (factors?.totp ?? []).length > 0;
-
-    setBusy(false);
-
-    if (hasTotp) {
-      // Must verify MFA before accessing dashboard.
-      navigate({ to: "/mfa-verify" });
-    } else {
-      // No MFA enrolled → go straight to dashboard.
-      navigate({ to: "/dashboard" });
     }
   };
+
+  const isLocked = !!lockedUntil && remainingSeconds > 0;
 
   return (
     <SiteLayout>
@@ -117,6 +171,19 @@ function AuthPage() {
               Secure access to the CodeForge administration dashboard.
             </p>
           </div>
+
+          {isLocked && (
+            <div className="mb-5 rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-5 text-center">
+              <p className="font-semibold text-red-300">Security lockout</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Please try again after 10 minutes.
+              </p>
+              <p className="mt-3 font-mono text-2xl font-semibold tracking-wider text-foreground">
+                {formatRemaining(remainingSeconds)}
+              </p>
+            </div>
+          )}
+
           <form onSubmit={signIn} className="space-y-5">
             <Field
               name="email"
@@ -125,6 +192,7 @@ function AuthPage() {
               icon={Mail}
               placeholder="you@example.com"
               required
+              disabled={isLocked}
             />
             <Field
               name="password"
@@ -133,17 +201,20 @@ function AuthPage() {
               icon={Lock}
               placeholder="••••••••••••"
               required
+              disabled={isLocked}
             />
-            <TurnstileWidget
-              key={turnstileResetKey}
-              onToken={setTurnstileToken}
-            />
+            {!isLocked && (
+              <TurnstileWidget
+                key={turnstileResetKey}
+                onToken={setTurnstileToken}
+              />
+            )}
             <Button
               type="submit"
-              disabled={busy || !turnstileToken}
+              disabled={busy || !turnstileToken || isLocked}
               className="w-full rounded-xl bg-gradient-to-r from-violet to-electric text-white"
             >
-              {busy ? "Signing in…" : "Login"}
+              {busy ? "Signing in…" : isLocked ? "Locked" : "Login"}
             </Button>
           </form>
         </div>
@@ -159,6 +230,7 @@ function Field({
   icon: Icon,
   placeholder,
   required,
+  disabled,
 }: {
   name: string;
   label: string;
@@ -166,6 +238,7 @@ function Field({
   icon: React.ComponentType<{ className?: string }>;
   placeholder?: string;
   required?: boolean;
+  disabled?: boolean;
 }) {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === "password";
@@ -187,6 +260,7 @@ function Field({
           type={inputType}
           placeholder={placeholder}
           required={required}
+          disabled={disabled}
           autoComplete={isPassword ? "current-password" : "username"}
           className={`h-13 rounded-xl border-border/80 bg-background/60 pl-11 ${
             isPassword ? "pr-11" : "pr-4"
@@ -197,7 +271,8 @@ function Field({
             type="button"
             onClick={() => setShowPassword((visible) => !visible)}
             aria-label={showPassword ? "Hide password" : "Show password"}
-            className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-muted-foreground transition-colors hover:text-foreground"
+            disabled={disabled}
+            className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-muted-foreground transition-colors hover:text-foreground disabled:pointer-events-none disabled:opacity-50"
           >
             {showPassword ? (
               <Eye className="h-4 w-4" />
