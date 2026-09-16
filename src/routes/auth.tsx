@@ -3,7 +3,7 @@
  *
  * Flow after successful password login:
  *   - Only the configured admin email can continue
- *   - Five invalid admin password attempts trigger a 10-minute server-side lockout
+ *   - Four invalid admin password attempts trigger a 10-minute server-side lockout
  *   - If the admin has a verified TOTP factor → /mfa-verify
  *   - Otherwise → /dashboard
  */

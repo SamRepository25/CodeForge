@@ -72,7 +72,7 @@ function MfaVerify() {
     if (result.locked && result.lockedUntil) {
       setLockedUntil(result.lockedUntil);
       setRemainingSeconds(Math.max(0, Math.ceil((new Date(result.lockedUntil).getTime() - Date.now()) / 1000)));
-      setFailedAttempts(3);
+      setFailedAttempts(4);
       return true;
     }
     setLockedUntil(null);
@@ -159,9 +159,9 @@ function MfaVerify() {
       } else if (result.locked && result.lockedUntil) {
         setLockedUntil(result.lockedUntil);
         setRemainingSeconds(Math.max(0, Math.ceil((new Date(result.lockedUntil).getTime() - Date.now()) / 1000)));
-        setFailedAttempts(3);
+        setFailedAttempts(4);
         setCode("");
-        toast.error("Security lockout. Please try again after 3 minutes.");
+        toast.error("Security lockout. Please try again after 10 minutes.");
       } else {
         setFailedAttempts(result.failedAttempts ?? failedAttempts + 1);
         setCode("");
@@ -209,7 +209,7 @@ function MfaVerify() {
               <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-5">
                 <p className="font-semibold text-red-300">Security lockout</p>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Please try again after 3 minutes.
+                  Please try again after 10 minutes.
                 </p>
                 <p className="mt-3 font-mono text-2xl font-semibold tracking-wider text-foreground">
                   {formatRemaining(remainingSeconds)}
@@ -250,7 +250,7 @@ function MfaVerify() {
               </Button>
               {failedAttempts > 0 && (
                 <p className="text-center text-xs text-muted-foreground">
-                  {3 - failedAttempts} attempt{3 - failedAttempts === 1 ? "" : "s"} remaining
+                  {4 - failedAttempts} attempt{4 - failedAttempts === 1 ? "" : "s"} remaining
                 </p>
               )}
               <button

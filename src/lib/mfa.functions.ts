@@ -1,7 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 
 const ADMIN_EMAIL = "simakahmed002@gmail.com";
-const LOCKOUT_MINUTES = 3;
+const LOCKOUT_MINUTES = 10;
+const MAX_FAILED_ATTEMPTS = 4;
 
 type LockoutRow = {
   failed_attempts: number;
@@ -44,7 +45,7 @@ export const getMfaLockout = createServerFn({ method: "POST" })
     return {
       locked: isLocked,
       lockedUntil: isLocked ? lockedUntil : null,
-      failedAttempts: isLocked ? (row?.failed_attempts ?? 3) : 0,
+      failedAttempts: isLocked ? (row?.failed_attempts ?? MAX_FAILED_ATTEMPTS) : 0,
     };
   });
 
@@ -84,7 +85,7 @@ export const verifyMfaCode = createServerFn({ method: "POST" })
         success: false,
         locked: true,
         lockedUntil: lockRow.locked_until,
-        error: "Security lockout. Please try again after 3 minutes.",
+        error: "Security lockout. Please try again after 10 minutes.",
       };
     }
 
@@ -151,7 +152,7 @@ export const verifyMfaCode = createServerFn({ method: "POST" })
       locked,
       lockedUntil: locked ? lockedUntil : null,
       failedAttempts: failureRow?.failed_attempts ?? 1,
-      remainingAttempts: Math.max(0, 3 - (failureRow?.failed_attempts ?? 1)),
+      remainingAttempts: Math.max(0, MAX_FAILED_ATTEMPTS - (failureRow?.failed_attempts ?? 1)),
       error: locked
         ? `Security lockout. Please try again after ${LOCKOUT_MINUTES} minutes.`
         : "Invalid code. Check your authenticator app.",

@@ -3,6 +3,7 @@ import { verifyTurnstile, getClientIp } from "@/lib/turnstile.server";
 
 const ADMIN_EMAIL = "simakahmed002@gmail.com";
 const LOCKOUT_MINUTES = 10;
+const MAX_FAILED_ATTEMPTS = 4;
 
 type LockoutRow = {
   failed_attempts: number;
@@ -50,7 +51,7 @@ export const getLoginLockout = createServerFn({ method: "POST" })
     return {
       locked,
       lockedUntil: locked ? lockedUntil : null,
-      failedAttempts: locked ? (row?.failed_attempts ?? 5) : (row?.failed_attempts ?? 0),
+      failedAttempts: locked ? (row?.failed_attempts ?? MAX_FAILED_ATTEMPTS) : (row?.failed_attempts ?? 0),
     };
   });
 
@@ -126,7 +127,7 @@ export const loginWithProtection = createServerFn({ method: "POST" })
         locked,
         lockedUntil: locked ? lockedUntil : null,
         failedAttempts: failureRow?.failed_attempts ?? 1,
-        remainingAttempts: Math.max(0, 5 - (failureRow?.failed_attempts ?? 1)),
+        remainingAttempts: Math.max(0, MAX_FAILED_ATTEMPTS - (failureRow?.failed_attempts ?? 1)),
         error: locked
           ? `Security lockout. Please try again after ${LOCKOUT_MINUTES} minutes.`
           : "Invalid username or password.",
