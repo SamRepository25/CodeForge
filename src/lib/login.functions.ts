@@ -88,8 +88,12 @@ export const loginWithProtection = createServerFn({ method: "POST" })
       };
     }
 
-    const supabaseUrl = process.env.SUPABASE_URL;
-    const publishableKey = process.env.SUPABASE_PUBLISHABLE_KEY;
+    // Password authentication must use the same Supabase project/key pair as the browser client.
+    // Prefer the VITE_* values because they are the canonical public Supabase configuration
+    // used by src/integrations/supabase/client.ts, with the server-side names as fallback.
+    const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
+    const publishableKey =
+      process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_PUBLISHABLE_KEY;
     if (!supabaseUrl || !publishableKey) {
       throw new Error("Supabase server configuration is incomplete.");
     }
