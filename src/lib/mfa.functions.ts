@@ -89,8 +89,11 @@ export const verifyMfaCode = createServerFn({ method: "POST" })
       };
     }
 
-    const supabaseUrl = process.env.SUPABASE_URL;
-    const publishableKey = process.env.SUPABASE_PUBLISHABLE_KEY;
+    // Use the same canonical Supabase project/key configuration as the browser client.
+    // Keep the server-side names as a fallback for existing deployments.
+    const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
+    const publishableKey =
+      process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_PUBLISHABLE_KEY;
     if (!supabaseUrl || !publishableKey) throw new Error("Supabase server configuration is incomplete.");
 
     const { createClient } = await import("@supabase/supabase-js");
