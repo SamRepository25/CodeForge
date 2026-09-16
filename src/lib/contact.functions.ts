@@ -180,19 +180,5 @@ export const submitContactForm = createServerFn({ method: "POST" })
       }
     }
 
-    // -- notify (best-effort) --------------------------------------------------------
-    try {
-      const { sendContactNotification } = await import("@/lib/email.server");
-      await sendContactNotification({
-        name,
-        email,
-        subject,
-        message,
-        attachmentCount: validatedFiles.length,
-      });
-    } catch (e) {
-      console.error("[contact] notification email failed", e);
-    }
-
     return { success: true };
   });
