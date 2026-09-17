@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import {
   formatSessionDate,
   listAdminSessions,
+  registerCurrentAdminSession,
   revokeAdminSession,
   type AdminSession,
 } from "@/lib/admin-sessions";
@@ -22,7 +23,10 @@ function sessionLabel(session: AdminSession) {
 export function DevicesPanel() {
   const sessions = useQuery({
     queryKey: ["admin-device-sessions"],
-    queryFn: listAdminSessions,
+    queryFn: async () => {
+      await registerCurrentAdminSession();
+      return listAdminSessions();
+    },
     refetchInterval: 30_000,
   });
 
@@ -77,7 +81,7 @@ export function DevicesPanel() {
 
       {!sessions.isLoading && !sessions.isError && (sessions.data ?? []).length === 0 && (
         <div className="glass rounded-2xl p-8 text-center text-sm text-muted-foreground">
-          No active device sessions are registered yet. Your current session will appear after the next authenticated refresh.
+          No active device sessions are registered yet. Sign in from another browser or device to register it here.
         </div>
       )}
 
