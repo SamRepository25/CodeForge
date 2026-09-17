@@ -14,7 +14,6 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider } from "@/hooks/use-auth";
 import { Toaster } from "@/components/ui/sonner";
 import { EditModeProvider } from "@/contexts/EditModeContext";
-import { EditModeButton } from "@/components/EditModeButton";
 
 function NotFoundComponent() {
   return (
@@ -144,7 +143,6 @@ function RootComponent() {
       <AuthProvider>
         <EditModeProvider>
           <Outlet />
-          <EditModeButton />
           <Toaster richColors theme="dark" />
           <Analytics />
         </EditModeProvider>
