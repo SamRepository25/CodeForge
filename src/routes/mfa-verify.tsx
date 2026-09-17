@@ -12,7 +12,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
-import { getMfaLockout, verifyMfaCode } from "@/lib/mfa.functions";
+import {
+  clearMfaLockout,
+  getMfaLockout,
+  recordMfaFailure,
+} from "@/lib/mfa.functions";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/mfa-verify")({
@@ -46,22 +50,12 @@ function formatRemaining(seconds: number) {
 function MfaVerify() {
   const navigate = useNavigate();
   const [factorId, setFactorId] = useState("");
-  const [challengeId, setChallengeId] = useState("");
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(true);
   const [verifying, setVerifying] = useState(false);
   const [lockedUntil, setLockedUntil] = useState<string | null>(null);
   const [remainingSeconds, setRemainingSeconds] = useState(0);
   const [failedAttempts, setFailedAttempts] = useState(0);
-
-  const createChallenge = useCallback(async (fId: string) => {
-    const { data: challenge, error } = await supabase.auth.mfa.challenge({ factorId: fId });
-    if (error) {
-      toast.error("Failed to start verification. Please try again.");
-      return;
-    }
-    setChallengeId(challenge.id);
-  }, []);
 
   const refreshLockout = useCallback(async () => {
     const { data: sessionData } = await supabase.auth.getSession();
@@ -71,58 +65,76 @@ function MfaVerify() {
     const result = await getMfaLockout({ data: { accessToken } });
     if (result.locked && result.lockedUntil) {
       setLockedUntil(result.lockedUntil);
-      setRemainingSeconds(Math.max(0, Math.ceil((new Date(result.lockedUntil).getTime() - Date.now()) / 1000)));
+      setRemainingSeconds(
+        Math.max(
+          0,
+          Math.ceil((new Date(result.lockedUntil).getTime() - Date.now()) / 1000),
+        ),
+      );
       setFailedAttempts(4);
       return true;
     }
+
     setLockedUntil(null);
     setRemainingSeconds(0);
-    setFailedAttempts(0);
+    setFailedAttempts(result.failedAttempts ?? 0);
     return false;
   }, []);
 
   useEffect(() => {
     let cancelled = false;
+
     async function init() {
       const { data: factors, error } = await supabase.auth.mfa.listFactors();
       if (cancelled) return;
-      if (error || !factors) { navigate({ to: "/auth" }); return; }
+      if (error || !factors) {
+        navigate({ to: "/auth" });
+        return;
+      }
 
       const totp = (factors.totp ?? [])[0];
-      if (!totp) { navigate({ to: "/dashboard" }); return; }
+      if (!totp) {
+        navigate({ to: "/dashboard" });
+        return;
+      }
 
       setFactorId(totp.id);
-      const locked = await refreshLockout();
-      if (!locked && !cancelled) await createChallenge(totp.id);
+      await refreshLockout();
       if (!cancelled) setLoading(false);
     }
-    init();
-    return () => { cancelled = true; };
-  }, [navigate, createChallenge, refreshLockout]);
+
+    void init();
+    return () => {
+      cancelled = true;
+    };
+  }, [navigate, refreshLockout]);
 
   useEffect(() => {
     if (!lockedUntil) return;
 
     const timer = window.setInterval(() => {
-      const seconds = Math.max(0, Math.ceil((new Date(lockedUntil).getTime() - Date.now()) / 1000));
+      const seconds = Math.max(
+        0,
+        Math.ceil((new Date(lockedUntil).getTime() - Date.now()) / 1000),
+      );
       setRemainingSeconds(seconds);
+
       if (seconds === 0) {
         setLockedUntil(null);
         setFailedAttempts(0);
         setCode("");
-        if (factorId) void createChallenge(factorId);
       }
     }, 1000);
 
     return () => window.clearInterval(timer);
-  }, [lockedUntil, factorId, createChallenge]);
+  }, [lockedUntil]);
 
   const verify = useCallback(async () => {
     if (!/^\d{6}$/.test(code)) {
       toast.error("Enter a valid 6-digit code.");
       return;
     }
-    if (!factorId || !challengeId || verifying || lockedUntil) return;
+    if (!factorId || verifying || lockedUntil) return;
 
     const { data: sessionData } = await supabase.auth.getSession();
     const accessToken = sessionData.session?.access_token;
@@ -134,37 +146,44 @@ function MfaVerify() {
 
     setVerifying(true);
     try {
-      const result = await verifyMfaCode({
-        data: { accessToken, factorId, challengeId, code },
+      const { error: verifyError } = await supabase.auth.mfa.challengeAndVerify({
+        factorId,
+        code,
       });
 
-      if (result.success) {
-        if (result.session) {
-          const { error: sessionError } = await supabase.auth.setSession(result.session);
-          if (sessionError) {
-            toast.error("Verification succeeded, but the session could not be updated. Please sign in again.");
-            setVerifying(false);
-            return;
-          }
-        } else {
-          await supabase.auth.refreshSession();
+      if (!verifyError) {
+        await clearMfaLockout({ data: { accessToken } });
+
+        const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+        if (aal?.currentLevel !== "aal2") {
+          toast.error("Verification did not complete. Please try again.");
+          return;
         }
+
         navigate({ to: "/dashboard" });
         return;
       }
 
-      if (result.expired) {
-        toast.error("Challenge expired — refreshing…");
-        await createChallenge(factorId);
-      } else if (result.locked && result.lockedUntil) {
-        setLockedUntil(result.lockedUntil);
-        setRemainingSeconds(Math.max(0, Math.ceil((new Date(result.lockedUntil).getTime() - Date.now()) / 1000)));
-        setFailedAttempts(4);
+      if (verifyError.code === "mfa_challenge_expired") {
         setCode("");
+        toast.error("Challenge expired — enter the current code again.");
+        return;
+      }
+
+      const failure = await recordMfaFailure({ data: { accessToken } });
+      setFailedAttempts(failure.failedAttempts);
+      setCode("");
+
+      if (failure.locked && failure.lockedUntil) {
+        setLockedUntil(failure.lockedUntil);
+        setRemainingSeconds(
+          Math.max(
+            0,
+            Math.ceil((new Date(failure.lockedUntil).getTime() - Date.now()) / 1000),
+          ),
+        );
         toast.error("Security lockout. Please try again after 10 minutes.");
       } else {
-        setFailedAttempts(result.failedAttempts ?? failedAttempts + 1);
-        setCode("");
         toast.error("Invalid code. Check your authenticator app.");
       }
     } catch (error) {
@@ -173,13 +192,13 @@ function MfaVerify() {
     } finally {
       setVerifying(false);
     }
-  }, [code, factorId, challengeId, verifying, lockedUntil, failedAttempts, createChallenge, navigate]);
+  }, [code, factorId, verifying, lockedUntil, navigate]);
 
   useEffect(() => {
-    if (code.length === 6 && factorId && challengeId && !verifying && !lockedUntil) {
+    if (code.length === 6 && factorId && !verifying && !lockedUntil) {
       void verify();
     }
-  }, [code, factorId, challengeId, verifying, lockedUntil, verify]);
+  }, [code, factorId, verifying, lockedUntil, verify]);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -199,6 +218,7 @@ function MfaVerify() {
               Enter the 6-digit code from your authenticator app.
             </p>
           </div>
+
           {loading ? (
             <div className="flex flex-col items-center gap-3 py-8">
               <div className="h-8 w-8 animate-spin rounded-full border-2 border-violet border-t-transparent" />
