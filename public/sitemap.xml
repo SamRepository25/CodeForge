@@ -6,41 +6,45 @@
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
-
   <url>
     <loc>https://codeforgedev.vercel.app/about</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
-
   <url>
     <loc>https://codeforgedev.vercel.app/projects</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
-
   <url>
     <loc>https://codeforgedev.vercel.app/blog</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
-
   <url>
     <loc>https://codeforgedev.vercel.app/contact</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
-
   <url>
     <loc>https://codeforgedev.vercel.app/privacy-policy</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
-
   <url>
     <loc>https://codeforgedev.vercel.app/terms</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
+
+  <url><loc>https://codeforgedev.vercel.app/blog/building-codeforge-my-journey-creating-my-first-full-stack-portfolio</loc><lastmod>2026-06-26</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://codeforgedev.vercel.app/blog/linux-commands-every-computer-science-student-should-know</loc><lastmod>2026-07-28</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://codeforgedev.vercel.app/blog/why-every-computer-science-student-should-learn-git-and-github</loc><lastmod>2026-07-28</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://codeforgedev.vercel.app/blog/networking-basics-every-computer-science-student-should-understand</loc><lastmod>2026-07-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://codeforgedev.vercel.app/blog/what-happens-when-you-type-a-url</loc><lastmod>2026-09-07</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://codeforgedev.vercel.app/blog/understanding-apis</loc><lastmod>2026-09-07</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://codeforgedev.vercel.app/blog/sql-vs-nosql</loc><lastmod>2026-09-07</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://codeforgedev.vercel.app/blog/how-dns-works</loc><lastmod>2026-09-07</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://codeforgedev.vercel.app/blog/processes-threads-memory</loc><lastmod>2026-09-07</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
 
 </urlset>
