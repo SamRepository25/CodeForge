@@ -1,5 +1,7 @@
 import { Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { Code2, Github, Linkedin, Mail } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 function XLogo({ className }: { className?: string }) {
   return (
@@ -10,6 +12,21 @@ function XLogo({ className }: { className?: string }) {
 }
 
 export function Footer() {
+  const settings = useQuery({
+    queryKey: ["site_settings"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("site_settings").select("key,value");
+      if (error) throw error;
+      const map: Record<string, string> = {};
+      (data ?? []).forEach((row) => {
+        map[row.key] = row.value ?? "";
+      });
+      return map;
+    },
+  });
+
+  const xUrl = settings.data?.twitter_url?.trim() || "https://x.com/X";
+
   return (
     <footer className="mt-32 border-t border-border/50">
       <div className="mx-auto max-w-7xl px-4 py-12">
@@ -33,7 +50,7 @@ export function Footer() {
                   href: "https://www.linkedin.com/in/simakahmed",
                   label: "LinkedIn",
                 },
-                { icon: XLogo, href: "https://x.com/X", label: "X" },
+                { icon: XLogo, href: xUrl, label: "X" },
                 { icon: Mail, href: "mailto:simakahmed@outlook.com", label: "Email" },
               ].map(({ icon: Icon, href, label }) => (
                 <a
@@ -52,41 +69,17 @@ export function Footer() {
           <div>
             <h4 className="text-sm font-semibold">Explore</h4>
             <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-              <li>
-                <Link to="/projects" className="hover:text-foreground">
-                  Projects
-                </Link>
-              </li>
-              <li>
-                <Link to="/blog" className="hover:text-foreground">
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <Link to="/about" className="hover:text-foreground">
-                  About
-                </Link>
-              </li>
-              <li>
-                <Link to="/contact" className="hover:text-foreground">
-                  Contact
-                </Link>
-              </li>
+              <li><Link to="/projects" className="hover:text-foreground">Projects</Link></li>
+              <li><Link to="/blog" className="hover:text-foreground">Blog</Link></li>
+              <li><Link to="/about" className="hover:text-foreground">About</Link></li>
+              <li><Link to="/contact" className="hover:text-foreground">Contact</Link></li>
             </ul>
           </div>
           <div>
             <h4 className="text-sm font-semibold">Legal</h4>
             <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-              <li>
-                <Link to="/privacy-policy" className="hover:text-foreground">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link to="/terms" className="hover:text-foreground">
-                  Terms & Conditions
-                </Link>
-              </li>
+              <li><Link to="/privacy-policy" className="hover:text-foreground">Privacy Policy</Link></li>
+              <li><Link to="/terms" className="hover:text-foreground">Terms & Conditions</Link></li>
             </ul>
           </div>
         </div>
