@@ -9,14 +9,26 @@
  *
  * MFA is OPTIONAL. If a user has no TOTP factor, they pass through normally.
  * MFA is enforced only when the user HAS enrolled it.
+ *
+ * Device-session monitoring:
+ *   - Registers the current admin browser/device.
+ *   - Periodically asks Supabase Auth whether the session still exists.
+ *   - A session revoked from Admin → Devices is therefore detected and the
+ *     remote browser is signed out through the normal local logout flow.
  */
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  registerCurrentAdminSession,
+  touchCurrentAdminSession,
+} from "@/lib/admin-sessions";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
   beforeLoad: async () => {
-    // 1. Require a valid session
+    // 1. Require a valid session. getUser() performs a network check against
+    // Supabase Auth, so revoked remote sessions are not treated as valid.
     const { data: userData, error } = await supabase.auth.getUser();
     if (error || !userData.user) throw redirect({ to: "/auth" });
 
@@ -36,5 +48,39 @@ export const Route = createFileRoute("/_authenticated")({
 
     return { user: userData.user };
   },
-  component: () => <Outlet />,
+  component: AuthenticatedLayout,
 });
+
+function AuthenticatedLayout() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const monitorSession = async () => {
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      if (cancelled) return;
+
+      if (userError || !userData.user) {
+        await supabase.auth.signOut({ scope: "local" });
+        if (!cancelled) navigate({ to: "/auth" });
+        return;
+      }
+
+      // Only admin accounts are registered in the Devices panel. Failure to
+      // register must not block the existing authenticated route.
+      await registerCurrentAdminSession();
+      await touchCurrentAdminSession();
+    };
+
+    void monitorSession();
+    const timer = window.setInterval(() => void monitorSession(), 15_000);
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, [navigate]);
+
+  return <Outlet />;
+}
