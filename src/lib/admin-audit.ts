@@ -1,5 +1,12 @@
 import { supabase } from "@/integrations/supabase/client";
 
+function config() {
+  return {
+    url: import.meta.env.VITE_SUPABASE_URL as string | undefined,
+    key: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined,
+  };
+}
+
 export async function recordAdminAudit(
   action: string,
   resource: string,
@@ -7,9 +14,7 @@ export async function recordAdminAudit(
 ): Promise<void> {
   const { data } = await supabase.auth.getSession();
   const accessToken = data.session?.access_token;
-  const url = import.meta.env.VITE_SUPABASE_URL;
-  const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-
+  const { url, key } = config();
   if (!accessToken || !url || !key) return;
 
   try {
@@ -43,12 +48,21 @@ export type AdminAuditEntry = {
 };
 
 export async function getAdminAuditEntries(limit = 100): Promise<AdminAuditEntry[]> {
-  const { data, error } = await supabase
-    .from("admin_audit_log" as never)
-    .select("id,actor_id,action,resource,resource_id,created_at")
-    .order("created_at", { ascending: false })
-    .limit(limit);
+  const { data } = await supabase.auth.getSession();
+  const accessToken = data.session?.access_token;
+  const { url, key } = config();
+  if (!accessToken || !url || !key) return [];
 
-  if (error) throw error;
-  return (data ?? []) as AdminAuditEntry[];
+  const response = await fetch(
+    `${url}/rest/v1/admin_audit_log?select=id,actor_id,action,resource,resource_id,created_at&order=created_at.desc&limit=${Math.max(1, Math.min(limit, 200))}`,
+    {
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${accessToken}`,
+      },
+    },
+  );
+
+  if (!response.ok) throw new Error("Unable to load the admin audit log");
+  return (await response.json()) as AdminAuditEntry[];
 }
