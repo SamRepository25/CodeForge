@@ -127,12 +127,6 @@ function PrivacyPolicyPage() {
                 not use tracking cookies.
               </li>
               <li>
-                <strong className="text-foreground">Resend</strong> — used to email the site owner a
-                notification when a contact form message is received. The content of your message is
-                included in that notification email so it can be read and replied to; it is not
-                shared with anyone beyond the site owner.
-              </li>
-              <li>
                 <strong className="text-foreground">Google Fonts</strong> — web font delivery for
                 site typography.
               </li>
