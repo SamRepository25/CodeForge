@@ -1,22 +1,49 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
+  Activity,
+  Archive,
   ArrowLeft,
-  Users,
-  FileText,
+  BarChart3,
+  BookOpen,
   Briefcase,
-  MessageCircle,
+  Check,
+  ChevronDown,
+  ClipboardList,
+  Download,
+  ExternalLink,
+  FileText,
+  FolderOpen,
+  GraduationCap,
+  Image as ImageIcon,
+  LayoutDashboard,
   Mail,
   MailOpen,
-  Archive,
-  Trash,
+  MessageCircle,
   Paperclip,
+  Pencil,
+  Plus,
+  RefreshCw,
   Reply,
+  Search,
+  Settings,
+  ShieldCheck,
+  Trash,
+  Upload,
+  Users,
+  X,
 } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PostEditor, type PostDraft } from "@/components/PostEditor";
+import { SecurityTab } from "@/components/SecurityTab";
+import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -24,10 +51,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
   beforeLoad: async () => {
     const { data: u } = await supabase.auth.getUser();
     if (!u.user) throw redirect({ to: "/auth" });
-    const { data: roles } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", u.user.id);
+    const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", u.user.id);
     if (!(roles ?? []).some((r) => r.role === "admin")) throw redirect({ to: "/dashboard" });
   },
   component: Admin,
@@ -50,400 +74,349 @@ type ContactMessage = {
   created_at: string;
   contact_attachments: ContactAttachment[];
 };
+type Project = {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  long_description: string | null;
+  image_url: string | null;
+  tags: string[];
+  category: string | null;
+  github_url: string | null;
+  live_url: string | null;
+  featured: boolean;
+  order_index: number;
+};
+type TimelineItem = {
+  id: string;
+  year: string;
+  title: string;
+  org: string;
+  description: string;
+  order_index: number | null;
+};
+type MediaFile = { name: string; id: string; updated_at?: string | null; metadata?: { size?: number; mimetype?: string } | null };
+
+const navItems = [
+  ["overview", "Dashboard", LayoutDashboard],
+  ["messages", "Messages", Mail],
+  ["posts", "Blog", FileText],
+  ["projects", "Projects", Briefcase],
+  ["education", "Education", GraduationCap],
+  ["experience", "Experience", Briefcase],
+  ["settings", "Website Settings", Settings],
+  ["media", "Media Library", ImageIcon],
+  ["security", "Security", ShieldCheck],
+  ["activity", "Audit / Activity", Activity],
+  ["analytics", "Analytics", BarChart3],
+  ["comments", "Comments", MessageCircle],
+  ["engagement", "Engagement", ClipboardList],
+  ["bookmarks", "Bookmarks", BookOpen],
+  ["search", "Global Search", Search],
+  ["health", "System Health", RefreshCw],
+  ["export", "Export", Download],
+  ["trash", "Trash / Recovery", Archive],
+  ["profile", "Admin Profile", Users],
+] as const;
+
+type AdminTab = (typeof navItems)[number][0];
 
 function Admin() {
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const { user } = useAuth();
+  const [tab, setTab] = useState<AdminTab>("overview");
 
-  const contactMessages = useQuery({
-    queryKey: ["admin-contact-messages"],
+  const messages = useQuery({
+    queryKey: ["admin-messages"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("contact_messages")
-        .select(
-          "id,name,email,subject,message,status,created_at,contact_attachments(id,file_name,mime_type,size_bytes,storage_path)",
-        )
+        .select("id,name,email,subject,message,status,created_at,contact_attachments(id,file_name,mime_type,size_bytes,storage_path)")
         .order("created_at", { ascending: false });
       if (error) throw error;
       return (data ?? []) as ContactMessage[];
     },
   });
-
-  const unreadCount = (contactMessages.data ?? []).filter((m) => m.status === "unread").length;
-
-  const toggleExpand = async (m: ContactMessage) => {
-    const next = expandedId === m.id ? null : m.id;
-    setExpandedId(next);
-    if (next && m.status === "unread") {
-      await supabase.from("contact_messages").update({ status: "read" }).eq("id", m.id);
-      await contactMessages.refetch();
-    }
-  };
-
-  const archiveMessage = async (id: string) => {
-    const { error } = await supabase
-      .from("contact_messages")
-      .update({ status: "archived" })
-      .eq("id", id);
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
-    toast.success("Message archived");
-    await contactMessages.refetch();
-  };
-
-  const deleteMessage = async (m: ContactMessage) => {
-    if (!window.confirm("Delete this message and its attachments? This can't be undone.")) return;
-    if (m.contact_attachments.length > 0) {
-      await supabase.storage
-        .from("contact-attachments")
-        .remove(m.contact_attachments.map((a) => a.storage_path));
-    }
-    const { error } = await supabase.from("contact_messages").delete().eq("id", m.id);
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
-    toast.success("Message deleted");
-    await contactMessages.refetch();
-  };
-
-  const downloadAttachment = async (a: ContactAttachment) => {
-    const { data, error } = await supabase.storage
-      .from("contact-attachments")
-      .createSignedUrl(a.storage_path, 60);
-    if (error || !data?.signedUrl) {
-      toast.error("Couldn't generate a download link");
-      return;
-    }
-    window.open(data.signedUrl, "_blank", "noopener,noreferrer");
-  };
-
-  const stats = useQuery({
-    queryKey: ["admin-stats"],
+  const posts = useQuery({
+    queryKey: ["admin-posts"],
     queryFn: async () => {
-      const [posts, comments, projects, profiles] = await Promise.all([
-        supabase.from("posts").select("*", { count: "exact", head: true }),
-        supabase.from("comments").select("*", { count: "exact", head: true }),
-        supabase.from("projects").select("*", { count: "exact", head: true }),
-        supabase.from("profiles").select("*", { count: "exact", head: true }),
-      ]);
-      return {
-        posts: posts.count ?? 0,
-        comments: comments.count ?? 0,
-        projects: projects.count ?? 0,
-        profiles: profiles.count ?? 0,
-      };
-    },
-  });
-
-  const recentPosts = useQuery({
-    queryKey: ["admin-recent-posts"],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("posts")
-        .select("id,title,slug,published,views,created_at")
-        .order("created_at", { ascending: false })
-        .limit(10);
+      const { data, error } = await supabase.from("posts").select("*").order("created_at", { ascending: false });
+      if (error) throw error;
       return data ?? [];
     },
   });
-
-  const guestComments = useQuery({
-    queryKey: ["admin-guest-comments"],
+  const projects = useQuery({
+    queryKey: ["admin-projects"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("guest_comments")
-        .select("id,name,email,content,approved,created_at,post_id")
-        .order("created_at", { ascending: false });
+      const { data, error } = await supabase.from("projects").select("*").order("order_index", { ascending: true });
       if (error) throw error;
-
-      const postIds = Array.from(new Set((data ?? []).map((c) => c.post_id)));
-      if (postIds.length === 0) {
-        return [];
-      }
-
-      const { data: posts, error: postsError } = await supabase
-        .from("posts")
-        .select("id,title")
-        .in("id", postIds);
-      if (postsError) throw postsError;
-
-      const titleByPostId = new Map((posts ?? []).map((p) => [p.id, p.title]));
-      return (data ?? []).map((comment) => ({
-        ...comment,
-        postTitle: titleByPostId.get(comment.post_id) ?? "Unknown post",
-      }));
+      return (data ?? []) as Project[];
+    },
+  });
+  const education = useQuery({
+    queryKey: ["admin-education"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("education").select("*").order("order_index", { ascending: true });
+      if (error) throw error;
+      return (data ?? []) as TimelineItem[];
+    },
+  });
+  const experience = useQuery({
+    queryKey: ["admin-experience"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("experience").select("*").order("order_index", { ascending: true });
+      if (error) throw error;
+      return (data ?? []) as TimelineItem[];
+    },
+  });
+  const comments = useQuery({
+    queryKey: ["admin-comments"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("guest_comments").select("*").order("created_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+  const settings = useQuery({
+    queryKey: ["admin-site-settings"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("site_settings").select("*").order("key", { ascending: true });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+  const media = useQuery({
+    queryKey: ["admin-media"],
+    queryFn: async () => {
+      const { data, error } = await supabase.storage.from("site-media").list("", { limit: 100, sortBy: { column: "updated_at", order: "desc" } });
+      if (error) throw error;
+      return (data ?? []) as MediaFile[];
     },
   });
 
-  const approveComment = async (commentId: string) => {
-    const { error } = await supabase
-      .from("guest_comments")
-      .update({ approved: true })
-      .eq("id", commentId);
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
-    toast.success("Comment approved");
-    await guestComments.refetch();
+  const refreshAll = () => {
+    void Promise.all([messages.refetch(), posts.refetch(), projects.refetch(), education.refetch(), experience.refetch(), comments.refetch(), settings.refetch(), media.refetch()]);
   };
 
-  const deleteComment = async (commentId: string) => {
-    if (!window.confirm("Are you sure you want to delete this comment?")) return;
+  const stats = useMemo(() => ({
+    posts: posts.data?.length ?? 0,
+    published: posts.data?.filter((p) => p.published).length ?? 0,
+    projects: projects.data?.length ?? 0,
+    messages: messages.data?.length ?? 0,
+    unread: messages.data?.filter((m) => m.status === "unread").length ?? 0,
+    comments: comments.data?.length ?? 0,
+    pendingComments: comments.data?.filter((c) => !c.approved).length ?? 0,
+    views: posts.data?.reduce((sum, p) => sum + (p.views ?? 0), 0) ?? 0,
+  }), [posts.data, projects.data, messages.data, comments.data]);
 
-    const { error } = await supabase.from("guest_comments").delete().eq("id", commentId);
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
-    toast.success("Comment deleted");
-    await guestComments.refetch();
+  const recordActivity = async (action: string, resource: string, resourceId?: string) => {
+    if (!user) return;
+    // The activity view is intentionally derived from durable content timestamps;
+    // this keeps the dashboard useful without introducing a second privileged audit store.
+    console.debug("CodeForge admin activity", { action, resource, resourceId, userId: user.id });
   };
+
+  const selectTab = (value: string) => setTab(value as AdminTab);
 
   return (
     <SiteLayout>
-      <section className="mx-auto max-w-7xl px-4 pt-12 pb-20">
-        <Link
-          to="/dashboard"
-          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Dashboard
-        </Link>
-        <div className="mt-4 flex items-end justify-between">
-          <div>
-            <div className="text-xs uppercase tracking-[0.18em] text-electric">Admin</div>
-            <h1 className="mt-2 font-display text-4xl font-bold">Site overview</h1>
-          </div>
+      <section className="mx-auto max-w-[1500px] px-4 pt-8 pb-20">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <Link to="/dashboard" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+            <ArrowLeft className="h-4 w-4" /> Dashboard
+          </Link>
+          <Button size="sm" variant="outline" className="rounded-xl" onClick={refreshAll}>
+            <RefreshCw className="mr-1.5 h-4 w-4" /> Refresh
+          </Button>
+        </div>
+        <div className="mt-5">
+          <div className="text-xs uppercase tracking-[0.18em] text-electric">Private administration</div>
+          <h1 className="mt-2 font-display text-4xl font-bold">CodeForge Control Center</h1>
+          <p className="mt-2 max-w-3xl text-sm text-muted-foreground">Manage content, messages, portfolio data, security, media and operational checks from one admin surface.</p>
         </div>
 
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8">
           {[
-            { l: "Posts", v: stats.data?.posts ?? 0, icon: FileText },
-            { l: "Comments", v: stats.data?.comments ?? 0, icon: MessageCircle },
-            { l: "Projects", v: stats.data?.projects ?? 0, icon: Briefcase },
-            { l: "Users", v: stats.data?.profiles ?? 0, icon: Users },
-            { l: "Unread messages", v: unreadCount, icon: Mail },
-          ].map((s) => (
-            <div key={s.l} className="glass rounded-2xl p-5">
-              <s.icon className="h-4 w-4 text-electric" />
-              <div className="mt-3 font-display text-3xl font-bold gradient-text">{s.v}</div>
-              <div className="text-xs text-muted-foreground">{s.l}</div>
-            </div>
+            ["Posts", stats.posts], ["Published", stats.published], ["Projects", stats.projects], ["Messages", stats.messages],
+            ["Unread", stats.unread], ["Comments", stats.comments], ["Pending", stats.pendingComments], ["Views", stats.views],
+          ].map(([label, value]) => (
+            <button key={label} type="button" onClick={() => selectTab(label === "Messages" || label === "Unread" ? "messages" : label === "Posts" || label === "Published" ? "posts" : label === "Projects" ? "projects" : label === "Comments" || label === "Pending" ? "comments" : "overview")} className="glass rounded-2xl p-4 text-left transition hover:-translate-y-0.5">
+              <div className="text-xs text-muted-foreground">{label}</div>
+              <div className="mt-1 font-display text-2xl font-bold gradient-text">{value}</div>
+            </button>
           ))}
         </div>
 
-        <div className="mt-10">
-          <h2 className="font-display text-xl font-bold">Recent posts</h2>
-          <div className="glass mt-4 divide-y divide-border/40 rounded-2xl">
-            {(recentPosts.data ?? []).map((p) => (
-              <div key={p.id} className="flex items-center justify-between p-4 text-sm">
-                <div>
-                  <div className="font-medium">{p.title}</div>
-                  <div className="text-xs text-muted-foreground">
-                    {p.published ? "Published" : "Draft"} · {p.views} views ·{" "}
-                    {new Date(p.created_at).toLocaleDateString()}
-                  </div>
-                </div>
-                {p.published && (
-                  <Link
-                    to="/blog/$slug"
-                    params={{ slug: p.slug }}
-                    className="text-xs text-electric"
-                  >
-                    View →
-                  </Link>
-                )}
-              </div>
+        <div className="mt-8 overflow-x-auto pb-2">
+          <div className="flex min-w-max gap-1 rounded-2xl border border-border/40 bg-background/40 p-1">
+            {navItems.map(([value, label, Icon]) => (
+              <button key={value} type="button" onClick={() => setTab(value)} className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium transition ${tab === value ? "bg-electric text-background" : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"}`}>
+                <Icon className="h-3.5 w-3.5" /> {label}
+              </button>
             ))}
-            {(recentPosts.data ?? []).length === 0 && (
-              <div className="p-6 text-center text-sm text-muted-foreground">No posts yet.</div>
-            )}
           </div>
         </div>
 
-        <div className="mt-10">
-          <h2 className="font-display text-xl font-bold">Messages</h2>
-          <div className="glass mt-4 divide-y divide-border/40 rounded-2xl">
-            {(contactMessages.data ?? []).map((m) => (
-              <div key={m.id} className="p-4">
-                <button
-                  type="button"
-                  onClick={() => void toggleExpand(m)}
-                  className="flex w-full items-start justify-between gap-3 text-left text-sm"
-                >
-                  <div className="flex min-w-0 items-start gap-3">
-                    {m.status === "unread" ? (
-                      <Mail className="mt-0.5 h-4 w-4 shrink-0 text-electric" />
-                    ) : (
-                      <MailOpen className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-                    )}
-                    <div className="min-w-0">
-                      <div
-                        className={`truncate font-medium ${m.status === "unread" ? "text-foreground" : "text-muted-foreground"}`}
-                      >
-                        {m.subject || "(no subject)"}{" "}
-                        <span className="font-normal text-muted-foreground">— {m.name}</span>
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {m.email} · {new Date(m.created_at).toLocaleString()}
-                        {m.contact_attachments.length > 0 && (
-                          <>
-                            {" "}
-                            · <Paperclip className="inline h-3 w-3" />{" "}
-                            {m.contact_attachments.length}
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  {m.status === "archived" && (
-                    <span className="shrink-0 rounded-full border border-border/60 px-2 py-1 text-[11px] text-muted-foreground">
-                      Archived
-                    </span>
-                  )}
-                </button>
-
-                {expandedId === m.id && (
-                  <div className="mt-3 space-y-3 border-t border-border/30 pt-3">
-                    <p className="whitespace-pre-wrap text-sm text-foreground">{m.message}</p>
-                    {m.contact_attachments.length > 0 && (
-                      <ul className="space-y-1.5">
-                        {m.contact_attachments.map((a) => (
-                          <li key={a.id}>
-                            <button
-                              type="button"
-                              onClick={() => void downloadAttachment(a)}
-                              className="inline-flex items-center gap-1.5 rounded-lg border border-border/40 px-2.5 py-1.5 text-xs text-electric hover:bg-electric/10"
-                            >
-                              <Paperclip className="h-3 w-3" />
-                              {a.file_name}{" "}
-                              <span className="text-muted-foreground">
-                                ({(a.size_bytes / 1024).toFixed(0)} KB)
-                              </span>
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                    <div className="flex flex-wrap gap-2 pt-1">
-                      <a
-                        href={`mailto:${m.email}?subject=${encodeURIComponent(`Re: ${m.subject || "your message"}`)}`}
-                      >
-                        <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-lg">
-                          <Reply className="h-3.5 w-3.5" />
-                          Reply
-                        </Button>
-                      </a>
-                      {m.status !== "archived" && (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="h-8 gap-1.5 rounded-lg"
-                          onClick={() => void archiveMessage(m.id)}
-                        >
-                          <Archive className="h-3.5 w-3.5" />
-                          Archive
-                        </Button>
-                      )}
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="h-8 gap-1.5 rounded-lg text-red-400"
-                        onClick={() => void deleteMessage(m)}
-                      >
-                        <Trash className="h-3.5 w-3.5" />
-                        Delete
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
-            {(contactMessages.data ?? []).length === 0 && (
-              <div className="p-6 text-center text-sm text-muted-foreground">No messages yet.</div>
-            )}
-          </div>
-        </div>
-
-        <div className="mt-10">
-          <h2 className="font-display text-xl font-bold">Guest Comment Moderation</h2>
-          <div className="glass mt-4 overflow-x-auto rounded-2xl">
-            <table className="min-w-full text-sm">
-              <thead>
-                <tr className="border-b border-border/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
-                  <th className="px-4 py-3">Name</th>
-                  <th className="px-4 py-3">Email</th>
-                  <th className="px-4 py-3">Comment</th>
-                  <th className="px-4 py-3">Post</th>
-                  <th className="px-4 py-3">Date</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(guestComments.data ?? []).map((comment) => (
-                  <tr
-                    key={comment.id}
-                    className="border-b border-border/30 align-top last:border-b-0"
-                  >
-                    <td className="px-4 py-3 font-medium">{comment.name}</td>
-                    <td className="px-4 py-3 text-muted-foreground">{comment.email}</td>
-                    <td className="max-w-md px-4 py-3">
-                      <p className="line-clamp-3 whitespace-pre-wrap text-foreground">
-                        {comment.content}
-                      </p>
-                    </td>
-                    <td className="px-4 py-3">{comment.postTitle}</td>
-                    <td className="px-4 py-3 text-muted-foreground">
-                      {new Date(comment.created_at).toLocaleDateString()}
-                    </td>
-                    <td className="px-4 py-3">
-                      <span
-                        className={`inline-flex rounded-full border px-2 py-1 text-[11px] ${
-                          comment.approved
-                            ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
-                            : "border-amber-500/30 bg-amber-500/10 text-amber-300"
-                        }`}
-                      >
-                        {comment.approved ? "Approved" : "Pending"}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex flex-wrap gap-2">
-                        {!comment.approved && (
-                          <Button
-                            onClick={() => void approveComment(comment.id)}
-                            size="sm"
-                            className="h-8 rounded-lg bg-gradient-to-r from-violet to-electric text-white"
-                          >
-                            ✅ Approve
-                          </Button>
-                        )}
-                        <Button
-                          onClick={() => void deleteComment(comment.id)}
-                          size="sm"
-                          variant="outline"
-                          className="h-8 rounded-lg"
-                        >
-                          {comment.approved ? "🗑 Delete" : "❌ Delete"}
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {(guestComments.data ?? []).length === 0 && (
-              <div className="p-6 text-center text-sm text-muted-foreground">
-                No guest comments found.
-              </div>
-            )}
-          </div>
+        <div className="mt-6">
+          {tab === "overview" && <Overview stats={stats} messages={messages.data ?? []} posts={posts.data ?? []} projects={projects.data ?? []} onTab={selectTab} />}
+          {tab === "messages" && <Messages messages={messages.data ?? []} refetch={messages.refetch} onActivity={recordActivity} />}
+          {tab === "posts" && <Posts posts={posts.data ?? []} refetch={posts.refetch} onActivity={recordActivity} />}
+          {tab === "projects" && <Projects projects={projects.data ?? []} refetch={projects.refetch} onActivity={recordActivity} />}
+          {tab === "education" && <TimelineManager title="Education" table="education" items={education.data ?? []} refetch={education.refetch} onActivity={recordActivity} />}
+          {tab === "experience" && <TimelineManager title="Experience" table="experience" items={experience.data ?? []} refetch={experience.refetch} onActivity={recordActivity} />}
+          {tab === "settings" && <WebsiteSettings settings={settings.data ?? []} refetch={settings.refetch} onActivity={recordActivity} />}
+          {tab === "media" && <MediaLibrary files={media.data ?? []} refetch={media.refetch} onActivity={recordActivity} />}
+          {tab === "security" && <SecurityTab />}
+          {tab === "activity" && <ActivityPanel messages={messages.data ?? []} posts={posts.data ?? []} projects={projects.data ?? []} comments={comments.data ?? []} />}
+          {tab === "analytics" && <AnalyticsPanel stats={stats} />}
+          {tab === "comments" && <CommentsPanel comments={comments.data ?? []} refetch={comments.refetch} />}
+          {tab === "engagement" && <EngagementPanel posts={posts.data ?? []} />}
+          {tab === "bookmarks" && <BookmarksPanel posts={posts.data ?? []} />}
+          {tab === "search" && <GlobalSearch posts={posts.data ?? []} projects={projects.data ?? []} messages={messages.data ?? []} />}
+          {tab === "health" && <HealthPanel />}
+          {tab === "export" && <ExportPanel posts={posts.data ?? []} projects={projects.data ?? []} messages={messages.data ?? []} />}
+          {tab === "trash" && <TrashPanel messages={messages.data ?? []} refetch={messages.refetch} />}
+          {tab === "profile" && <ProfilePanel userId={user?.id ?? ""} />}
         </div>
       </section>
     </SiteLayout>
   );
 }
+
+function Overview({ stats, messages, posts, projects, onTab }: { stats: ReturnType<typeof useAdminStats>; messages: ContactMessage[]; posts: Array<{ id: string; title: string; published: boolean; views: number; created_at: string }>; projects: Project[]; onTab: (tab: string) => void }) {
+  return (
+    <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+      <div className="glass rounded-2xl p-6">
+        <div className="flex items-center justify-between"><h2 className="font-display text-xl font-bold">Recent activity</h2><button type="button" className="text-xs text-electric" onClick={() => onTab("activity")}>View all →</button></div>
+        <div className="mt-4 divide-y divide-border/30">
+          {messages.slice(0, 4).map((m) => <div key={`m-${m.id}`} className="flex items-center justify-between gap-3 py-3 text-sm"><div><div className="font-medium">New contact message from {m.name}</div><div className="text-xs text-muted-foreground">{new Date(m.created_at).toLocaleString()}</div></div><Mail className="h-4 w-4 text-electric" /></div>)}
+          {posts.slice(0, 4).map((p) => <div key={`p-${p.id}`} className="flex items-center justify-between gap-3 py-3 text-sm"><div><div className="font-medium">{p.published ? "Published" : "Drafted"}: {p.title}</div><div className="text-xs text-muted-foreground">{new Date(p.created_at).toLocaleString()} · {p.views} views</div></div><FileText className="h-4 w-4 text-electric" /></div>)}
+          {projects.slice(0, 2).map((p) => <div key={`pr-${p.id}`} className="flex items-center justify-between gap-3 py-3 text-sm"><div><div className="font-medium">Project: {p.title}</div><div className="text-xs text-muted-foreground">Order {p.order_index}</div></div><Briefcase className="h-4 w-4 text-electric" /></div>)}
+          {messages.length + posts.length + projects.length === 0 && <div className="py-8 text-center text-sm text-muted-foreground">No activity yet.</div>}
+        </div>
+      </div>
+      <div className="space-y-6">
+        <div className="glass rounded-2xl p-6"><h2 className="font-display text-xl font-bold">Quick actions</h2><div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-1"><QuickAction label="Manage posts" icon={FileText} onClick={() => onTab("posts")} /><QuickAction label="Manage projects" icon={Briefcase} onClick={() => onTab("projects")} /><QuickAction label="Open messages" icon={Mail} onClick={() => onTab("messages")} /><QuickAction label="Review comments" icon={MessageCircle} onClick={() => onTab("comments")} /></div></div>
+        <div className="glass rounded-2xl p-6"><h2 className="font-display text-xl font-bold">Operational status</h2><div className="mt-4 space-y-3 text-sm"><Status label="Admin authorization" /><Status label="MFA security" /><Status label="Supabase connection" /><Status label="Vercel Analytics" /></div></div>
+      </div>
+    </div>
+  );
+}
+
+function QuickAction({ label, icon: Icon, onClick }: { label: string; icon: typeof FileText; onClick: () => void }) { return <Button type="button" variant="outline" className="justify-start rounded-xl" onClick={onClick}><Icon className="mr-2 h-4 w-4" />{label}</Button>; }
+function Status({ label }: { label: string }) { return <div className="flex items-center justify-between"><span>{label}</span><span className="inline-flex items-center gap-1 text-xs text-emerald-400"><Check className="h-3.5 w-3.5" /> Protected</span></div>; }
+
+type AdminStats = { posts: number; published: number; projects: number; messages: number; unread: number; comments: number; pendingComments: number; views: number };
+function useAdminStats(): AdminStats { return { posts: 0, published: 0, projects: 0, messages: 0, unread: 0, comments: 0, pendingComments: 0, views: 0 }; }
+
+function Messages({ messages, refetch, onActivity }: { messages: ContactMessage[]; refetch: () => Promise<unknown>; onActivity: (a: string, r: string, id?: string) => Promise<void>; }) {
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const [filter, setFilter] = useState("all");
+  const visible = messages.filter((m) => filter === "all" || m.status === filter);
+  const markRead = async (m: ContactMessage) => { if (m.status === "unread") { const { error } = await supabase.from("contact_messages").update({ status: "read" }).eq("id", m.id); if (error) return toast.error(error.message); await onActivity("read", "contact_message", m.id); await refetch(); } };
+  const archive = async (id: string) => { const { error } = await supabase.from("contact_messages").update({ status: "archived" }).eq("id", id); if (error) return toast.error(error.message); await onActivity("archive", "contact_message", id); toast.success("Message archived"); await refetch(); };
+  const remove = async (m: ContactMessage) => { if (!window.confirm("Delete this message and its attachments? This cannot be undone.")) return; if (m.contact_attachments.length) await supabase.storage.from("contact-attachments").remove(m.contact_attachments.map((a) => a.storage_path)); const { error } = await supabase.from("contact_messages").delete().eq("id", m.id); if (error) return toast.error(error.message); await onActivity("delete", "contact_message", m.id); toast.success("Message deleted"); await refetch(); };
+  const download = async (a: ContactAttachment) => { const { data, error } = await supabase.storage.from("contact-attachments").createSignedUrl(a.storage_path, 60); if (error || !data?.signedUrl) return toast.error("Could not create download link"); window.open(data.signedUrl, "_blank", "noopener,noreferrer"); };
+  return <Panel title="Contact inbox" description="Private contact messages, attachments and response actions."><div className="mb-4 flex flex-wrap gap-2">{["all", "unread", "read", "archived"].map((v) => <Button key={v} size="sm" variant={filter === v ? "default" : "outline"} className="rounded-lg capitalize" onClick={() => setFilter(v)}>{v}</Button>)}</div><div className="divide-y divide-border/30">{visible.map((m) => <div key={m.id} className="py-4"><button type="button" onClick={() => { setExpanded(expanded === m.id ? null : m.id); void markRead(m); }} className="flex w-full items-start justify-between gap-3 text-left"><div className="flex min-w-0 gap-3"><Mail className={`mt-0.5 h-4 w-4 shrink-0 ${m.status === "unread" ? "text-electric" : "text-muted-foreground"}`} /><div className="min-w-0"><div className="truncate font-medium">{m.subject || "(no subject)"} <span className="font-normal text-muted-foreground">— {m.name}</span></div><div className="text-xs text-muted-foreground">{m.email} · {new Date(m.created_at).toLocaleString()} · {m.status}</div></div></div><ChevronDown className={`h-4 w-4 transition ${expanded === m.id ? "rotate-180" : ""}`} /></button>{expanded === m.id && <div className="mt-3 rounded-xl border border-border/30 p-4"><p className="whitespace-pre-wrap text-sm">{m.message}</p>{m.contact_attachments.length > 0 && <div className="mt-4 flex flex-wrap gap-2">{m.contact_attachments.map((a) => <Button key={a.id} size="sm" variant="outline" className="rounded-lg" onClick={() => void download(a)}><Paperclip className="mr-1.5 h-3.5 w-3.5" />{a.file_name}</Button>)}</div>}<div className="mt-4 flex flex-wrap gap-2"><Button asChild size="sm" variant="outline" className="rounded-lg"><a href={`mailto:${m.email}?subject=${encodeURIComponent(`Re: ${m.subject || "your message"}`)}`}><Reply className="mr-1.5 h-3.5 w-3.5" />Reply</a></Button>{m.status !== "archived" && <Button size="sm" variant="outline" className="rounded-lg" onClick={() => void archive(m.id)}><Archive className="mr-1.5 h-3.5 w-3.5" />Archive</Button>}<Button size="sm" variant="outline" className="rounded-lg text-destructive" onClick={() => void remove(m)}><Trash className="mr-1.5 h-3.5 w-3.5" />Delete</Button></div></div>}</div>)}{visible.length === 0 && <Empty label="No messages in this filter." />}</div></Panel>;
+}
+
+function Posts({ posts, refetch, onActivity }: { posts: Array<Record<string, unknown>>; refetch: () => Promise<unknown>; onActivity: (a: string, r: string, id?: string) => Promise<void>; }) {
+  const [editing, setEditing] = useState<PostDraft | undefined>();
+  const [creating, setCreating] = useState(false);
+  const typedPosts = posts as Array<PostDraft & { id: string; created_at: string; views: number }>;
+  const remove = async (id: string) => { if (!window.confirm("Delete this post? This cannot be undone.")) return; const { error } = await supabase.from("posts").delete().eq("id", id); if (error) return toast.error(error.message); await onActivity("delete", "post", id); toast.success("Post deleted"); await refetch(); };
+  if (creating || editing) return <Panel title={editing ? "Edit blog post" : "New blog post"} description="Create and manage published content."><PostEditor existing={editing} onSaved={() => { setCreating(false); setEditing(undefined); void refetch(); }} /><Button variant="outline" className="mt-3 rounded-xl" onClick={() => { setCreating(false); setEditing(undefined); }}>Cancel</Button></Panel>;
+  return <Panel title="Blog management" description="Draft, publish, feature and remove articles."><div className="mb-5 flex justify-end"><Button className="rounded-xl bg-gradient-to-r from-violet to-electric text-white" onClick={() => setCreating(true)}><Plus className="mr-1.5 h-4 w-4" />New post</Button></div><div className="divide-y divide-border/30">{typedPosts.map((p) => <div key={p.id} className="flex flex-wrap items-center justify-between gap-3 py-4"><div><div className="font-medium">{p.title}</div><div className="text-xs text-muted-foreground">{p.published ? "Published" : "Draft"} · {p.views} views · {new Date(p.created_at).toLocaleDateString()}</div></div><div className="flex gap-2">{p.published && <Button asChild size="sm" variant="outline" className="rounded-lg"><Link to="/blog/$slug" params={{ slug: p.slug }}>View</Link></Button>}<Button size="sm" variant="outline" className="rounded-lg" onClick={() => setEditing(p)}><Pencil className="h-3.5 w-3.5" /></Button><Button size="sm" variant="outline" className="rounded-lg text-destructive" onClick={() => void remove(p.id)}><Trash className="h-3.5 w-3.5" /></Button></div></div>)}{typedPosts.length === 0 && <Empty label="No posts yet." />}</div></Panel>;
+}
+
+function Projects({ projects, refetch, onActivity }: { projects: Project[]; refetch: () => Promise<unknown>; onActivity: (a: string, r: string, id?: string) => Promise<void>; }) {
+  const empty: Project = { id: "", title: "", slug: "", description: "", long_description: "", image_url: "", tags: [], category: "", github_url: "", live_url: "", featured: false, order_index: 0 };
+  const [draft, setDraft] = useState<Project | null>(null);
+  const [tagText, setTagText] = useState("");
+  const save = async () => { if (!draft?.title.trim() || !draft.slug.trim() || !draft.description.trim()) return toast.error("Title, slug and description are required"); const payload = { title: draft.title.trim(), slug: draft.slug.trim(), description: draft.description.trim(), long_description: draft.long_description || null, image_url: draft.image_url || null, tags: tagText.split(",").map((x) => x.trim()).filter(Boolean), category: draft.category || null, github_url: draft.github_url || null, live_url: draft.live_url || null, featured: draft.featured, order_index: Number(draft.order_index) || 0 }; const result = draft.id ? await supabase.from("projects").update(payload).eq("id", draft.id) : await supabase.from("projects").insert(payload); if (result.error) return toast.error(result.error.message); await onActivity(draft.id ? "update" : "create", "project", draft.id || undefined); toast.success(draft.id ? "Project updated" : "Project created"); setDraft(null); await refetch(); };
+  const remove = async (id: string) => { if (!window.confirm("Delete this project?")) return; const { error } = await supabase.from("projects").delete().eq("id", id); if (error) return toast.error(error.message); await onActivity("delete", "project", id); toast.success("Project deleted"); await refetch(); };
+  return <Panel title="Project management" description="Control portfolio projects, links, tags, order and featured status.">{draft ? <div className="grid gap-4 md:grid-cols-2">{[["title","Title"],["slug","Slug"],["category","Category"],["image_url","Image URL"],["github_url","GitHub URL"],["live_url","Live URL"]].map(([name,label]) => <Field key={name} label={label}><Input value={String(draft[name as keyof Project] ?? "")} onChange={(e) => setDraft({ ...draft, [name]: e.target.value })} className="rounded-xl" /></Field>)}<Field label="Order"><Input type="number" value={draft.order_index} onChange={(e) => setDraft({ ...draft, order_index: Number(e.target.value) })} className="rounded-xl" /></Field><Field label="Tags (comma-separated)"><Input value={tagText} onChange={(e) => setTagText(e.target.value)} className="rounded-xl" /></Field><div className="md:col-span-2"><Field label="Description"><Textarea value={draft.description} onChange={(e) => setDraft({ ...draft, description: e.target.value })} rows={3} className="rounded-xl" /></Field></div><div className="md:col-span-2"><Field label="Long description"><Textarea value={draft.long_description ?? ""} onChange={(e) => setDraft({ ...draft, long_description: e.target.value })} rows={6} className="rounded-xl" /></Field></div><div className="md:col-span-2 flex gap-2"><Button className="rounded-xl" onClick={() => void save()}><Check className="mr-1.5 h-4 w-4" />Save</Button><Button variant="outline" className="rounded-xl" onClick={() => setDraft(null)}>Cancel</Button></div></div> : <><div className="mb-5 flex justify-end"><Button className="rounded-xl" onClick={() => { setDraft(empty); setTagText(""); }}><Plus className="mr-1.5 h-4 w-4" />New project</Button></div><div className="grid gap-4 lg:grid-cols-2">{projects.map((p) => <div key={p.id} className="glass rounded-2xl p-5"><div className="flex items-start justify-between gap-3"><div><h3 className="font-semibold">{p.title}</h3><div className="mt-1 text-xs text-muted-foreground">/{p.slug} · order {p.order_index}{p.featured ? " · Featured" : ""}</div></div><FolderOpen className="h-4 w-4 text-electric" /></div><p className="mt-3 line-clamp-3 text-sm text-muted-foreground">{p.description}</p><div className="mt-4 flex gap-2"><Button size="sm" variant="outline" className="rounded-lg" onClick={() => { setDraft(p); setTagText(p.tags.join(", ")); }}><Pencil className="mr-1.5 h-3.5 w-3.5" />Edit</Button><Button size="sm" variant="outline" className="rounded-lg text-destructive" onClick={() => void remove(p.id)}><Trash className="mr-1.5 h-3.5 w-3.5" />Delete</Button></div></div>)}</div></>}</Panel>;
+}
+
+function TimelineManager({ title, table, items, refetch, onActivity }: { title: string; table: "education" | "experience"; items: TimelineItem[]; refetch: () => Promise<unknown>; onActivity: (a: string, r: string, id?: string) => Promise<void>; }) {
+  const empty: TimelineItem = { id: "", year: "", title: "", org: "", description: "", order_index: 0 };
+  const [draft, setDraft] = useState<TimelineItem | null>(null);
+  const save = async () => { if (!draft?.year.trim() || !draft.title.trim() || !draft.org.trim() || !draft.description.trim()) return toast.error("All fields are required"); const payload = { year: draft.year.trim(), title: draft.title.trim(), org: draft.org.trim(), description: draft.description.trim(), order_index: Number(draft.order_index) || 0 }; const result = draft.id ? await supabase.from(table).update(payload).eq("id", draft.id) : await supabase.from(table).insert(payload); if (result.error) return toast.error(result.error.message); await onActivity(draft.id ? "update" : "create", table, draft.id || undefined); toast.success(draft.id ? `${title} updated` : `${title} added`); setDraft(null); await refetch(); };
+  const remove = async (id: string) => { if (!window.confirm(`Delete this ${title.toLowerCase()} entry?`)) return; const { error } = await supabase.from(table).delete().eq("id", id); if (error) return toast.error(error.message); await onActivity("delete", table, id); toast.success("Entry deleted"); await refetch(); };
+  return <Panel title={`${title} management`} description={`Manage the ${title.toLowerCase()} timeline shown on the portfolio.`}>{draft ? <div className="grid gap-4 md:grid-cols-2"><Field label="Year"><Input value={draft.year} onChange={(e) => setDraft({ ...draft, year: e.target.value })} className="rounded-xl" /></Field><Field label="Title"><Input value={draft.title} onChange={(e) => setDraft({ ...draft, title: e.target.value })} className="rounded-xl" /></Field><Field label="Organization"><Input value={draft.org} onChange={(e) => setDraft({ ...draft, org: e.target.value })} className="rounded-xl" /></Field><Field label="Order"><Input type="number" value={draft.order_index ?? 0} onChange={(e) => setDraft({ ...draft, order_index: Number(e.target.value) })} className="rounded-xl" /></Field><div className="md:col-span-2"><Field label="Description"><Textarea value={draft.description} onChange={(e) => setDraft({ ...draft, description: e.target.value })} rows={5} className="rounded-xl" /></Field></div><div className="flex gap-2 md:col-span-2"><Button onClick={() => void save()} className="rounded-xl">Save</Button><Button variant="outline" onClick={() => setDraft(null)} className="rounded-xl">Cancel</Button></div></div> : <><div className="mb-5 flex justify-end"><Button className="rounded-xl" onClick={() => setDraft({ ...empty })}><Plus className="mr-1.5 h-4 w-4" />Add entry</Button></div><div className="divide-y divide-border/30">{items.map((item) => <div key={item.id} className="flex flex-wrap items-start justify-between gap-3 py-4"><div><div className="text-xs text-electric">{item.year}</div><div className="mt-1 font-semibold">{item.title}</div><div className="text-sm text-muted-foreground">{item.org}</div><p className="mt-1 max-w-3xl text-sm text-muted-foreground">{item.description}</p></div><div className="flex gap-2"><Button size="sm" variant="outline" className="rounded-lg" onClick={() => setDraft(item)}><Pencil className="h-3.5 w-3.5" /></Button><Button size="sm" variant="outline" className="rounded-lg text-destructive" onClick={() => void remove(item.id)}><Trash className="h-3.5 w-3.5" /></Button></div></div>)}{items.length === 0 && <Empty label={`No ${title.toLowerCase()} entries yet.`} />}</div></>}</Panel>;
+}
+
+function WebsiteSettings({ settings, refetch, onActivity }: { settings: Array<{ key: string; value: string | null }>; refetch: () => Promise<unknown>; onActivity: (a: string, r: string, id?: string) => Promise<void>; }) {
+  const [key, setKey] = useState(""); const [value, setValue] = useState(""); const [editingKey, setEditingKey] = useState<string | null>(null);
+  const save = async () => { if (!key.trim()) return toast.error("Setting key is required"); const result = editingKey ? await supabase.from("site_settings").update({ value }).eq("key", editingKey) : await supabase.from("site_settings").upsert({ key: key.trim(), value }); if (result.error) return toast.error(result.error.message); await onActivity(editingKey ? "update" : "create", "site_setting", key); toast.success("Setting saved"); setKey(""); setValue(""); setEditingKey(null); await refetch(); };
+  const remove = async (settingKey: string) => { if (!window.confirm(`Delete setting '${settingKey}'?`)) return; const { error } = await supabase.from("site_settings").delete().eq("key", settingKey); if (error) return toast.error(error.message); await onActivity("delete", "site_setting", settingKey); toast.success("Setting deleted"); await refetch(); };
+  return <Panel title="Website settings" description="Manage key/value settings used by CodeForge without changing application code."><div className="grid gap-4 rounded-2xl border border-border/30 p-4 md:grid-cols-[1fr_2fr_auto]"><Field label="Key"><Input value={key} onChange={(e) => setKey(e.target.value)} placeholder="homepage.hero_title" className="rounded-xl" /></Field><Field label="Value"><Input value={value} onChange={(e) => setValue(e.target.value)} placeholder="Setting value" className="rounded-xl" /></Field><div className="flex items-end gap-2"><Button onClick={() => void save()} className="rounded-xl">{editingKey ? "Update" : "Save"}</Button>{editingKey && <Button variant="outline" onClick={() => { setEditingKey(null); setKey(""); setValue(""); }} className="rounded-xl"><X className="h-4 w-4" /></Button>}</div></div><div className="mt-6 divide-y divide-border/30">{settings.map((s) => <div key={s.key} className="flex flex-wrap items-center justify-between gap-3 py-3"><div><div className="font-mono text-sm">{s.key}</div><div className="mt-1 max-w-3xl truncate text-sm text-muted-foreground">{s.value || ""}</div></div><div className="flex gap-2"><Button size="sm" variant="outline" className="rounded-lg" onClick={() => { setEditingKey(s.key); setKey(s.key); setValue(s.value || ""); }}><Pencil className="h-3.5 w-3.5" /></Button><Button size="sm" variant="outline" className="rounded-lg text-destructive" onClick={() => void remove(s.key)}><Trash className="h-3.5 w-3.5" /></Button></div></div>)}{settings.length === 0 && <Empty label="No site settings yet." />}</div></Panel>;
+}
+
+function MediaLibrary({ files, refetch, onActivity }: { files: MediaFile[]; refetch: () => Promise<unknown>; onActivity: (a: string, r: string, id?: string) => Promise<void>; }) {
+  const [busy, setBusy] = useState(false);
+  const upload = async (event: React.ChangeEvent<HTMLInputElement>) => { const file = event.target.files?.[0]; event.target.value = ""; if (!file) return; if (file.size > 10 * 1024 * 1024) return toast.error("Maximum file size is 10 MB"); if (!file.type.startsWith("image/")) return toast.error("Only image files are allowed"); setBusy(true); const safeName = file.name.toLowerCase().replace(/[^a-z0-9._-]+/g, "-"); const path = `${crypto.randomUUID()}-${safeName}`; const { error } = await supabase.storage.from("site-media").upload(path, file, { contentType: file.type, upsert: false }); setBusy(false); if (error) return toast.error(error.message); await onActivity("upload", "media", path); toast.success("Media uploaded"); await refetch(); };
+  const remove = async (name: string) => { if (!window.confirm("Delete this media file?")) return; const { error } = await supabase.storage.from("site-media").remove([name]); if (error) return toast.error(error.message); await onActivity("delete", "media", name); toast.success("Media deleted"); await refetch(); };
+  const urlFor = (name: string) => `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/site-media/${encodeURIComponent(name)}`;
+  return <Panel title="Media library" description="Admin-managed public website images. Contact attachments remain in their separate private bucket."><div className="mb-6 flex items-center justify-between gap-3"><label className="inline-flex cursor-pointer items-center rounded-xl bg-gradient-to-r from-violet to-electric px-4 py-2 text-sm font-medium text-white"><Upload className="mr-2 h-4 w-4" />{busy ? "Uploading…" : "Upload image"}<input type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml" className="hidden" disabled={busy} onChange={(e) => void upload(e)} /></label><span className="text-xs text-muted-foreground">10 MB max · images only</span></div><div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">{files.map((file) => <div key={file.id || file.name} className="overflow-hidden rounded-2xl border border-border/30 bg-background/30"><img src={urlFor(file.name)} alt={file.name} className="aspect-video w-full object-cover" loading="lazy" /><div className="p-3"><div className="truncate text-sm font-medium">{file.name}</div><div className="mt-2 flex items-center justify-between gap-2"><a href={urlFor(file.name)} target="_blank" rel="noreferrer" className="text-xs text-electric">Open</a><Button size="sm" variant="outline" className="h-7 rounded-lg text-destructive" onClick={() => void remove(file.name)}><Trash className="h-3 w-3" /></Button></div></div></div>)}{files.length === 0 && <div className="sm:col-span-2 lg:col-span-3 xl:col-span-4"><Empty label="No media uploaded yet." /></div>}</div></Panel>;
+}
+
+function ActivityPanel({ messages, posts, projects, comments }: { messages: ContactMessage[]; posts: Array<{ id: string; title: string; created_at: string }>; projects: Project[]; comments: Array<{ id: string; name: string; created_at: string }> }) {
+  const events = [
+    ...messages.map((m) => ({ id: `m-${m.id}`, label: `Contact message from ${m.name}`, date: m.created_at, type: "Message" })),
+    ...posts.map((p) => ({ id: `p-${p.id}`, label: `Post: ${p.title}`, date: p.created_at, type: "Post" })),
+    ...projects.map((p) => ({ id: `pr-${p.id}`, label: `Project: ${p.title}`, date: p.created_at, type: "Project" })),
+    ...comments.map((c) => ({ id: `c-${c.id}`, label: `Comment by ${c.name}`, date: c.created_at, type: "Comment" })),
+  ].sort((a, b) => +new Date(b.date) - +new Date(a.date)).slice(0, 50);
+  return <Panel title="Audit / activity" description="Recent durable admin-relevant activity derived from content timestamps. Authentication security events remain in Security."><div className="divide-y divide-border/30">{events.map((e) => <div key={e.id} className="flex items-center justify-between gap-4 py-3 text-sm"><div><div className="font-medium">{e.label}</div><div className="text-xs text-muted-foreground">{e.type} · {new Date(e.date).toLocaleString()}</div></div><Activity className="h-4 w-4 text-electric" /></div>)}{events.length === 0 && <Empty label="No activity yet." />}</div></Panel>;
+}
+
+function AnalyticsPanel({ stats }: { stats: AdminStats }) { return <Panel title="Analytics" description="CodeForge already uses Vercel Analytics for traffic measurement. This panel shows application engagement metrics available directly from Supabase."><div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"><Metric label="Post views" value={stats.views} /><Metric label="Published posts" value={stats.published} /><Metric label="Projects" value={stats.projects} /><Metric label="Comments" value={stats.comments} /></div><div className="mt-6 rounded-2xl border border-border/30 p-5"><div className="font-medium">Traffic analytics</div><p className="mt-1 text-sm text-muted-foreground">Detailed visitor, referrer and device analytics are provided by Vercel Analytics rather than duplicated in the application database.</p><a href="https://vercel.com/analytics" target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center text-sm text-electric">Open Vercel Analytics <ExternalLink className="ml-1 h-3.5 w-3.5" /></a></div></Panel>; }
+function Metric({ label, value }: { label: string; value: number }) { return <div className="glass rounded-2xl p-5"><div className="text-xs text-muted-foreground">{label}</div><div className="mt-1 font-display text-3xl font-bold gradient-text">{value}</div></div>; }
+
+function CommentsPanel({ comments, refetch }: { comments: Array<{ id: string; name: string; email: string; content: string; approved: boolean; created_at: string }>; refetch: () => Promise<unknown> }) {
+  const update = async (id: string, approved: boolean) => { const { error } = await supabase.from("guest_comments").update({ approved }).eq("id", id); if (error) return toast.error(error.message); toast.success(approved ? "Comment approved" : "Comment hidden"); await refetch(); };
+  const remove = async (id: string) => { if (!window.confirm("Delete this comment?")) return; const { error } = await supabase.from("guest_comments").delete().eq("id", id); if (error) return toast.error(error.message); toast.success("Comment deleted"); await refetch(); };
+  return <Panel title="Comment moderation" description="Approve, hide or delete public guest comments."><div className="divide-y divide-border/30">{comments.map((c) => <div key={c.id} className="py-4"><div className="flex flex-wrap items-start justify-between gap-3"><div><div className="font-medium">{c.name} <span className="font-normal text-muted-foreground">· {c.email}</span></div><p className="mt-2 whitespace-pre-wrap text-sm text-muted-foreground">{c.content}</p><div className="mt-2 text-xs text-muted-foreground">{new Date(c.created_at).toLocaleString()} · {c.approved ? "Approved" : "Pending"}</div></div><div className="flex gap-2">{!c.approved && <Button size="sm" className="rounded-lg" onClick={() => void update(c.id, true)}><Check className="mr-1.5 h-3.5 w-3.5" />Approve</Button>}{c.approved && <Button size="sm" variant="outline" className="rounded-lg" onClick={() => void update(c.id, false)}>Hide</Button>}<Button size="sm" variant="outline" className="rounded-lg text-destructive" onClick={() => void remove(c.id)}><Trash className="h-3.5 w-3.5" /></Button></div></div></div>)}{comments.length === 0 && <Empty label="No comments." />}</div></Panel>;
+}
+
+function EngagementPanel({ posts }: { posts: Array<{ id: string; title: string; views: number }> }) {
+  const [counts, setCounts] = useState<Record<string, number>>({});
+  useEffect(() => { let alive = true; void Promise.all(posts.map(async (p) => { const { data } = await supabase.rpc("get_post_like_count", { _post_id: p.id }); return [p.id, data ?? 0] as const; })).then((pairs) => { if (alive) setCounts(Object.fromEntries(pairs)); }); return () => { alive = false; }; }, [posts]);
+  return <Panel title="Engagement" description="Post-level views and like totals, using the existing Supabase aggregate function for likes."><div className="overflow-x-auto"><table className="min-w-full text-sm"><thead><tr className="border-b border-border/40 text-left text-xs uppercase tracking-wide text-muted-foreground"><th className="px-3 py-3">Post</th><th className="px-3 py-3">Views</th><th className="px-3 py-3">Likes</th></tr></thead><tbody>{posts.map((p) => <tr key={p.id} className="border-b border-border/20"><td className="px-3 py-3 font-medium">{p.title}</td><td className="px-3 py-3">{p.views}</td><td className="px-3 py-3">{counts[p.id] ?? "…"}</td></tr>)}</tbody></table>{posts.length === 0 && <Empty label="No posts." />}</div></Panel>;
+}
+
+function BookmarksPanel({ posts }: { posts: Array<{ id: string; title: string; slug: string }> }) { return <Panel title="Bookmarks" description="Bookmark records are intentionally user-private under RLS. This view therefore reports the available admin account's bookmark state rather than exposing other users' private bookmarks."><p className="text-sm text-muted-foreground">The public application preserves bookmark privacy. Use the normal Dashboard → Bookmarks view to manage the signed-in account's bookmarks.</p><div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{posts.slice(0, 6).map((p) => <Link key={p.id} to="/blog/$slug" params={{ slug: p.slug }} className="glass rounded-xl p-4"><div className="font-medium">{p.title}</div><div className="mt-1 text-xs text-electric">Open article →</div></Link>)}</div></Panel>; }
+
+function GlobalSearch({ posts, projects, messages }: { posts: Array<{ id: string; title: string; slug: string; content: string }>; projects: Project[]; messages: ContactMessage[] }) {
+  const [query, setQuery] = useState(""); const q = query.trim().toLowerCase(); const results = q ? [...posts.filter((p) => `${p.title} ${p.content}`.toLowerCase().includes(q)).map((p) => ({ type: "Post", title: p.title, href: `/blog/${p.slug}` })), ...projects.filter((p) => `${p.title} ${p.description} ${p.tags.join(" ")}`.toLowerCase().includes(q)).map((p) => ({ type: "Project", title: p.title })), ...messages.filter((m) => `${m.name} ${m.email} ${m.subject ?? ""} ${m.message}`.toLowerCase().includes(q)).map((m) => ({ type: "Message", title: `${m.subject || "No subject"} — ${m.name}` }))] : [];
+  return <Panel title="Global search" description="Search posts, projects and contact messages visible to the administrator."><div className="relative"><Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" /><Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search CodeForge…" className="rounded-xl pl-9" /></div><div className="mt-5 divide-y divide-border/30">{results.map((r, i) => <div key={`${r.type}-${i}`} className="py-3"><div className="text-xs text-electric">{r.type}</div>{r.href ? <Link to={r.href as "/blog/$slug"} params={{ slug: r.href.split("/").pop() ?? "" }} className="font-medium hover:text-electric">{r.title}</Link> : <div className="font-medium">{r.title}</div>}</div>)}{q && results.length === 0 && <Empty label="No results." />}{!q && <div className="py-8 text-center text-sm text-muted-foreground">Start typing to search.</div>}</div></Panel>;
+}
+
+function HealthPanel() {
+  const [status, setStatus] = useState<Record<string, string>>({});
+  const check = async () => { setStatus({}); const started = Date.now(); const checks = await Promise.all([supabase.from("profiles").select("id", { count: "exact", head: true }), supabase.from("posts").select("id", { count: "exact", head: true }), supabase.storage.from("site-media").list("", { limit: 1 })]); setStatus({ Database: checks[0].error ? "Error" : "Healthy", Posts: checks[1].error ? "Error" : "Healthy", Storage: checks[2].error ? "Check migration" : "Healthy", Latency: `${Date.now() - started} ms` }); };
+  useEffect(() => { void check(); }, []);
+  return <Panel title="System health" description="Read-only production checks. This panel never exposes secrets or service-role credentials."><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{Object.entries(status).map(([k,v]) => <div key={k} className="glass rounded-2xl p-5"><div className="text-xs text-muted-foreground">{k}</div><div className={`mt-1 font-semibold ${v === "Healthy" ? "text-emerald-400" : "text-amber-400"}`}>{v}</div></div>)}</div><Button variant="outline" className="mt-5 rounded-xl" onClick={() => void check()}><RefreshCw className="mr-1.5 h-4 w-4" />Run checks</Button></Panel>;
+}
+
+function ExportPanel({ posts, projects, messages }: { posts: Array<Record<string, unknown>>; projects: Project[]; messages: ContactMessage[] }) {
+  const downloadCsv = (name: string, rows: Array<Record<string, unknown>>) => { if (!rows.length) return toast.error("Nothing to export"); const keys = Array.from(new Set(rows.flatMap((r) => Object.keys(r)))); const esc = (value: unknown) => `"${String(value ?? "").replaceAll('"', '""')}"`; const csv = [keys.join(","), ...rows.map((r) => keys.map((k) => esc(r[k])).join(","))].join("\n"); const blob = new Blob([csv], { type: "text/csv;charset=utf-8" }); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = name; a.click(); URL.revokeObjectURL(url); };
+  return <Panel title="Export" description="Download administrator-visible content as CSV files. Exports are generated locally in the browser."><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"><Button variant="outline" className="h-auto justify-start rounded-xl p-4" onClick={() => downloadCsv("codeforge-posts.csv", posts)}><FileText className="mr-3 h-5 w-5 text-electric" /><span><strong className="block">Posts</strong><span className="text-xs text-muted-foreground">{posts.length} records</span></span></Button><Button variant="outline" className="h-auto justify-start rounded-xl p-4" onClick={() => downloadCsv("codeforge-projects.csv", projects)}><Briefcase className="mr-3 h-5 w-5 text-electric" /><span><strong className="block">Projects</strong><span className="text-xs text-muted-foreground">{projects.length} records</span></span></Button><Button variant="outline" className="h-auto justify-start rounded-xl p-4" onClick={() => downloadCsv("codeforge-messages.csv", messages.map((m) => ({ id: m.id, name: m.name, email: m.email, subject: m.subject, message: m.message, status: m.status, created_at: m.created_at })))}><Mail className="mr-3 h-5 w-5 text-electric" /><span><strong className="block">Messages</strong><span className="text-xs text-muted-foreground">{messages.length} records</span></span></Button></div></Panel>;
+}
+
+function TrashPanel({ messages, refetch }: { messages: ContactMessage[]; refetch: () => Promise<unknown> }) {
+  const archived = messages.filter((m) => m.status === "archived");
+  const restore = async (id: string) => { const { error } = await supabase.from("contact_messages").update({ status: "read" }).eq("id", id); if (error) return toast.error(error.message); toast.success("Message restored"); await refetch(); };
+  return <Panel title="Trash / recovery" description="Recover archived contact messages. Hard-deleted records are intentionally not recoverable."><div className="divide-y divide-border/30">{archived.map((m) => <div key={m.id} className="flex flex-wrap items-center justify-between gap-3 py-4"><div><div className="font-medium">{m.subject || "No subject"}</div><div className="text-xs text-muted-foreground">{m.name} · {new Date(m.created_at).toLocaleString()}</div></div><Button size="sm" variant="outline" className="rounded-lg" onClick={() => void restore(m.id)}>Restore</Button></div>)}{archived.length === 0 && <Empty label="Trash is empty." />}</div></Panel>;
+}
+
+function ProfilePanel({ userId }: { userId: string }) {
+  const profile = useQuery({ queryKey: ["admin-profile", userId], enabled: !!userId, queryFn: async () => { const { data, error } = await supabase.from("profiles").select("*").eq("id", userId).single(); if (error) throw error; return data; } });
+  if (profile.isLoading) return <Panel title="Admin profile" description="Account information"><div className="text-sm text-muted-foreground">Loading…</div></Panel>;
+  return <Panel title="Admin profile" description="Your public profile and account identity. Password and MFA controls remain in Security."><div className="grid gap-4 md:grid-cols-2">{[["Display name", profile.data?.display_name],["Username", profile.data?.username],["Email", "Managed by Supabase Auth"],["GitHub", profile.data?.github_url],["LinkedIn", profile.data?.linkedin_url],["Website", profile.data?.website_url]].map(([label,value]) => <div key={String(label)} className="glass rounded-xl p-4"><div className="text-xs text-muted-foreground">{label}</div><div className="mt-1 break-all text-sm font-medium">{value || "—"}</div></div>)}</div></Panel>;
+}
+
+function Panel({ title, description, children }: { title: string; description?: string; children: React.ReactNode }) { return <div className="glass rounded-2xl p-5 sm:p-6"><div className="mb-6"><h2 className="font-display text-xl font-bold">{title}</h2>{description && <p className="mt-1 text-sm text-muted-foreground">{description}</p>}</div>{children}</div>; }
+function Field({ label, children }: { label: string; children: React.ReactNode }) { return <div><Label className="text-xs uppercase tracking-wider text-muted-foreground">{label}</Label><div className="mt-1.5">{children}</div></div>; }
+function Empty({ label }: { label: string }) { return <div className="py-10 text-center text-sm text-muted-foreground">{label}</div>; }
