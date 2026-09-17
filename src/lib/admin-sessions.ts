@@ -11,10 +11,10 @@ export type AdminSession = {
   is_current: boolean;
 };
 
-const rpc = supabase.rpc as unknown as (
+const rpc = (
   fn: string,
   args?: Record<string, unknown>,
-) => Promise<{ data: unknown; error: { message: string } | null }>;
+) => supabase.rpc(fn, args);
 
 function detectDeviceType(userAgent: string) {
   if (/iPad|Tablet/i.test(userAgent)) return "Tablet";
