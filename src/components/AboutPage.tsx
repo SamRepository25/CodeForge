@@ -293,7 +293,7 @@ export function AboutPage() {
               >
                 <a href={s.resume_url || "#"} download>
                   <Download className="mr-1.5 h-4 w-4" />
-                  Download Resume
+                  View Resume
                 </a>
               </Button>
               <Button asChild variant="outline" className="rounded-xl">
