@@ -75,6 +75,7 @@ function formatSettingPreview(value: string | null | undefined) {
     .replace(/_([^_]+)_/g, "$1")
     .replace(/\x60([^\x60]+)\x60/g, "$1")
     .replace(/\n+/g, " ")
+    .replace(/\s*\|\s*/g, " • ")
     .replace(/\s+/g, " ")
     .trim();
 }
