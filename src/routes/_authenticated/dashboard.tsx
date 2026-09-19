@@ -1,6 +1,7 @@
 import { createFileRoute, Link, Outlet, useChildMatches } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import ReactMarkdown from "react-markdown";
 import { Plus, Edit, Trash, Bookmark, Heart, Eye, LogOut, Settings, ShieldCheck } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { supabase } from "@/integrations/supabase/client";
@@ -187,7 +188,13 @@ function Dashboard() {
                 <FormField name="website_url" label="Website URL" defaultValue={profile.website_url ?? ""} className="md:col-span-2" disabled={!profileEditing} />
                 <div className="md:col-span-2">
                   <Label htmlFor="bio" className="text-xs">Bio</Label>
-                  <Textarea id="bio" name="bio" defaultValue={profile.bio ?? ""} disabled={!profileEditing} className="mt-1.5 rounded-xl disabled:cursor-not-allowed disabled:opacity-50" rows={3} maxLength={500} />
+                  {profileEditing ? (
+                    <Textarea id="bio" name="bio" defaultValue={profile.bio ?? ""} className="mt-1.5 rounded-xl" rows={3} maxLength={500} />
+                  ) : (
+                    <div className="mt-1.5 min-h-[72px] rounded-xl border border-input bg-background/40 px-3 py-2 text-sm leading-6 text-muted-foreground">
+                      <ReactMarkdown>{profile.bio ?? ""}</ReactMarkdown>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="mt-5 flex justify-end">
