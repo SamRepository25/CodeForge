@@ -22,9 +22,11 @@ function Dashboard() {
   const { user, signOut } = useAuth();
   const [profile, setProfile] = useState<{ display_name?: string | null; username?: string | null; bio?: string | null; github_url?: string | null; linkedin_url?: string | null; website_url?: string | null }>({});
   const [isAdmin, setIsAdmin] = useState(false);
-  const [isEditingProfile, setIsEditingProfile] = useState(() =>
-    typeof window !== "undefined" && window.sessionStorage.getItem("codeforge-profile-editing") === "true",
-  );
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const profileEditing =
+    isEditingProfile ||
+    (typeof window !== "undefined" &&
+      window.sessionStorage.getItem("codeforge-profile-editing") === "true");
 
   useEffect(() => {
     if (!user) return;
@@ -178,18 +180,18 @@ function Dashboard() {
             <form onSubmit={saveProfile} className="glass rounded-2xl p-6">
               <h3 className="font-display text-lg font-semibold">Profile settings</h3>
               <div className="mt-5 grid gap-4 md:grid-cols-2">
-                <FormField name="display_name" label="Display name" defaultValue={profile.display_name ?? ""} disabled={!isEditingProfile} />
-                <FormField name="username" label="Username" defaultValue={profile.username ?? ""} disabled={!isEditingProfile} />
-                <FormField name="github_url" label="GitHub URL" defaultValue={profile.github_url ?? ""} disabled={!isEditingProfile} />
-                <FormField name="linkedin_url" label="LinkedIn URL" defaultValue={profile.linkedin_url ?? ""} disabled={!isEditingProfile} />
-                <FormField name="website_url" label="Website URL" defaultValue={profile.website_url ?? ""} className="md:col-span-2" disabled={!isEditingProfile} />
+                <FormField name="display_name" label="Display name" defaultValue={profile.display_name ?? ""} disabled={!profileEditing} />
+                <FormField name="username" label="Username" defaultValue={profile.username ?? ""} disabled={!profileEditing} />
+                <FormField name="github_url" label="GitHub URL" defaultValue={profile.github_url ?? ""} disabled={!profileEditing} />
+                <FormField name="linkedin_url" label="LinkedIn URL" defaultValue={profile.linkedin_url ?? ""} disabled={!profileEditing} />
+                <FormField name="website_url" label="Website URL" defaultValue={profile.website_url ?? ""} className="md:col-span-2" disabled={!profileEditing} />
                 <div className="md:col-span-2">
                   <Label htmlFor="bio" className="text-xs">Bio</Label>
-                  <Textarea id="bio" name="bio" defaultValue={profile.bio ?? ""} disabled={!isEditingProfile} className="mt-1.5 rounded-xl disabled:cursor-not-allowed disabled:opacity-50" rows={3} maxLength={500} />
+                  <Textarea id="bio" name="bio" defaultValue={profile.bio ?? ""} disabled={!profileEditing} className="mt-1.5 rounded-xl disabled:cursor-not-allowed disabled:opacity-50" rows={3} maxLength={500} />
                 </div>
               </div>
               <div className="mt-5 flex justify-end">
-                {isEditingProfile ? (
+                {profileEditing ? (
                   <Button type="submit" className="rounded-xl bg-gradient-to-r from-violet to-electric text-white">Save changes</Button>
                 ) : (
                   <Button
