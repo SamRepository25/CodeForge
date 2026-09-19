@@ -22,7 +22,9 @@ function Dashboard() {
   const { user, signOut } = useAuth();
   const [profile, setProfile] = useState<{ display_name?: string | null; username?: string | null; bio?: string | null; github_url?: string | null; linkedin_url?: string | null; website_url?: string | null }>({});
   const [isAdmin, setIsAdmin] = useState(false);
-  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [isEditingProfile, setIsEditingProfile] = useState(() =>
+    typeof window !== "undefined" && window.sessionStorage.getItem("codeforge-profile-editing") === "true",
+  );
 
   useEffect(() => {
     if (!user) return;
@@ -81,6 +83,7 @@ function Dashboard() {
     if (error) return toast.error(error.message);
     setProfile(payload);
     setIsEditingProfile(false);
+    if (typeof window !== "undefined") window.sessionStorage.removeItem("codeforge-profile-editing");
     toast.success("Profile saved");
   };
 
@@ -189,7 +192,17 @@ function Dashboard() {
                 {isEditingProfile ? (
                   <Button type="submit" className="rounded-xl bg-gradient-to-r from-violet to-electric text-white">Save changes</Button>
                 ) : (
-                  <Button type="button" onClick={() => setIsEditingProfile(true)} variant="outline" className="rounded-xl">Edit</Button>
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      setIsEditingProfile(true);
+                      if (typeof window !== "undefined") window.sessionStorage.setItem("codeforge-profile-editing", "true");
+                    }}
+                    variant="outline"
+                    className="rounded-xl"
+                  >
+                    Edit
+                  </Button>
                 )}
               </div>
             </form>
