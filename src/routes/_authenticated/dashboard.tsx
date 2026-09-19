@@ -2,7 +2,7 @@ import { createFileRoute, Link, Outlet, useChildMatches } from "@tanstack/react-
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { Plus, Edit, Trash, Bookmark, Heart, Eye, LogOut, Settings, ShieldCheck } from "lucide-react";
+import { Plus, Edit, Trash, Bookmark, Eye, LogOut, Settings, ShieldCheck } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -19,20 +19,46 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   component: Dashboard,
 });
 
+type Profile = {
+  display_name?: string | null;
+  username?: string | null;
+  bio?: string | null;
+  github_url?: string | null;
+  linkedin_url?: string | null;
+  website_url?: string | null;
+};
+
+const emptyProfile: Profile = {
+  display_name: "",
+  username: "",
+  bio: "",
+  github_url: "",
+  linkedin_url: "",
+  website_url: "",
+};
+
 function Dashboard() {
   const { user, signOut } = useAuth();
-  const [profile, setProfile] = useState<{ display_name?: string | null; username?: string | null; bio?: string | null; github_url?: string | null; linkedin_url?: string | null; website_url?: string | null }>({});
+  const [profile, setProfile] = useState<Profile>(emptyProfile);
+  const [profileDraft, setProfileDraft] = useState<Profile>(emptyProfile);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
-  const profileEditing =
-    isEditingProfile ||
-    (typeof window !== "undefined" &&
-      window.sessionStorage.getItem("codeforge-profile-editing") === "true");
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
 
   useEffect(() => {
     if (!user) return;
-    supabase.from("profiles").select("*").eq("id", user.id).maybeSingle().then(({ data }) => data && setProfile(data));
-    supabase.from("user_roles").select("role").eq("user_id", user.id).then(({ data }) => {
+
+    const loadProfile = async () => {
+      const { data } = await supabase.from("profiles").select("*").eq("id", user.id).maybeSingle();
+      if (data) {
+        setProfile(data);
+        setProfileDraft(data);
+      }
+    };
+
+    void loadProfile();
+
+    void supabase.from("user_roles").select("role").eq("user_id", user.id).then(({ data }) => {
       setIsAdmin((data ?? []).some((r) => r.role === "admin"));
     });
   }, [user]);
@@ -68,30 +94,69 @@ function Dashboard() {
     const { error } = await supabase.from("posts").delete().eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("Post deleted");
-    posts.refetch();
+    void posts.refetch();
+  };
+
+  const startProfileEditing = () => {
+    setProfileDraft({
+      display_name: profile.display_name ?? "",
+      username: profile.username ?? "",
+      bio: profile.bio ?? "",
+      github_url: profile.github_url ?? "",
+      linkedin_url: profile.linkedin_url ?? "",
+      website_url: profile.website_url ?? "",
+    });
+    setIsEditingProfile(true);
+  };
+
+  const cancelProfileEditing = () => {
+    setProfileDraft({
+      display_name: profile.display_name ?? "",
+      username: profile.username ?? "",
+      bio: profile.bio ?? "",
+      github_url: profile.github_url ?? "",
+      linkedin_url: profile.linkedin_url ?? "",
+      website_url: profile.website_url ?? "",
+    });
+    setIsEditingProfile(false);
   };
 
   const saveProfile = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const f = new FormData(e.currentTarget);
+    if (!user || isSavingProfile) return;
+
     const payload = {
-      display_name: String(f.get("display_name") ?? ""),
-      username: String(f.get("username") ?? ""),
-      bio: String(f.get("bio") ?? ""),
-      github_url: String(f.get("github_url") ?? ""),
-      linkedin_url: String(f.get("linkedin_url") ?? ""),
-      website_url: String(f.get("website_url") ?? ""),
+      display_name: profileDraft.display_name ?? "",
+      username: profileDraft.username ?? "",
+      bio: profileDraft.bio ?? "",
+      github_url: profileDraft.github_url ?? "",
+      linkedin_url: profileDraft.linkedin_url ?? "",
+      website_url: profileDraft.website_url ?? "",
     };
-    const { error } = await supabase.from("profiles").update(payload).eq("id", user!.id);
-    if (error) return toast.error(error.message);
-    setProfile(payload);
+
+    setIsSavingProfile(true);
+    const { data, error } = await supabase
+      .from("profiles")
+      .update(payload)
+      .eq("id", user.id)
+      .select("*")
+      .single();
+    setIsSavingProfile(false);
+
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+
+    setProfile(data ?? payload);
+    setProfileDraft(data ?? payload);
     setIsEditingProfile(false);
-    if (typeof window !== "undefined") window.sessionStorage.removeItem("codeforge-profile-editing");
     toast.success("Profile saved");
   };
 
   const childMatches = useChildMatches();
   if (childMatches.length > 0) return <Outlet />;
+
   return (
     <SiteLayout>
       <section className="mx-auto max-w-7xl px-4 pt-12">
@@ -181,15 +246,23 @@ function Dashboard() {
             <form onSubmit={saveProfile} className="glass rounded-2xl p-6">
               <h3 className="font-display text-lg font-semibold">Profile settings</h3>
               <div className="mt-5 grid gap-4 md:grid-cols-2">
-                <FormField name="display_name" label="Display name" defaultValue={profile.display_name ?? ""} disabled={!profileEditing} />
-                <FormField name="username" label="Username" defaultValue={profile.username ?? ""} disabled={!profileEditing} />
-                <FormField name="github_url" label="GitHub URL" defaultValue={profile.github_url ?? ""} disabled={!profileEditing} />
-                <FormField name="linkedin_url" label="LinkedIn URL" defaultValue={profile.linkedin_url ?? ""} disabled={!profileEditing} />
-                <FormField name="website_url" label="Website URL" defaultValue={profile.website_url ?? ""} className="md:col-span-2" disabled={!profileEditing} />
+                <FormField name="display_name" label="Display name" value={profileDraft.display_name ?? ""} disabled={!isEditingProfile} onChange={(value) => setProfileDraft((draft) => ({ ...draft, display_name: value }))} />
+                <FormField name="username" label="Username" value={profileDraft.username ?? ""} disabled={!isEditingProfile} onChange={(value) => setProfileDraft((draft) => ({ ...draft, username: value }))} />
+                <FormField name="github_url" label="GitHub URL" value={profileDraft.github_url ?? ""} disabled={!isEditingProfile} onChange={(value) => setProfileDraft((draft) => ({ ...draft, github_url: value }))} />
+                <FormField name="linkedin_url" label="LinkedIn URL" value={profileDraft.linkedin_url ?? ""} disabled={!isEditingProfile} onChange={(value) => setProfileDraft((draft) => ({ ...draft, linkedin_url: value }))} />
+                <FormField name="website_url" label="Website URL" value={profileDraft.website_url ?? ""} className="md:col-span-2" disabled={!isEditingProfile} onChange={(value) => setProfileDraft((draft) => ({ ...draft, website_url: value }))} />
                 <div className="md:col-span-2">
                   <Label htmlFor="bio" className="text-xs">Bio</Label>
-                  {profileEditing ? (
-                    <Textarea id="bio" name="bio" defaultValue={profile.bio ?? ""} className="mt-1.5 rounded-xl" rows={3} maxLength={500} />
+                  {isEditingProfile ? (
+                    <Textarea
+                      id="bio"
+                      name="bio"
+                      value={profileDraft.bio ?? ""}
+                      onChange={(e) => setProfileDraft((draft) => ({ ...draft, bio: e.target.value }))}
+                      className="mt-1.5 rounded-xl"
+                      rows={3}
+                      maxLength={500}
+                    />
                   ) : (
                     <div className="mt-1.5 min-h-[72px] rounded-xl border border-input bg-background/40 px-3 py-2 text-sm leading-6 text-muted-foreground">
                       <ReactMarkdown>{profile.bio ?? ""}</ReactMarkdown>
@@ -197,19 +270,18 @@ function Dashboard() {
                   )}
                 </div>
               </div>
-              <div className="mt-5 flex justify-end">
-                {profileEditing ? (
-                  <Button type="submit" className="rounded-xl bg-gradient-to-r from-violet to-electric text-white">Save changes</Button>
+              <div className="mt-5 flex justify-end gap-2">
+                {isEditingProfile ? (
+                  <>
+                    <Button type="button" onClick={cancelProfileEditing} variant="outline" className="rounded-xl" disabled={isSavingProfile}>
+                      Cancel
+                    </Button>
+                    <Button type="submit" className="rounded-xl bg-gradient-to-r from-violet to-electric text-white" disabled={isSavingProfile}>
+                      {isSavingProfile ? "Saving…" : "Save changes"}
+                    </Button>
+                  </>
                 ) : (
-                  <Button
-                    type="button"
-                    onClick={() => {
-                      setIsEditingProfile(true);
-                      if (typeof window !== "undefined") window.sessionStorage.setItem("codeforge-profile-editing", "true");
-                    }}
-                    variant="outline"
-                    className="rounded-xl"
-                  >
+                  <Button type="button" onClick={startProfileEditing} variant="outline" className="rounded-xl">
                     Edit
                   </Button>
                 )}
@@ -226,11 +298,32 @@ function Dashboard() {
   );
 }
 
-function FormField({ name, label, defaultValue, className, disabled = false }: { name: string; label: string; defaultValue?: string; className?: string; disabled?: boolean }) {
+function FormField({
+  name,
+  label,
+  value,
+  className,
+  disabled = false,
+  onChange,
+}: {
+  name: string;
+  label: string;
+  value: string;
+  className?: string;
+  disabled?: boolean;
+  onChange: (value: string) => void;
+}) {
   return (
     <div className={className}>
       <Label htmlFor={name} className="text-xs">{label}</Label>
-      <Input id={name} name={name} defaultValue={defaultValue} disabled={disabled} className="mt-1.5 rounded-xl disabled:cursor-not-allowed disabled:opacity-50" />
+      <Input
+        id={name}
+        name={name}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        disabled={disabled}
+        className="mt-1.5 rounded-xl disabled:cursor-not-allowed disabled:opacity-50"
+      />
     </div>
   );
 }
