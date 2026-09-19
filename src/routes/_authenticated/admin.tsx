@@ -62,6 +62,23 @@ type TimelineItem = { id: string; year: string; title: string; org: string; desc
 type MediaFile = { name: string; id: string; updated_at?: string | null; metadata?: { size?: number; mimetype?: string } | null };
 type AdminStats = { posts: number; published: number; projects: number; messages: number; unread: number; comments: number; pendingComments: number; views: number };
 
+function formatSettingPreview(value: string | null | undefined) {
+  return (value ?? "")
+    .replace(/!\\[([^\\]]*)\\]\\([^)]*\\)/g, "$1")
+    .replace(/\\[([^\\]]+)\\]\\([^)]*\\)/g, "$1")
+    .replace(/(^|\\s)#{1,6}\\s+/g, "$1")
+    .replace(/(^|\\s)[>*_-]{1,3}\\s+/g, "$1")
+    .replace(/\\*\\*([^*]+)\\*\\*/g, "$1")
+    .replace(/__([^_]+)__/g, "$1")
+    .replace(/~~([^~]+)~~/g, "$1")
+    .replace(/\\*([^*]+)\\*/g, "$1")
+    .replace(/_([^_]+)_/g, "$1")
+    .replace(/\\x60([^\\x60]+)\\x60/g, "$1")
+    .replace(/\\n+/g, " ")
+    .replace(/\\s+/g, " ")
+    .trim();
+}
+
 const navItems = [
   ["overview", "Dashboard", LayoutDashboard], ["messages", "Messages", Mail], ["posts", "Blog", FileText], ["projects", "Projects", Briefcase],
   ["education", "Education", GraduationCap], ["experience", "Experience", Briefcase], ["settings", "Website Settings", Settings], ["media", "Media Library", ImageIcon],
@@ -156,7 +173,7 @@ function WebsiteSettings({ settings, refetch, onActivity }: { settings: Array<{ 
   const [key, setKey] = useState(""); const [value, setValue] = useState(""); const [editingKey, setEditingKey] = useState<string | null>(null);
   const save = async () => { if (!key.trim()) return toast.error("Setting key is required"); const result = editingKey ? await supabase.from("site_settings").update({ value }).eq("key", editingKey) : await supabase.from("site_settings").upsert({ key: key.trim(), value }); if (result.error) return toast.error(result.error.message); await onActivity(editingKey ? "update" : "create", "site_setting", key); toast.success("Setting saved"); setKey(""); setValue(""); setEditingKey(null); await refetch(); };
   const remove = async (settingKey: string) => { if (!window.confirm(`Delete setting '${settingKey}'?`)) return; const { error } = await supabase.from("site_settings").delete().eq("key", settingKey); if (error) return toast.error(error.message); await onActivity("delete", "site_setting", settingKey); toast.success("Setting deleted"); await refetch(); };
-  return <Panel title="Website settings" description="Manage key/value settings used by CodeForge without changing application code."><div className="grid gap-4 rounded-2xl border border-border/30 p-4 md:grid-cols-[1fr_2fr_auto]"><Field label="Key"><Input value={key} onChange={(e) => setKey(e.target.value)} placeholder="homepage.hero_title" className="rounded-xl" /></Field><Field label="Value"><Input value={value} onChange={(e) => setValue(e.target.value)} placeholder="Setting value" className="rounded-xl" /></Field><div className="flex items-end gap-2"><Button onClick={() => void save()} className="rounded-xl">{editingKey ? "Update" : "Save"}</Button>{editingKey && <Button variant="outline" onClick={() => { setEditingKey(null); setKey(""); setValue(""); }} className="rounded-xl"><X className="h-4 w-4" /></Button>}</div></div><div className="mt-6 divide-y divide-border/30">{settings.map((s) => <div key={s.key} className="flex flex-wrap items-center justify-between gap-3 py-3"><div><div className="font-mono text-sm">{s.key}</div><div className="mt-1 max-w-3xl truncate text-sm text-muted-foreground">{s.value || ""}</div></div><div className="flex gap-2"><Button size="sm" variant="outline" className="rounded-lg" onClick={() => { setEditingKey(s.key); setKey(s.key); setValue(s.value || ""); }}><Pencil className="h-3.5 w-3.5" /></Button><Button size="sm" variant="outline" className="rounded-lg text-destructive" onClick={() => void remove(s.key)}><Trash className="h-3.5 w-3.5" /></Button></div></div>)}{settings.length === 0 && <Empty label="No site settings yet." />}</div></Panel>;
+  return <Panel title="Website settings" description="Manage key/value settings used by CodeForge without changing application code."><div className="grid gap-4 rounded-2xl border border-border/30 p-4 md:grid-cols-[1fr_2fr_auto]"><Field label="Key"><Input value={key} onChange={(e) => setKey(e.target.value)} placeholder="homepage.hero_title" className="rounded-xl" /></Field><Field label="Value"><Input value={value} onChange={(e) => setValue(e.target.value)} placeholder="Setting value" className="rounded-xl" /></Field><div className="flex items-end gap-2"><Button onClick={() => void save()} className="rounded-xl">{editingKey ? "Update" : "Save"}</Button>{editingKey && <Button variant="outline" onClick={() => { setEditingKey(null); setKey(""); setValue(""); }} className="rounded-xl"><X className="h-4 w-4" /></Button>}</div></div><div className="mt-6 divide-y divide-border/30">{settings.map((s) => <div key={s.key} className="flex flex-wrap items-center justify-between gap-3 py-3"><div><div className="font-mono text-sm">{s.key}</div><div className="mt-1 max-w-3xl truncate text-sm text-muted-foreground">{formatSettingPreview(s.value)}</div></div><div className="flex gap-2"><Button size="sm" variant="outline" className="rounded-lg" onClick={() => { setEditingKey(s.key); setKey(s.key); setValue(s.value || ""); }}><Pencil className="h-3.5 w-3.5" /></Button><Button size="sm" variant="outline" className="rounded-lg text-destructive" onClick={() => void remove(s.key)}><Trash className="h-3.5 w-3.5" /></Button></div></div>)}{settings.length === 0 && <Empty label="No site settings yet." />}</div></Panel>;
 }
 
 function MediaLibrary({ files, refetch, onActivity }: { files: MediaFile[]; refetch: () => Promise<unknown>; onActivity: (a: string, r: string, id?: string) => Promise<void>; }) {
