@@ -181,4 +181,4 @@ function ProfilePanel({ userId }: { userId: string }) { const profile=useQuery({
 function Panel({ title, description, children }: { title: string; description?: string; children: React.ReactNode }) { return <div className="glass rounded-2xl p-5 sm:p-6"><div className="mb-6"><h2 className="font-display text-xl font-bold">{title}</h2>{description&&<p className="mt-1 text-sm text-muted-foreground">{description}</p>}</div>{children}</div>; }
 function Field({ label, children }: { label: string; children: React.ReactNode }) { return <div><Label className="text-xs uppercase tracking-wider text-muted-foreground">{label}</Label><div className="mt-1.5">{children}</div></div>; }
 function Empty({ label }: { label: string }) { return <div className="py-10 text-center text-sm text-muted-foreground">{label}</div>; }
-function Metric({ label, value }: { label: string; value: number }) { return <div className="glass rounded-2xl p-5"><div className="text-xs text-muted-foreground">{label}</div><div className="mt-1 font-display text-3xl font-bold gradient-text">{value}</div></div>; }
+
