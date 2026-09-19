@@ -13,10 +13,12 @@ const count = source.split(duplicate).length - 1;
 if (count === 2) {
   source = source.replace(duplicate, "");
   console.log("Admin Metric declaration: removed duplicate");
+} else if (count === 1) {
+  console.log("Admin Metric declaration: already clean");
 } else if (count === 0) {
   console.log("Admin Metric declaration: already clean");
 } else {
-  throw new Error(`Expected exactly 0 or 2 identical Metric declarations, found ${count}`);
+  throw new Error(`Unexpected Metric declaration count: ${count}`);
 }
 
 // The Admin Control Center remains in the existing route file. This idempotent
