@@ -105,9 +105,9 @@ function TermsPage() {
               Questions about these terms can be sent to{" "}
               <a
                 className="text-violet underline underline-offset-2"
-                href="mailto:simakahmed@outlook.com"
+                href="mailto:admin.codeforgedev@proton.me"
               >
-                simakahmed@outlook.com
+                admin.codeforgedev@proton.me
               </a>
               .
             </p>
