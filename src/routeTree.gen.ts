@@ -16,6 +16,7 @@ import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as MfaVerifyRouteImport } from './routes/mfa-verify'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as BlogRouteImport } from './routes/blog'
+import { Route as Auth_backupRouteImport } from './routes/auth_backup'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
@@ -59,6 +60,11 @@ const ContactRoute = ContactRouteImport.update({
 const BlogRoute = BlogRouteImport.update({
   id: '/blog',
   path: '/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Auth_backupRoute = Auth_backupRouteImport.update({
+  id: '/auth_backup',
+  path: '/auth_backup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -112,6 +118,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/auth_backup': typeof Auth_backupRoute
   '/blog': typeof BlogRoute
   '/contact': typeof ContactRoute
   '/mfa-verify': typeof MfaVerifyRoute
@@ -129,6 +136,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/auth_backup': typeof Auth_backupRoute
   '/blog': typeof BlogRoute
   '/contact': typeof ContactRoute
   '/mfa-verify': typeof MfaVerifyRoute
@@ -148,6 +156,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/auth_backup': typeof Auth_backupRoute
   '/blog': typeof BlogRoute
   '/contact': typeof ContactRoute
   '/mfa-verify': typeof MfaVerifyRoute
@@ -167,6 +176,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/auth'
+    | '/auth_backup'
     | '/blog'
     | '/contact'
     | '/mfa-verify'
@@ -184,6 +194,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/auth'
+    | '/auth_backup'
     | '/blog'
     | '/contact'
     | '/mfa-verify'
@@ -202,6 +213,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/about'
     | '/auth'
+    | '/auth_backup'
     | '/blog'
     | '/contact'
     | '/mfa-verify'
@@ -221,6 +233,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
+  Auth_backupRoute: typeof Auth_backupRoute
   BlogRoute: typeof BlogRoute
   ContactRoute: typeof ContactRoute
   MfaVerifyRoute: typeof MfaVerifyRoute
@@ -280,6 +293,13 @@ declare module '@tanstack/react-router' {
       path: '/blog'
       fullPath: '/blog'
       preLoaderRoute: typeof BlogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth_backup': {
+      id: '/auth_backup'
+      path: '/auth_backup'
+      fullPath: '/auth_backup'
+      preLoaderRoute: typeof Auth_backupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -382,6 +402,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
+  Auth_backupRoute: Auth_backupRoute,
   BlogRoute: BlogRoute,
   ContactRoute: ContactRoute,
   MfaVerifyRoute: MfaVerifyRoute,

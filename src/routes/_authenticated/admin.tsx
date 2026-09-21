@@ -20,7 +20,6 @@ import {
   LayoutDashboard,
   Mail,
   MessageCircle,
-  Monitor,
   Paperclip,
   Pencil,
   Plus,
@@ -42,7 +41,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { PostEditor, type PostDraft } from "@/components/PostEditor";
 import { SecurityTab } from "@/components/SecurityTab";
-import { DevicesPanel } from "@/components/DevicesPanel";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 
@@ -88,7 +86,6 @@ const navItems = [
   ["security", "Security", ShieldCheck], ["activity", "Audit / Activity", Activity], ["analytics", "Analytics", BarChart3], ["comments", "Comments", MessageCircle],
   ["engagement", "Engagement", ClipboardList], ["bookmarks", "Bookmarks", BookOpen], ["search", "Global Search", Search], ["health", "System Health", RefreshCw],
   ["export", "Export", Download], ["trash", "Trash / Recovery", Archive], ["profile", "Admin Profile", Users],
-  ["devices", "Devices", Monitor],
 ] as const;
 type AdminTab = (typeof navItems)[number][0];
 
@@ -133,7 +130,6 @@ function Admin() {
       {tab === "export" && <ExportPanel posts={posts.data ?? []} projects={projects.data ?? []} messages={messages.data ?? []} />}
       {tab === "trash" && <TrashPanel messages={messages.data ?? []} refetch={messages.refetch} />}
       {tab === "profile" && <ProfilePanel userId={user?.id ?? ""} />}
-      {tab === "devices" && <DevicesPanel />}
     </div>
   </section></SiteLayout>;
 }
