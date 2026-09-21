@@ -178,7 +178,7 @@ function AuthPage() {
               <p className="mt-1 text-sm text-muted-foreground">
                 Please wait for the lockout to expire.
               </p>
-              <p className="mt-3 font-mono text-2xl font-semibold tracking-wider text-foreground">
+              <p className="mt-3 text-2xl font-semibold tracking-wider text-foreground" style={{ fontFamily: "Calibri, sans-serif" }}>
                 {formatRemaining(remainingSeconds)}
               </p>
             </div>
