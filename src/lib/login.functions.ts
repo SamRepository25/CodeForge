@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { verifyTurnstile, getClientIp } from "@/lib/turnstile.server";
 
 const ADMIN_EMAIL = "simakahmed002@gmail.com";
-const LOCKOUT_MINUTES = 30;
+const LOCKOUT_MINUTES = 10;
 const MAX_FAILED_ATTEMPTS = 4;
 
 type LockoutRow = {
