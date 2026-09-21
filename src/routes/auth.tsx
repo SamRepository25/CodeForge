@@ -3,7 +3,7 @@
  *
  * Flow after successful password login:
  *   - Only the configured admin email can continue
- *   - Four invalid admin password attempts trigger a 10-minute server-side lockout
+ *   - Four invalid admin password or non-admin login attempts trigger a 30-minute server-side lockout
  *   - If the admin has a verified TOTP factor → /mfa-verify
  *   - Otherwise → /dashboard
  */
@@ -176,7 +176,7 @@ function AuthPage() {
             <div className="mb-5 rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-5 text-center">
               <p className="font-semibold text-red-300">Security lockout</p>
               <p className="mt-1 text-sm text-muted-foreground">
-                Please try again after 10 minutes.
+                Please try again after 30 minutes.
               </p>
               <p className="mt-3 font-mono text-2xl font-semibold tracking-wider text-foreground">
                 {formatRemaining(remainingSeconds)}
