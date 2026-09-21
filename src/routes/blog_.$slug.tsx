@@ -259,11 +259,20 @@ const post = useQuery({
           </button>
         </div>
 
-       <div className="prose-content mt-10 min-w-0 max-w-full overflow-x-hidden text-base leading-relaxed">
-  <ReactMarkdown remarkPlugins={[remarkGfm]}>
-    {p.content}
-  </ReactMarkdown>
-</div>
+        <div className="prose-content mt-10 min-w-0 max-w-full text-base leading-relaxed">
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={{
+              table: ({ children }) => (
+                <div className="prose-table-wrap">
+                  <table>{children}</table>
+                </div>
+              ),
+            }}
+          >
+            {p.content}
+          </ReactMarkdown>
+        </div>
         <div className="mt-8 flex flex-wrap gap-1.5">
           {(p.tags ?? []).map((t) => (
             <span key={t} className="rounded-md border border-border/60 px-2 py-0.5 text-[10px] font-mono text-muted-foreground">#{t}</span>
