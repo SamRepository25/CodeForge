@@ -259,7 +259,7 @@ const post = useQuery({
           </button>
         </div>
 
-       <div className="prose-content mt-10 text-base leading-relaxed">
+       <div className="prose-content mt-10 min-w-0 max-w-full overflow-x-hidden text-base leading-relaxed">
   <ReactMarkdown remarkPlugins={[remarkGfm]}>
     {p.content}
   </ReactMarkdown>
