@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { ArrowRight, BookOpen, Code2, Cpu, FileText, Github, GraduationCap, Layers, Linkedin, MessageSquareCode, Rocket, Sparkles, Wand2 } from "lucide-react";
+import { ArrowRight, BookOpen, Code2, Cpu, FileText, Github, GraduationCap, Layers, Linkedin, MessageSquareCode, Network, Rocket, ShieldCheck, Sparkles, Wand2 } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -121,7 +121,7 @@ function Home() {
               <Button asChild size="lg" variant="outline" className="rounded-xl"><Link to="/about">A little about me</Link></Button>
             </div>
             <div className="mx-auto mt-10 flex max-w-2xl flex-wrap items-center justify-center gap-x-7 gap-y-3 text-xs text-muted-foreground">
-              <span>Software development</span><span>Cybersecurity</span><span>Networking</span><span>Always learning</span>
+              <span className="inline-flex items-center gap-1.5"><Code2 className="h-3.5 w-3.5 text-electric" />Software development</span><span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-electric" />Cybersecurity</span><span className="inline-flex items-center gap-1.5"><Network className="h-3.5 w-3.5 text-electric" />Networking</span><span className="inline-flex items-center gap-1.5"><GraduationCap className="h-3.5 w-3.5 text-electric" />Always learning</span>
             </div>
           </motion.div>
 
