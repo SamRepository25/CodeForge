@@ -32,13 +32,19 @@ export async function verifyTurnstile(token: string, ip: string, expectedAction:
     };
     if (!data.success || data.action !== expectedAction) return false;
 
-    const configuredHostnames = (process.env.TURNSTILE_HOSTNAMES ?? "codeforgedev.vercel.app")
+    const requestHost = getRequest()?.headers?.get("host")?.split(":")[0]?.toLowerCase();
+    const configuredHostnames = (process.env.TURNSTILE_HOSTNAMES ?? "")
       .split(",")
       .map((hostname) => hostname.trim().toLowerCase())
       .filter(Boolean);
-    const requestHost = getRequest()?.headers?.get("host")?.split(":")[0]?.toLowerCase();
-    if (!data.hostname || !configuredHostnames.includes(data.hostname.toLowerCase())) return false;
-    if (requestHost && !configuredHostnames.includes(requestHost)) return false;
+    const expectedHostnames = configuredHostnames.length > 0
+      ? configuredHostnames
+      : requestHost
+        ? [requestHost]
+        : [];
+
+    if (!data.hostname || expectedHostnames.length === 0) return false;
+    if (!expectedHostnames.includes(data.hostname.toLowerCase())) return false;
 
     return true;
   } catch (e) {
