@@ -439,33 +439,6 @@ BEGIN
 END;
 $$;
 
--- Recovery-code storage is user-private. The application still writes only
--- hashes, never plaintext codes.
-CREATE TABLE IF NOT EXISTS public.recovery_codes (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  code_hash text NOT NULL CHECK (char_length(code_hash) = 64),
-  created_at timestamptz NOT NULL DEFAULT now()
-);
-
-ALTER TABLE public.recovery_codes ENABLE ROW LEVEL SECURITY;
-REVOKE ALL ON public.recovery_codes FROM anon;
-GRANT SELECT, INSERT, DELETE ON public.recovery_codes TO authenticated;
-
-DROP POLICY IF EXISTS recovery_codes_self_select ON public.recovery_codes;
-CREATE POLICY recovery_codes_self_select ON public.recovery_codes
-FOR SELECT TO authenticated
-USING (user_id = auth.uid());
-
-DROP POLICY IF EXISTS recovery_codes_self_insert ON public.recovery_codes;
-CREATE POLICY recovery_codes_self_insert ON public.recovery_codes
-FOR INSERT TO authenticated
-WITH CHECK (user_id = auth.uid());
-
-DROP POLICY IF EXISTS recovery_codes_self_delete ON public.recovery_codes;
-CREATE POLICY recovery_codes_self_delete ON public.recovery_codes
-FOR DELETE TO authenticated
-USING (user_id = auth.uid());
-
-CREATE INDEX IF NOT EXISTS recovery_codes_user_id_idx
-  ON public.recovery_codes (user_id);
+-- The old custom recovery-code store was never a valid authentication path.
+-- Remove it so stale recovery material cannot be mistaken for a supported login method.
+DROP TABLE IF EXISTS public.recovery_codes;
