@@ -244,7 +244,7 @@ function ContactPage() {
             </div>
           </div>
 
-          <TurnstileWidget onToken={setTurnstileToken} />
+          <TurnstileWidget action="contact" onToken={setTurnstileToken} />
 
           <Button
             type="submit"
