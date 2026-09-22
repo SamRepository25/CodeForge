@@ -7,9 +7,9 @@
  *   - If the admin has a verified TOTP factor → /mfa-verify
  *   - Otherwise → /mfa-setup
  */
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Code2, Mail, Lock, Eye, EyeOff, Info } from "lucide-react";
+import { Code2, Mail, Lock, Eye, EyeOff, Info, KeyRound } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -215,6 +215,15 @@ function AuthPage() {
             >
               {busy ? "Signing in…" : isLocked ? "Locked" : "Login"}
             </Button>
+            <div className="text-center">
+              <Link
+                to="/forgot-password"
+                className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <KeyRound className="h-3.5 w-3.5" />
+                Forgot Password?
+              </Link>
+            </div>
           </form>
         </div>
       </section>
