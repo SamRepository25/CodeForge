@@ -34,7 +34,7 @@ type Step =
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
-export function SecurityTab() {
+export function SecurityTab({ requiredSetup = false, onRequiredComplete }: { requiredSetup?: boolean; onRequiredComplete?: () => void }) {
   const { user } = useAuth();
   const [mfaEnabled, setMfaEnabled] = useState(false);
   const [factorId, setFactorId] = useState("");
@@ -305,7 +305,7 @@ export function SecurityTab() {
           </div>
           <div className="flex gap-2">
             {mfaEnabled ? (
-              <>
+              {!requiredSetup && <>
                 <Button
                   size="sm"
                   variant="outline"
@@ -322,7 +322,7 @@ export function SecurityTab() {
                 >
                   <ShieldOff className="mr-1.5 h-3.5 w-3.5" />Disable
                 </Button>
-              </>
+              </>}
             ) : (
               <Button
                 size="sm"
@@ -461,7 +461,10 @@ export function SecurityTab() {
           </div>
           <Button
             className="w-full rounded-xl bg-gradient-to-r from-violet to-electric text-white"
-            onClick={reset}
+            onClick={() => {
+              reset();
+              onRequiredComplete?.();
+            }}
           >
             I've Saved My Codes — Done
           </Button>
