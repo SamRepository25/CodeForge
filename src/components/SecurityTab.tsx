@@ -305,24 +305,14 @@ export function SecurityTab({ requiredSetup = false, onRequiredComplete }: { req
           </div>
           <div className="flex gap-2">
             {mfaEnabled ? (
-              {!requiredSetup && <>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="rounded-xl"
-                  onClick={() => { setStep("regen-confirm"); }}
-                >
-                  <RefreshCw className="mr-1.5 h-3.5 w-3.5" />Regenerate Codes
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="rounded-xl border-red-500/40 text-red-400 hover:bg-red-500/10"
-                  onClick={() => setStep("disable-password")}
-                >
-                  <ShieldOff className="mr-1.5 h-3.5 w-3.5" />Disable
-                </Button>
-              </>}
+              <Button
+                size="sm"
+                variant="outline"
+                className="rounded-xl"
+                onClick={() => { setStep("regen-confirm"); }}
+              >
+                <RefreshCw className="mr-1.5 h-3.5 w-3.5" />Regenerate Codes
+              </Button>
             ) : (
               <Button
                 size="sm"
