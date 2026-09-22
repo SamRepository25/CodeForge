@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/use-auth";
 interface EditModeCtx {
   editMode: boolean;
   isAdmin: boolean; // role-only
-  canEdit: boolean; // effective capability: admin + optional MFA/AAL requirements
+  canEdit: boolean; // effective capability: admin + mandatory MFA/AAL2 requirements
   toggleEditMode: () => void;
   exitEditMode: () => void;
 }
