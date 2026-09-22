@@ -6,7 +6,7 @@
 
 begin;
 
-select plan(6);
+select plan(10);
 
 select ok(
   (select relrowsecurity from pg_class where oid = 'public.contact_messages'::regclass),
@@ -47,6 +47,38 @@ select ok(
       )
   ),
   'every SECURITY DEFINER function in public pins search_path'
+);
+
+select ok(
+  not has_table_privilege('anon', 'public.guest_comments', 'INSERT'),
+  'anon cannot directly insert guest comments'
+);
+
+select ok(
+  not has_function_privilege(
+    'anon',
+    'public.submit_guest_comment(uuid,text,text,text,text)',
+    'EXECUTE'
+  ),
+  'anon cannot execute the guest comment submission RPC'
+);
+
+select ok(
+  has_function_privilege(
+    'service_role',
+    'public.submit_guest_comment(uuid,text,text,text,text)',
+    'EXECUTE'
+  ),
+  'service_role can execute the guest comment submission RPC'
+);
+
+select ok(
+  has_function_privilege(
+    'anon',
+    'public.increment_post_views(uuid)',
+    'EXECUTE'
+  ),
+  'anon can execute the published-post view counter RPC'
 );
 
 select * from finish();

@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { TurnstileWidget } from "@/components/TurnstileWidget";
+import { submitGuestComment } from "@/lib/comment.functions";
 
 export const Route = createFileRoute("/blog_/$slug")({
   loader: async ({ params }) => {
@@ -177,10 +179,8 @@ const post = useQuery({
   // bump views
   useEffect(() => {
     if (post.data?.id) {
-      supabase.rpc as never; // no rpc, do raw update
-      supabase.from("posts").update({ views: (post.data.views ?? 0) + 1 }).eq("id", post.data.id).then(() => {});
+      void supabase.rpc("increment_post_views", { p_post_id: post.data.id });
     }
-     
   }, [post.data?.id]);
 
   if (post.isLoading) return <SiteLayout><div className="mx-auto max-w-3xl px-4 py-20"><div className="glass h-96 rounded-2xl shimmer" /></div></SiteLayout>;
@@ -324,6 +324,8 @@ function CommentForm({ postId, onPosted }: { postId: string; onPosted: () => voi
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [text, setText] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [formLoadedAt] = useState(() => Date.now());
   const [busy, setBusy] = useState(false);
 
   const submit = async () => {
@@ -331,26 +333,36 @@ function CommentForm({ postId, onPosted }: { postId: string; onPosted: () => voi
       toast.error("Name, email, and comment are required.");
       return;
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      toast.error("Please enter a valid email address.");
+    if (!turnstileToken) {
+      toast.error("Please complete the spam check.");
       return;
     }
 
     setBusy(true);
-    const { error } = await supabase.from("guest_comments").insert({
-      name: name.trim(),
-      email: email.trim(),
-      content: text.trim(),
-      post_id: postId,
-    });
-    setBusy(false);
-    if (error) { toast.error(error.message); return; }
-    setName("");
-    setEmail("");
-    setText("");
-    toast.success("Comment submitted for review.");
-    onPosted();
+    try {
+      await submitGuestComment({
+        data: {
+          postId,
+          name,
+          email,
+          content: text,
+          turnstileToken,
+          formLoadedAt,
+        },
+      });
+      setName("");
+      setEmail("");
+      setText("");
+      setTurnstileToken("");
+      toast.success("Comment submitted for review.");
+      onPosted();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Couldn't submit your comment.");
+    } finally {
+      setBusy(false);
+    }
   };
+
   return (
     <div className="mt-4">
       <div className="grid gap-3 sm:grid-cols-2">
@@ -371,8 +383,11 @@ function CommentForm({ postId, onPosted }: { postId: string; onPosted: () => voi
         />
       </div>
       <Textarea value={text} onChange={(e) => setText(e.target.value)} placeholder="Add a thoughtful comment..." className="mt-3 rounded-xl" rows={3} maxLength={1000} />
+      <div className="mt-3">
+        <TurnstileWidget onToken={setTurnstileToken} />
+      </div>
       <div className="mt-2 flex justify-end">
-        <Button onClick={submit} disabled={busy || !name.trim() || !email.trim() || !text.trim()} className="rounded-lg bg-gradient-to-r from-violet to-electric text-white">
+        <Button onClick={submit} disabled={busy || !name.trim() || !email.trim() || !text.trim() || !turnstileToken} className="rounded-lg bg-gradient-to-r from-violet to-electric text-white">
           <Send className="mr-1.5 h-3.5 w-3.5" />Post comment
         </Button>
       </div>

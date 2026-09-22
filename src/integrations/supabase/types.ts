@@ -312,6 +312,7 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          ip_hash: string | null
           name: string
           post_id: string
         }
@@ -321,6 +322,7 @@ export type Database = {
           created_at?: string
           email: string
           id?: string
+          ip_hash?: string | null
           name: string
           post_id: string
         }
@@ -330,6 +332,7 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
+          ip_hash?: string | null
           name?: string
           post_id?: string
         }
@@ -580,6 +583,17 @@ export type Database = {
     }
     Functions: {
       get_post_like_count: { Args: { _post_id: string }; Returns: number }
+      increment_post_views: { Args: { p_post_id: string }; Returns: number }
+      submit_guest_comment: {
+        Args: {
+          p_content: string
+          p_email: string
+          p_ip_hash: string
+          p_name: string
+          p_post_id: string
+        }
+        Returns: string
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

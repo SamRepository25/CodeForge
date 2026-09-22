@@ -27,7 +27,7 @@ export const Route = createFileRoute("/privacy-policy")({
   component: PrivacyPolicyPage,
 });
 
-const LAST_UPDATED = "September 14, 2026";
+const LAST_UPDATED = "September 22, 2026";
 
 function PrivacyPolicyPage() {
   return (
@@ -69,6 +69,16 @@ function PrivacyPolicyPage() {
                 is stored so the message can be read and responded to, and is only visible to the
                 site owner. Attachments are kept in a private file store that is never publicly
                 accessible. You can also email directly instead — see below.
+              </li>
+              <li>
+                <strong className="text-foreground">Blog comments.</strong> If you submit a comment,
+                CodeForge stores the name, email address, comment text, article ID, and a salted hash
+                of your IP address. Comments are held for moderation before publication. The IP hash
+                is used to limit automated abuse and is not displayed publicly.
+              </li>
+              <li>
+                <strong className="text-foreground">Comment spam protection.</strong> Blog comments
+                use Cloudflare Turnstile and server-side rate limiting to reduce automated submissions.
               </li>
               <li>
                 <strong className="text-foreground">Spam protection.</strong> The contact form uses
@@ -122,7 +132,7 @@ function PrivacyPolicyPage() {
               </li>
               <li>
                 <strong className="text-foreground">Cloudflare Turnstile</strong> — a cookieless
-                bot-check used on the contact form to reduce spam. Turnstile may process your IP
+                bot-check used on the contact form and blog comments to reduce spam. Turnstile may process your IP
                 address and browser signals to assess whether the submission is automated; it does
                 not use tracking cookies.
               </li>
