@@ -2,6 +2,8 @@ import { getRequest } from "@tanstack/react-start/server";
 
 export function getClientIp(): string {
   const req = getRequest();
+  const vercelForwarded = req?.headers?.get("x-vercel-forwarded-for");
+  if (vercelForwarded) return vercelForwarded.trim();
   const fwd = req?.headers?.get("x-forwarded-for");
   if (fwd) return fwd.split(",")[0].trim();
   return req?.headers?.get("x-real-ip") ?? "unknown";
