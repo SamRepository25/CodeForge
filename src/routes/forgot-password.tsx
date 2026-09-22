@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { TurnstileWidget } from "@/components/TurnstileWidget";
-import { supabase } from "@/integrations/supabase/client";
+import { requestPasswordReset } from "@/lib/password-reset.functions";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/forgot-password")({
@@ -43,12 +43,12 @@ function ForgotPasswordPage() {
 
     setBusy(true);
     try {
-      const redirectTo = `${window.location.origin}/reset-password`;
-      const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, { redirectTo });
-
-      if (error) {
-        throw error;
-      }
+      await requestPasswordReset({
+        data: {
+          email: normalizedEmail,
+          turnstileToken,
+        },
+      });
 
       setSent(true);
       setTurnstileToken("");
