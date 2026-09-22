@@ -13,10 +13,25 @@
  */
 
 /** Generate a random recovery code like XXXX-XXXX-XXXX */
+function secureRandomIndex(maxExclusive: number): number {
+  if (!Number.isInteger(maxExclusive) || maxExclusive <= 0) {
+    throw new Error("Invalid random range.");
+  }
+
+  const limit = Math.floor(0x100000000 / maxExclusive) * maxExclusive;
+  const values = new Uint32Array(1);
+
+  do {
+    crypto.getRandomValues(values);
+  } while (values[0] >= limit);
+
+  return values[0] % maxExclusive;
+}
+
 function generateCode(): string {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no 0/O/1/I confusion
   const segment = () =>
-    Array.from({ length: 4 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
+    Array.from({ length: 4 }, () => chars[secureRandomIndex(chars.length)]).join("");
   return `${segment()}-${segment()}-${segment()}`;
 }
 
