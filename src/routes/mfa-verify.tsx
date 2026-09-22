@@ -30,9 +30,17 @@ export const Route = createFileRoute("/mfa-verify")({
     const { data: userData } = await supabase.auth.getUser();
     if (!userData.user) throw redirect({ to: "/auth" });
 
+    const { data: role } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userData.user.id)
+      .eq("role", "admin")
+      .maybeSingle();
+    if (!role) throw redirect({ to: "/auth" });
+
     const { data: factors } = await supabase.auth.mfa.listFactors();
     if ((factors?.totp ?? []).length === 0) {
-      throw redirect({ to: "/dashboard" });
+      throw redirect({ to: "/mfa-setup" });
     }
 
     const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
