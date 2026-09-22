@@ -160,7 +160,7 @@ function AuthPage() {
 
   return (
     <SiteLayout>
-      <section className="relative mx-auto flex min-h-[80vh] max-w-md items-center px-4">
+      <section data-page="admin-login" className="relative mx-auto flex min-h-[80vh] max-w-md items-center px-4">
         <div className="glass-strong gradient-border w-full rounded-3xl p-8">
           <div className="mb-6 flex flex-col items-center text-center">
             <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-violet to-electric glow-violet">
