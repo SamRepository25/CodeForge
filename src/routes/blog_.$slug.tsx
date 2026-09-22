@@ -90,9 +90,11 @@ function PostPage() {
       return;
     }
 
+    const randomBytes = new Uint8Array(16);
+    crypto.getRandomValues(randomBytes);
     const newVisitorId = typeof crypto.randomUUID === "function"
       ? crypto.randomUUID()
-      : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+      : Array.from(randomBytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
     window.localStorage.setItem(storageKey, newVisitorId);
     setVisitorId(newVisitorId);
   }, []);
