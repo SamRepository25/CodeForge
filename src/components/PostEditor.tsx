@@ -29,7 +29,7 @@ function slugify(s: string) {
   return s.toLowerCase().trim().replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-").slice(0, 80);
 }
 
-export function PostEditor({ existing, onSaved }: { existing?: PostDraft; onSaved: () => void }) {
+export function PostEditor({ existing, onSaved }: { existing?: PostDraft; onSaved: (postId: string, action: "create" | "update") => void }) {
   const { user } = useAuth();
   const [draft, setDraft] = useState<PostDraft>(existing ?? empty);
   const [tagsInput, setTagsInput] = useState((existing?.tags ?? []).join(", "));
@@ -47,12 +47,13 @@ export function PostEditor({ existing, onSaved }: { existing?: PostDraft; onSave
     const reading_time = Math.max(1, Math.round(draft.content.split(/\s+/).length / 200));
     const payload = { ...draft, slug, tags, reading_time, published: publish ?? draft.published, author_id: user.id };
     const res = draft.id
-      ? await supabase.from("posts").update(payload).eq("id", draft.id)
-      : await supabase.from("posts").insert(payload);
+      ? await supabase.from("posts").update(payload).eq("id", draft.id).select("id").single()
+      : await supabase.from("posts").insert(payload).select("id").single();
     setBusy(false);
     if (res.error) return toast.error(res.error.message);
     toast.success(draft.id ? "Post updated" : "Post created");
-    onSaved();
+    const savedId = res.data?.id ?? draft.id;
+    if (savedId) onSaved(savedId, draft.id ? "update" : "create");
   };
 
   return (
