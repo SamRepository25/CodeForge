@@ -262,7 +262,8 @@ const post = useQuery({
         <div className="prose-content mt-10 min-w-0 max-w-full text-base leading-relaxed">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
-            skipHtml\n            components={{
+            skipHtml
+            components={{
               table: ({ children }) => (
                 <div className="prose-table-wrap">
                   <table>{children}</table>
