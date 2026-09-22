@@ -294,7 +294,6 @@ const post = useQuery({
           <h2 className="font-display text-2xl font-bold">Comments</h2>
           <CommentForm postId={p.id} onPosted={() => comments.refetch()} />
           <div className="mt-6 space-y-4">
-            {(comments.data ?? []).length === 0 && <p className="text-sm text-muted-foreground">No approved comments yet. Be the first to comment.</p>}
             {(comments.data ?? []).map((c) => (
               <div key={c.id} className="glass rounded-2xl p-4">
                 <div className="flex items-center gap-2 text-xs">
