@@ -4,21 +4,18 @@
  * Renders inside the Dashboard's <TabsContent value="security">.
  * Handles the complete MFA lifecycle:
  *   - Status display (enabled / disabled)
- *   - Enable flow: password → QR code → verify → recovery codes
- *   - Disable flow: password → TOTP code → unenroll
- *   - Recovery code generation and regeneration
+ *   - Enable flow: password → QR code → verify
+ *   - Backup-factor enrollment for account recovery
  */
 import { useState, useEffect, useCallback } from "react";
 import {
-  ShieldCheck, ShieldOff, Shield, Copy, Download, Check,
-  KeyRound, Eye, EyeOff, RefreshCw, X,
+  ShieldCheck, ShieldOff, Shield, KeyRound, Eye, EyeOff, Plus, X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { generateRecoveryCodes, hashRecoveryCode } from "@/lib/recovery-codes";
 import { toast } from "sonner";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -27,10 +24,7 @@ type Step =
   | "idle"
   | "enable-password"
   | "enable-qr"
-  | "enable-codes"
-  | "disable-password"
-  | "disable-totp"
-  | "regen-confirm";
+  | "enable-complete";
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
@@ -46,14 +40,10 @@ export function SecurityTab({ requiredSetup = false, onRequiredComplete }: { req
   const [qrCode, setQrCode] = useState("");
   const [secret, setSecret] = useState("");
   const [totpCode, setTotpCode] = useState("");
-  const [recoveryCodes, setRecoveryCodes] = useState<string[]>([]);
 
   // Password inputs
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
-  // Disable-flow TOTP code
-  const [disableTotpCode, setDisableTotpCode] = useState("");
 
   const [busy, setBusy] = useState(false);
   const [codeCopied, setCopied] = useState(false);
@@ -78,11 +68,9 @@ export function SecurityTab({ requiredSetup = false, onRequiredComplete }: { req
     setStep("idle");
     setPassword("");
     setTotpCode("");
-    setDisableTotpCode("");
     setQrCode("");
     setSecret("");
     setEnrollFactorId("");
-    setRecoveryCodes([]);
     setShowPassword(false);
     setBusy(false);
   };
@@ -158,23 +146,11 @@ export function SecurityTab({ requiredSetup = false, onRequiredComplete }: { req
       return;
     }
 
-    // Generate and store recovery codes
-    const { plaintext, hashes } = await generateRecoveryCodes();
-
-    // Delete old recovery codes first
-    if (user?.id) {
-      await supabase.from("recovery_codes").delete().eq("user_id", user.id);
-      await supabase.from("recovery_codes").insert(
-        hashes.map((code_hash) => ({ user_id: user.id, code_hash }))
-      );
-    }
-
-    setRecoveryCodes(plaintext);
     setTotpCode("");
     setBusy(false);
-    setStep("enable-codes");
+    setStep("enable-complete");
     await loadStatus();
-    toast.success("Two-factor authentication enabled!");
+    toast.success("Authenticator enabled successfully.");
   };
 
   // ─── DISABLE FLOW ─────────────────────────────────────────────────────────
@@ -309,9 +285,9 @@ export function SecurityTab({ requiredSetup = false, onRequiredComplete }: { req
                 size="sm"
                 variant="outline"
                 className="rounded-xl"
-                onClick={() => { setStep("regen-confirm"); }}
+                onClick={() => setStep("enable-password")}
               >
-                <RefreshCw className="mr-1.5 h-3.5 w-3.5" />Regenerate Codes
+                <Plus className="mr-1.5 h-3.5 w-3.5" />Add Backup Authenticator
               </Button>
             ) : (
               <Button
@@ -423,31 +399,16 @@ export function SecurityTab({ requiredSetup = false, onRequiredComplete }: { req
         </StepCard>
       )}
 
-      {/* Step: Recovery codes */}
-      {step === "enable-codes" && (
+      {/* Step: Enrollment complete */}
+      {step === "enable-complete" && (
         <StepCard
-          icon={<KeyRound className="h-5 w-5 text-amber-400" />}
-          title="Save Your Recovery Codes"
-          description=""
-          onClose={() => { reset(); }}
+          icon={<ShieldCheck className="h-5 w-5 text-emerald-400" />}
+          title="Authenticator Enabled"
+          description="This authenticator can now be used for administrator sign-in."
+          onClose={reset}
         >
-          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-300">
-            ⚠️ Save these recovery codes in a safe place. They will not be shown again. Each code can only be used once.
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            {recoveryCodes.map((c) => (
-              <div key={c} className="rounded-lg border border-border/60 bg-card/60 px-3 py-2 text-center font-mono text-sm tracking-widest">
-                {c}
-              </div>
-            ))}
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" className="rounded-xl flex-1" onClick={copyAllCodes}>
-              {codeCopied ? <><Check className="mr-1.5 h-4 w-4" />Copied!</> : <><Copy className="mr-1.5 h-4 w-4" />Copy All</>}
-            </Button>
-            <Button variant="outline" className="rounded-xl flex-1" onClick={downloadCodes}>
-              <Download className="mr-1.5 h-4 w-4" />Download
-            </Button>
+          <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-sm text-emerald-300">
+            Your authenticator is active. For recovery, add a second authenticator on another trusted device and keep it separate from your primary device.
           </div>
           <Button
             className="w-full rounded-xl bg-gradient-to-r from-violet to-electric text-white"
@@ -456,155 +417,8 @@ export function SecurityTab({ requiredSetup = false, onRequiredComplete }: { req
               onRequiredComplete?.();
             }}
           >
-            I've Saved My Codes — Done
+            Done
           </Button>
         </StepCard>
       )}
 
-      {/* ══════════════ DISABLE FLOW ══════════════ */}
-
-      {step === "disable-password" && (
-        <StepCard
-          icon={<ShieldOff className="h-5 w-5 text-red-400" />}
-          title="Disable Two-Factor Authentication"
-          description="Enter your password to proceed. You will also need your authenticator code."
-          onClose={reset}
-        >
-          <PasswordField
-            value={password}
-            show={showPassword}
-            onChange={setPassword}
-            onToggle={() => setShowPassword((v) => !v)}
-          />
-          <div className="flex gap-2">
-            <Button
-              onClick={handleDisablePassword}
-              disabled={busy || !password}
-              className="rounded-xl border-red-500/40 bg-red-500/10 text-red-400 hover:bg-red-500/20"
-              variant="outline"
-            >
-              {busy ? "Verifying…" : "Continue"}
-            </Button>
-            <Button variant="outline" className="rounded-xl" onClick={reset}>Cancel</Button>
-          </div>
-        </StepCard>
-      )}
-
-      {step === "disable-totp" && (
-        <StepCard
-          icon={<ShieldOff className="h-5 w-5 text-red-400" />}
-          title="Confirm with Authenticator Code"
-          description="Enter the current 6-digit code from your authenticator app to disable 2FA."
-          onClose={reset}
-        >
-          <Input
-            type="text"
-            inputMode="numeric"
-            maxLength={6}
-            placeholder="000000"
-            value={disableTotpCode}
-            onChange={(e) => setDisableTotpCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-            onKeyDown={(e) => { if (e.key === "Enter") handleDisableVerify(); }}
-            className="rounded-xl text-center font-mono text-lg tracking-[0.5em]"
-            autoComplete="one-time-code"
-            autoFocus
-          />
-          <div className="flex gap-2">
-            <Button
-              onClick={handleDisableVerify}
-              disabled={busy || disableTotpCode.length !== 6}
-              className="rounded-xl border-red-500/40 bg-red-500/10 text-red-400 hover:bg-red-500/20"
-              variant="outline"
-            >
-              {busy ? "Disabling…" : "Disable 2FA"}
-            </Button>
-            <Button variant="outline" className="rounded-xl" onClick={reset}>Cancel</Button>
-          </div>
-        </StepCard>
-      )}
-
-      {/* ══════════════ REGEN CODES ══════════════ */}
-
-      {step === "regen-confirm" && (
-        <StepCard
-          icon={<RefreshCw className="h-5 w-5 text-amber-400" />}
-          title="Regenerate Recovery Codes"
-          description="Your old recovery codes will be permanently invalidated. New codes will be generated."
-          onClose={reset}
-        >
-          <div className="flex gap-2">
-            <Button
-              onClick={handleRegen}
-              disabled={busy}
-              className="rounded-xl bg-gradient-to-r from-violet to-electric text-white"
-            >
-              {busy ? "Generating…" : "Regenerate Codes"}
-            </Button>
-            <Button variant="outline" className="rounded-xl" onClick={reset}>Cancel</Button>
-          </div>
-        </StepCard>
-      )}
-    </div>
-  );
-}
-
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
-function StepCard({
-  icon, title, description, children, onClose,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-  children: React.ReactNode;
-  onClose: () => void;
-}) {
-  return (
-    <div className="glass gradient-border rounded-2xl p-6">
-      <div className="mb-5 flex items-start justify-between">
-        <div className="flex items-center gap-3">
-          <div className="grid h-10 w-10 place-items-center rounded-xl bg-white/5">{icon}</div>
-          <div>
-            <div className="font-display font-semibold">{title}</div>
-            {description && <div className="mt-0.5 text-sm text-muted-foreground">{description}</div>}
-          </div>
-        </div>
-        <button onClick={onClose} className="rounded-lg p-1 text-muted-foreground hover:text-foreground">
-          <X className="h-4 w-4" />
-        </button>
-      </div>
-      <div className="space-y-4">{children}</div>
-    </div>
-  );
-}
-
-function PasswordField({
-  value, show, onChange, onToggle,
-}: {
-  value: string; show: boolean;
-  onChange: (v: string) => void; onToggle: () => void;
-}) {
-  return (
-    <div>
-      <Label htmlFor="security-password" className="text-xs">Current Password</Label>
-      <div className="relative mt-1.5">
-        <Input
-          id="security-password"
-          type={show ? "text" : "password"}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="rounded-xl pr-10"
-          autoComplete="current-password"
-          autoFocus
-        />
-        <button
-          type="button"
-          onClick={onToggle}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-        >
-          {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-        </button>
-      </div>
-    </div>
-  );
-}
