@@ -13,7 +13,7 @@ export const verifyLoginTurnstile = createServerFn({ method: "POST" })
     return { token };
   })
   .handler(async ({ data }) => {
-    const verified = await verifyTurnstile(data.token, getClientIp());
+    const verified = await verifyTurnstile(data.token, getClientIp(), "auth");
     if (!verified) throw new Error("Human verification failed. Please try again.");
     return { success: true };
   });
