@@ -7,7 +7,7 @@ export function getClientIp(): string {
   return req?.headers?.get("x-real-ip") ?? "unknown";
 }
 
-export async function verifyTurnstile(token: string, ip: string): Promise<boolean> {
+export async function verifyTurnstile(token: string, ip: string, expectedAction: string): Promise<boolean> {
   const secret = process.env.TURNSTILE_SECRET_KEY;
   if (!secret) {
     // Turnstile not configured — fail closed in production, but don't hard-block local dev.
@@ -15,13 +15,30 @@ export async function verifyTurnstile(token: string, ip: string): Promise<boolea
     return process.env.NODE_ENV !== "production";
   }
   try {
+    if (!token || token.length > 2048) return false;
+
     const res = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({ secret, response: token, remoteip: ip }),
     });
-    const data = (await res.json()) as { success: boolean };
-    return data.success === true;
+    if (!res.ok) return false;
+    const data = (await res.json()) as {
+      success: boolean;
+      hostname?: string;
+      action?: string;
+    };
+    if (!data.success || data.action !== expectedAction) return false;
+
+    const configuredHostnames = (process.env.TURNSTILE_HOSTNAMES ?? "codeforgedev.vercel.app")
+      .split(",")
+      .map((hostname) => hostname.trim().toLowerCase())
+      .filter(Boolean);
+    const requestHost = getRequest()?.headers?.get("host")?.split(":")[0]?.toLowerCase();
+    if (!data.hostname || !configuredHostnames.includes(data.hostname.toLowerCase())) return false;
+    if (requestHost && !configuredHostnames.includes(requestHost)) return false;
+
+    return true;
   } catch (e) {
     console.error("[turnstile] verification failed", e);
     return false;
