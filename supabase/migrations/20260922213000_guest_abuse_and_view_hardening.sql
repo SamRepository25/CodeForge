@@ -33,6 +33,6 @@ GRANT EXECUTE ON FUNCTION public.increment_post_views(uuid) TO anon, authenticat
 
 -- The legacy authenticated-user comments table is no longer used by CodeForge.
 -- Keep the table for migration compatibility, but remove anonymous access.
-REVOKE ALL ON public.comments FROM anon;
+REVOKE ALL ON public.comments FROM PUBLIC, anon;
 DROP POLICY IF EXISTS comments_public_read ON public.comments;
 DROP POLICY IF EXISTS comments_read_published ON public.comments;
