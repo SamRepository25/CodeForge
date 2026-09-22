@@ -72,30 +72,14 @@ export function EditModeProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      // isAdmin remains role-only and true from this point onward
-      let nextCanEdit = true;
-
-      const { data: factors, error: factorsError } = await supabase.auth.mfa.listFactors();
-      if (factorsError) {
-        // fail closed
+      // Admin editing is allowed only for an AAL2 session.
+      const { data: aal, error: aalError } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+      if (aalError) {
         setStateSafely({ isAdmin: true, canEdit: false, forceEditOff: true });
         return;
       }
 
-      const hasVerifiedTotp = (factors?.all ?? []).some(
-        (f) => f.factor_type === "totp" && f.status === "verified",
-      );
-
-      if (hasVerifiedTotp) {
-        const { data: aal, error: aalError } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
-        if (aalError) {
-          // fail closed
-          setStateSafely({ isAdmin: true, canEdit: false, forceEditOff: true });
-          return;
-        }
-        nextCanEdit = aal?.currentLevel === "aal2";
-      }
-
+      const nextCanEdit = aal?.currentLevel === "aal2";
       setStateSafely({ isAdmin: true, canEdit: nextCanEdit, forceEditOff: !nextCanEdit });
     } finally {
       recomputingRef.current = false;
