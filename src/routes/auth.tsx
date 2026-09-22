@@ -190,7 +190,7 @@ function AuthPage() {
               label="Email / Username"
               type="email"
               icon={Mail}
-              placeholder="you@example.com"
+              placeholder="admin@domain.com"
               required
               disabled={isLocked}
             />
