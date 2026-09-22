@@ -13,6 +13,13 @@ import { toast } from "sonner";
 import { TurnstileWidget } from "@/components/TurnstileWidget";
 import { submitGuestComment } from "@/lib/comment.functions";
 
+function toSafeJsonLd(value: unknown): string {
+  return JSON.stringify(value)
+    .replace(/</g, "\\u003c")
+    .replace(/>/g, "\\u003e")
+    .replace(/&/g, "\\u0026");
+}
+
 export const Route = createFileRoute("/blog_/$slug")({
   loader: async ({ params }) => {
     const { data } = await supabase
@@ -47,7 +54,7 @@ export const Route = createFileRoute("/blog_/$slug")({
         ? [
             {
               type: "application/ld+json",
-              children: JSON.stringify({
+              children: toSafeJsonLd({
                 "@context": "https://schema.org",
                 "@type": "Article",
                 headline: m.title,
