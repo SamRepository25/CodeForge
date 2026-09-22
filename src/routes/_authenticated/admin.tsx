@@ -136,10 +136,114 @@ function Admin() {
 }
 
 function Overview({ stats, messages, posts, projects, onTab }: { stats: AdminStats; messages: ContactMessage[]; posts: Array<{ id: string; title: string; published: boolean; views: number; created_at: string }>; projects: Project[]; onTab: (tab: string) => void }) {
-  return <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]"><div className="glass rounded-2xl p-6"><div className="flex items-center justify-between"><h2 className="font-display text-xl font-bold">Recent activity</h2><button type="button" className="text-xs text-electric" onClick={() => onTab("activity")}>View all →</button></div><div className="mt-4 divide-y divide-border/30">{messages.slice(0,4).map((m) => <div key={`m-${m.id}`} className="flex items-center justify-between gap-3 py-3 text-sm"><div><div className="font-medium">New contact message from {m.name}</div><div className="text-xs text-muted-foreground">{new Date(m.created_at).toLocaleString()}</div></div><Mail className="h-4 w-4 text-electric" /></div>)}{posts.slice(0,4).map((p) => <div key={`p-${p.id}`} className="flex items-center justify-between gap-3 py-3 text-sm"><div><div className="font-medium">{p.published ? "Published" : "Drafted"}: {p.title}</div><div className="text-xs text-muted-foreground">{new Date(p.created_at).toLocaleString()} · {p.views} views</div></div><FileText className="h-4 w-4 text-electric" /></div>)}{projects.slice(0,2).map((p) => <div key={`pr-${p.id}`} className="flex items-center justify-between gap-3 py-3 text-sm"><div><div className="font-medium">Project: {p.title}</div><div className="text-xs text-muted-foreground">Order {p.order_index}</div></div><Briefcase className="h-4 w-4 text-electric" /></div>)}{messages.length + posts.length + projects.length === 0 && <div className="py-8 text-center text-sm text-muted-foreground">No activity yet.</div>}</div></div><div className="space-y-6"><div className="glass rounded-2xl p-6"><h2 className="font-display text-xl font-bold">Quick actions</h2><div className="mt-4 grid gap-2"><QuickAction label="Manage posts" icon={FileText} onClick={() => onTab("posts")} /><QuickAction label="Manage projects" icon={Briefcase} onClick={() => onTab("projects")} /><QuickAction label="Open messages" icon={Mail} onClick={() => onTab("messages")} /><QuickAction label="Review comments" icon={MessageCircle} onClick={() => onTab("comments")} /></div></div><div className="glass rounded-2xl p-6"><h2 className="font-display text-xl font-bold">Operational status</h2><div className="mt-4 space-y-3 text-sm"><Status label="Admin authorization" /><Status label="MFA security" /><Status label="Supabase connection" /><Status label="Vercel Analytics" /></div><div className="mt-4 grid grid-cols-2 gap-3 text-center"><Metric label="Unread" value={stats.unread} /><Metric label="Pending comments" value={stats.pendingComments} /></div></div></div></div>;
+  return <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]"><div className="glass rounded-2xl p-6"><div className="flex items-center justify-between"><h2 className="font-display text-xl font-bold">Recent activity</h2><button type="button" className="text-xs text-electric" onClick={() => onTab("activity")}>View all →</button></div><div className="mt-4 divide-y divide-border/30">{messages.slice(0,4).map((m) => <div key={`m-${m.id}`} className="flex items-center justify-between gap-3 py-3 text-sm"><div><div className="font-medium">New contact message from {m.name}</div><div className="text-xs text-muted-foreground">{new Date(m.created_at).toLocaleString()}</div></div><Mail className="h-4 w-4 text-electric" /></div>)}{posts.slice(0,4).map((p) => <div key={`p-${p.id}`} className="flex items-center justify-between gap-3 py-3 text-sm"><div><div className="font-medium">{p.published ? "Published" : "Drafted"}: {p.title}</div><div className="text-xs text-muted-foreground">{new Date(p.created_at).toLocaleString()} · {p.views} views</div></div><FileText className="h-4 w-4 text-electric" /></div>)}{projects.slice(0,2).map((p) => <div key={`pr-${p.id}`} className="flex items-center justify-between gap-3 py-3 text-sm"><div><div className="font-medium">Project: {p.title}</div><div className="text-xs text-muted-foreground">Order {p.order_index}</div></div><Briefcase className="h-4 w-4 text-electric" /></div>)}{messages.length + posts.length + projects.length === 0 && <div className="py-8 text-center text-sm text-muted-foreground">No activity yet.</div>}</div></div><div className="space-y-6"><div className="glass rounded-2xl p-6"><h2 className="font-display text-xl font-bold">Quick actions</h2><div className="mt-4 grid gap-2"><QuickAction label="Manage posts" icon={FileText} onClick={() => onTab("posts")} /><QuickAction label="Manage projects" icon={Briefcase} onClick={() => onTab("projects")} /><QuickAction label="Open messages" icon={Mail} onClick={() => onTab("messages")} /><QuickAction label="Review comments" icon={MessageCircle} onClick={() => onTab("comments")} /></div></div><OperationalStatus stats={stats} /></div></div>;
 }
 function QuickAction({ label, icon: Icon, onClick }: { label: string; icon: typeof FileText; onClick: () => void }) { return <Button type="button" variant="outline" className="justify-start rounded-xl" onClick={onClick}><Icon className="mr-2 h-4 w-4" />{label}</Button>; }
-function Status({ label }: { label: string }) { return <div className="flex items-center justify-between"><span>{label}</span><span className="inline-flex items-center gap-1 text-xs text-emerald-400"><Check className="h-3.5 w-3.5" /> Protected</span></div>; }
+type OperationalState = "checking" | "healthy" | "warning" | "error";
+
+function OperationalStatus({ stats }: { stats: AdminStats }) {
+  const [states, setStates] = useState<Record<string, { state: OperationalState; label: string }>>({
+    admin: { state: "checking", label: "Checking…" },
+    mfa: { state: "checking", label: "Checking…" },
+    supabase: { state: "checking", label: "Checking…" },
+    analytics: { state: "checking", label: "Checking…" },
+  });
+
+  const check = async () => {
+    setStates({
+      admin: { state: "checking", label: "Checking…" },
+      mfa: { state: "checking", label: "Checking…" },
+      supabase: { state: "checking", label: "Checking…" },
+      analytics: { state: "checking", label: "Checking…" },
+    });
+
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    const currentUser = userData.user;
+
+    let adminHealthy = false;
+    if (currentUser && !userError) {
+      const { data: roles, error: rolesError } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", currentUser.id);
+      adminHealthy = !rolesError && (roles ?? []).some((role) => role.role === "admin");
+    }
+
+    const { data: aalData, error: aalError } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+    const mfaHealthy = !aalError && aalData.currentLevel === "aal2";
+
+    const { error: databaseError } = await supabase.from("profiles").select("id", { count: "exact", head: true });
+    const supabaseHealthy = !databaseError;
+
+    const analyticsLoaded =
+      typeof window !== "undefined" &&
+      typeof (window as Window & { va?: unknown }).va === "function";
+
+    setStates({
+      admin: {
+        state: adminHealthy ? "healthy" : "error",
+        label: adminHealthy ? "Verified" : "Not verified",
+      },
+      mfa: {
+        state: mfaHealthy ? "healthy" : "warning",
+        label: mfaHealthy ? "AAL2 verified" : "Not AAL2",
+      },
+      supabase: {
+        state: supabaseHealthy ? "healthy" : "error",
+        label: supabaseHealthy ? "Connected" : "Connection error",
+      },
+      analytics: {
+        state: analyticsLoaded ? "healthy" : "warning",
+        label: analyticsLoaded ? "Loaded" : "Not detected",
+      },
+    });
+  };
+
+  useEffect(() => {
+    void check();
+  }, []);
+
+  const statusClass = (state: OperationalState) =>
+    state === "healthy"
+      ? "text-emerald-400"
+      : state === "checking"
+        ? "text-muted-foreground"
+        : "text-amber-400";
+
+  const statusIcon = (state: OperationalState) =>
+    state === "healthy" ? <Check className="h-3.5 w-3.5" /> : null;
+
+  return <div className="glass rounded-2xl p-6">
+    <div className="flex items-center justify-between gap-3">
+      <h2 className="font-display text-xl font-bold">Operational status</h2>
+      <Button size="sm" variant="outline" className="rounded-lg" onClick={() => void check()}>
+        <RefreshCw className="mr-1.5 h-3.5 w-3.5" />
+        Check
+      </Button>
+    </div>
+    <div className="mt-4 space-y-3 text-sm">
+      {[
+        ["Admin authorization", states.admin],
+        ["MFA security", states.mfa],
+        ["Supabase connection", states.supabase],
+        ["Vercel Analytics", states.analytics],
+      ].map(([label, status]) => {
+        const item = status as { state: OperationalState; label: string };
+        return <div key={String(label)} className="flex items-center justify-between gap-3">
+          <span>{label}</span>
+          <span className={`inline-flex items-center gap-1 text-xs ${statusClass(item.state)}`}>
+            {statusIcon(item.state)}
+            {item.label}
+          </span>
+        </div>;
+      })}
+    </div>
+    <div className="mt-4 grid grid-cols-2 gap-3 text-center">
+      <Metric label="Unread" value={stats.unread} />
+      <Metric label="Pending comments" value={stats.pendingComments} />
+    </div>
+  </div>;
+}
 
 function Messages({ messages, refetch, onActivity }: { messages: ContactMessage[]; refetch: () => Promise<unknown>; onActivity: (a: string, r: string, id?: string) => Promise<void>; }) {
   const [expanded, setExpanded] = useState<string | null>(null); const [filter, setFilter] = useState("all"); const visible = messages.filter((m) => filter === "all" || m.status === filter);
