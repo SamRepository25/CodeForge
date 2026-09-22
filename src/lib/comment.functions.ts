@@ -51,7 +51,7 @@ export const submitGuestComment = createServerFn({ method: "POST" })
 
     const ip = getClientIp();
     const ipHash = hashIp(ip);
-    const turnstileOk = await verifyTurnstile(data.turnstileToken, ip);
+    const turnstileOk = await verifyTurnstile(data.turnstileToken, ip, "comment");
     if (!turnstileOk) throw new Error("Spam check failed. Please try again.");
 
     const { error } = await supabaseAdmin.rpc("submit_guest_comment", {
