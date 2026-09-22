@@ -49,8 +49,9 @@ export const submitGuestComment = createServerFn({ method: "POST" })
       .maybeSingle();
     if (postError || !post) throw new Error("Article not found.");
 
-    const ipHash = hashIp(getClientIp());
-    const turnstileOk = await verifyTurnstile(data.turnstileToken, getClientIp());
+    const ip = getClientIp();
+    const ipHash = hashIp(ip);
+    const turnstileOk = await verifyTurnstile(data.turnstileToken, ip);
     if (!turnstileOk) throw new Error("Spam check failed. Please try again.");
 
     const { error } = await supabaseAdmin.rpc("submit_guest_comment", {
