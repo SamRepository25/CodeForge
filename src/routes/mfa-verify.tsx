@@ -58,6 +58,7 @@ function formatRemaining(seconds: number) {
 function MfaVerify() {
   const navigate = useNavigate();
   const [factorId, setFactorId] = useState("");
+  const [factorOptions, setFactorOptions] = useState<Array<{ id: string; friendly_name?: string | null }>>([]);
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(true);
   const [verifying, setVerifying] = useState(false);
@@ -252,6 +253,30 @@ function MfaVerify() {
             </div>
           ) : (
             <div className="space-y-4">
+              {factorOptions.length > 1 && (
+                <div>
+                  <Label className="text-xs">Choose Authenticator</Label>
+                  <div className="mt-1.5 grid gap-2">
+                    {factorOptions.map((factor, index) => (
+                      <Button
+                        key={factor.id}
+                        type="button"
+                        variant={factorId === factor.id ? "default" : "outline"}
+                        className="justify-start rounded-xl"
+                        onClick={() => {
+                          setFactorId(factor.id);
+                          setCode("");
+                        }}
+                        disabled={verifying}
+                      >
+                        <ShieldCheck className="mr-2 h-4 w-4" />
+                        {factor.friendly_name || `Authenticator ${index + 1}`}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div>
                 <Label htmlFor="mfa-code" className="text-xs">Authenticator Code</Label>
                 <Input
