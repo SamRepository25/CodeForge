@@ -18,15 +18,6 @@ export const requestPasswordReset = createServerFn({ method: "POST" })
     const verified = await verifyTurnstile(data.turnstileToken, ip, "password_reset");
     if (!verified) throw new Error("Human verification failed. Please try again.");
 
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: adminRole, error: roleError } = await supabaseAdmin
-      .from("user_roles")
-      .select("user_id")
-      .eq("role", "admin")
-      .limit(1);
-
-    if (roleError) throw new Error("Unable to process the request.");
-
     const { createClient } = await import("@supabase/supabase-js");
     const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
     const publishableKey =
@@ -43,7 +34,6 @@ export const requestPasswordReset = createServerFn({ method: "POST" })
 
     if (error) throw new Error("Unable to process the request.");
 
-    // Deliberately do not reveal whether the submitted address belongs to the admin.
-    void adminRole;
+    // Deliberately do not reveal whether the submitted address exists.
     return { success: true };
   });
