@@ -119,27 +119,6 @@ export type Database = {
         }
         Relationships: []
       }
-      recovery_codes: {
-        Row: {
-          id: string
-          user_id: string
-          code_hash: string
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          code_hash: string
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          code_hash?: string
-          created_at?: string
-        }
-        Relationships: []
-      }
       site_settings: {
         Row: {
           key: string
