@@ -10,8 +10,6 @@ const MAX_FILES = 3;
 const MAX_FILE_BYTES = 8 * 1024 * 1024; // 8MB per file
 const MAX_TOTAL_BYTES = 20 * 1024 * 1024; // 20MB per submission
 const MIN_SUBMIT_MS = 2000; // reject if the form was "filled" faster than this
-const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour
-const RATE_LIMIT_MAX = 5; // max submissions per IP per window
 
 const ALLOWED_TYPES: Record<string, { exts: string[]; magic: (buf: Uint8Array) => boolean }> = {
   "image/jpeg": {
