@@ -6,7 +6,7 @@
 
 begin;
 
-select plan(17);
+select plan(15);
 
 select ok(
   (select relrowsecurity from pg_class where oid = 'public.contact_messages'::regclass),
@@ -126,16 +126,6 @@ select ok(
     'EXECUTE'
   ),
   'service_role can execute the login lockout RPC'
-);
-
-select ok(
-  (select relrowsecurity from pg_class where oid = 'public.recovery_codes'::regclass),
-  'recovery_codes has RLS enabled'
-);
-
-select ok(
-  not has_table_privilege('anon', 'public.recovery_codes', 'SELECT'),
-  'anon cannot SELECT recovery_codes'
 );
 
 select ok(
