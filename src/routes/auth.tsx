@@ -2,10 +2,10 @@
  * /auth — Admin Login
  *
  * Flow after successful password login:
- *   - Only the configured admin email can continue
- *   - Four invalid admin password or non-admin login attempts trigger a 30-minute server-side lockout
+ *   - Authorization is role-based on the server; no admin email is hard-coded here
+ *   - Four invalid login attempts per client IP trigger a 30-minute server-side lockout
  *   - If the admin has a verified TOTP factor → /mfa-verify
- *   - Otherwise → /dashboard
+ *   - Otherwise → /mfa-setup
  */
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
@@ -18,8 +18,6 @@ import { TurnstileWidget } from "@/components/TurnstileWidget";
 import { getLoginLockout, loginWithProtection } from "@/lib/login.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-
-const ADMIN_EMAIL = "simakahmed002@gmail.com";
 
 function formatRemaining(seconds: number) {
   const minutes = Math.floor(seconds / 60);
@@ -143,8 +141,8 @@ function AuthPage() {
         // Must verify MFA before accessing dashboard.
         navigate({ to: "/mfa-verify" });
       } else {
-        // No MFA enrolled → go straight to dashboard.
-        navigate({ to: "/dashboard" });
+        // MFA is mandatory for the admin account.
+        navigate({ to: "/mfa-setup" });
       }
     } catch (error) {
       resetTurnstile();
@@ -206,6 +204,7 @@ function AuthPage() {
             {!isLocked && (
               <TurnstileWidget
                 key={turnstileResetKey}
+                action="login"
                 onToken={setTurnstileToken}
               />
             )}
