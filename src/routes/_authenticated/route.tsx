@@ -3,12 +3,11 @@
  *
  * Logic:
  *   1. No session → /auth
- *   2. Has verified TOTP factor BUT session is only AAL1 → /mfa-verify
- *      (handles the case where the user has MFA enrolled but hasn't verified this session)
- *   3. Everything else → allow through
+ *   2. No verified TOTP factor → /mfa-setup
+ *   3. Has verified TOTP factor BUT session is only AAL1 → /mfa-verify
+ *   4. AAL2 session → allow through
  *
- * MFA is OPTIONAL. If a user has no TOTP factor, they pass through normally.
- * MFA is enforced only when the user HAS enrolled it.
+ * MFA is mandatory for the admin account.
  *
  * Device-session monitoring:
  *   - Registers the current admin browser/device.
@@ -36,7 +35,11 @@ export const Route = createFileRoute("/_authenticated")({
     const { data: factors } = await supabase.auth.mfa.listFactors();
     const hasVerifiedFactor = (factors?.totp ?? []).length > 0;
 
-    if (hasVerifiedFactor) {
+    if (!hasVerifiedFactor) {
+      throw redirect({ to: "/mfa-setup" });
+    }
+
+    {
       // User has MFA — enforce AAL2 for this session
       const { data: aalData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
       if (aalData?.currentLevel !== "aal2") {
@@ -44,7 +47,6 @@ export const Route = createFileRoute("/_authenticated")({
         throw redirect({ to: "/mfa-verify" });
       }
     }
-    // No MFA enrolled → pass through normally
 
     return { user: userData.user };
   },
