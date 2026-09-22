@@ -6,7 +6,7 @@
 
 begin;
 
-select plan(10);
+select plan(15);
 
 select ok(
   (select relrowsecurity from pg_class where oid = 'public.contact_messages'::regclass),
@@ -79,6 +79,61 @@ select ok(
     'EXECUTE'
   ),
   'anon can execute the published-post view counter RPC'
+);
+
+select ok(
+  not exists (
+    select 1
+    from pg_policies
+    where schemaname = 'public'
+      and tablename = 'guest_comments'
+      and policyname = 'guest_comments_insert'
+  ),
+  'legacy guest_comments INSERT policy is absent'
+);
+
+select ok(
+  not has_function_privilege(
+    'anon',
+    'public.submit_contact_message(text,text,text,text,text)',
+    'EXECUTE'
+  ),
+  'anon cannot execute the contact submission RPC'
+);
+
+select ok(
+  has_function_privilege(
+    'service_role',
+    'public.submit_contact_message(text,text,text,text,text)',
+    'EXECUTE'
+  ),
+  'service_role can execute the contact submission RPC'
+);
+
+select ok(
+  not has_function_privilege(
+    'anon',
+    'public.login_lockout_record_failure(text)',
+    'EXECUTE'
+  ),
+  'anon cannot execute the server-only login lockout RPC'
+);
+
+select ok(
+  has_function_privilege(
+    'service_role',
+    'public.login_lockout_record_failure(text)',
+    'EXECUTE'
+  ),
+  'service_role can execute the login lockout RPC'
+);
+
+select ok(
+  position(
+    'public.session_is_aal2()'
+    in pg_get_functiondef('public.current_user_admin_write_allowed()'::regprocedure)
+  ) > 0,
+  'admin write gate requires an AAL2 session'
 );
 
 select * from finish();

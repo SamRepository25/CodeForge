@@ -28,7 +28,7 @@ function loadTurnstileScript(): Promise<void> {
   return scriptPromise;
 }
 
-export function TurnstileWidget({ onToken }: { onToken: (token: string) => void }) {
+export function TurnstileWidget({ action = "default", onToken }: { action?: string; onToken: (token: string) => void }) {
   const id = useId();
   const containerRef = useRef<HTMLDivElement>(null);
   const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined;
@@ -43,6 +43,7 @@ export function TurnstileWidget({ onToken }: { onToken: (token: string) => void 
       widgetId = window.turnstile.render(containerRef.current, {
         sitekey: siteKey,
         theme: "dark",
+        action,
         callback: (token: string) => onToken(token),
         "expired-callback": () => onToken(""),
         "error-callback": () => onToken(""),
@@ -53,7 +54,7 @@ export function TurnstileWidget({ onToken }: { onToken: (token: string) => void 
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [siteKey]);
+  }, [siteKey, action, onToken]);
 
   if (!siteKey) return null;
 

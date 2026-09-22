@@ -30,9 +30,17 @@ export const Route = createFileRoute("/mfa-verify")({
     const { data: userData } = await supabase.auth.getUser();
     if (!userData.user) throw redirect({ to: "/auth" });
 
+    const { data: role } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userData.user.id)
+      .eq("role", "admin")
+      .maybeSingle();
+    if (!role) throw redirect({ to: "/auth" });
+
     const { data: factors } = await supabase.auth.mfa.listFactors();
     if ((factors?.totp ?? []).length === 0) {
-      throw redirect({ to: "/dashboard" });
+      throw redirect({ to: "/mfa-setup" });
     }
 
     const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
@@ -50,6 +58,7 @@ function formatRemaining(seconds: number) {
 function MfaVerify() {
   const navigate = useNavigate();
   const [factorId, setFactorId] = useState("");
+  const [factorOptions, setFactorOptions] = useState<Array<{ id: string; friendly_name?: string | null }>>([]);
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(true);
   const [verifying, setVerifying] = useState(false);
@@ -244,6 +253,30 @@ function MfaVerify() {
             </div>
           ) : (
             <div className="space-y-4">
+              {factorOptions.length > 1 && (
+                <div>
+                  <Label className="text-xs">Choose Authenticator</Label>
+                  <div className="mt-1.5 grid gap-2">
+                    {factorOptions.map((factor, index) => (
+                      <Button
+                        key={factor.id}
+                        type="button"
+                        variant={factorId === factor.id ? "default" : "outline"}
+                        className="justify-start rounded-xl"
+                        onClick={() => {
+                          setFactorId(factor.id);
+                          setCode("");
+                        }}
+                        disabled={verifying}
+                      >
+                        <ShieldCheck className="mr-2 h-4 w-4" />
+                        {factor.friendly_name || `Authenticator ${index + 1}`}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div>
                 <Label htmlFor="mfa-code" className="text-xs">Authenticator Code</Label>
                 <Input

@@ -1,6 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
 
-const ADMIN_EMAIL = "simakahmed002@gmail.com";
 const LOCKOUT_MINUTES = 10;
 const MAX_FAILED_ATTEMPTS = 4;
 
@@ -20,9 +19,16 @@ function validateInput(data: unknown) {
 async function getAdminUser(accessToken: string) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data, error } = await supabaseAdmin.auth.getUser(accessToken);
-  if (error || !data.user || data.user.email?.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
-    throw new Error("Authentication required.");
-  }
+  if (error || !data.user) throw new Error("Authentication required.");
+
+  const { data: role, error: roleError } = await supabaseAdmin
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", data.user.id)
+    .eq("role", "admin")
+    .maybeSingle();
+  if (roleError || !role) throw new Error("Authentication required.");
+
   return { supabaseAdmin, user: data.user };
 }
 

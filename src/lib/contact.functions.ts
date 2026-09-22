@@ -10,8 +10,6 @@ const MAX_FILES = 3;
 const MAX_FILE_BYTES = 8 * 1024 * 1024; // 8MB per file
 const MAX_TOTAL_BYTES = 20 * 1024 * 1024; // 20MB per submission
 const MIN_SUBMIT_MS = 2000; // reject if the form was "filled" faster than this
-const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour
-const RATE_LIMIT_MAX = 5; // max submissions per IP per window
 
 const ALLOWED_TYPES: Record<string, { exts: string[]; magic: (buf: Uint8Array) => boolean }> = {
   "image/jpeg": {
@@ -106,18 +104,8 @@ export const submitContactForm = createServerFn({ method: "POST" })
     const ipHash = hashIp(ip);
 
     // -- spam check -----------------------------------------------------------
-    const turnstileOk = await verifyTurnstile(turnstileToken, ip);
+    const turnstileOk = await verifyTurnstile(turnstileToken, ip, "contact");
     if (!turnstileOk) throw new Error("Spam check failed. Please try again.");
-
-    // -- rate limit -------------------------------------------------------------
-    const { count } = await supabaseAdmin
-      .from("contact_messages")
-      .select("*", { count: "exact", head: true })
-      .eq("ip_hash", ipHash)
-      .gte("created_at", new Date(Date.now() - RATE_LIMIT_WINDOW_MS).toISOString());
-    if ((count ?? 0) >= RATE_LIMIT_MAX) {
-      throw new Error("You've sent several messages recently. Please try again later.");
-    }
 
     // -- attachments ------------------------------------------------------------
     const files = data
@@ -143,12 +131,18 @@ export const submitContactForm = createServerFn({ method: "POST" })
     }
 
     // -- insert message row -------------------------------------------------------
-    const { data: inserted, error: insertError } = await supabaseAdmin
-      .from("contact_messages")
-      .insert({ name, email, subject: subject || null, message, ip_hash: ipHash })
-      .select("id")
-      .single();
+    const { data: insertedRows, error: insertError } = await supabaseAdmin.rpc("submit_contact_message", {
+      p_name: name,
+      p_email: email,
+      p_subject: subject || null,
+      p_message: message,
+      p_ip_hash: ipHash,
+    });
+    const inserted = insertedRows ? { id: insertedRows as string } : null;
     if (insertError || !inserted) {
+      if (insertError?.message.includes("rate limit")) {
+        throw new Error("You've sent several messages recently. Please try again later.");
+      }
       console.error("[contact] insert failed", insertError);
       throw new Error("Couldn't send your message. Please try again.");
     }

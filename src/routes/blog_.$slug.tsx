@@ -13,6 +13,13 @@ import { toast } from "sonner";
 import { TurnstileWidget } from "@/components/TurnstileWidget";
 import { submitGuestComment } from "@/lib/comment.functions";
 
+function toSafeJsonLd(value: unknown): string {
+  return JSON.stringify(value)
+    .replace(/</g, "\\u003c")
+    .replace(/>/g, "\\u003e")
+    .replace(/&/g, "\\u0026");
+}
+
 export const Route = createFileRoute("/blog_/$slug")({
   loader: async ({ params }) => {
     const { data } = await supabase
@@ -47,7 +54,7 @@ export const Route = createFileRoute("/blog_/$slug")({
         ? [
             {
               type: "application/ld+json",
-              children: JSON.stringify({
+              children: toSafeJsonLd({
                 "@context": "https://schema.org",
                 "@type": "Article",
                 headline: m.title,
@@ -83,9 +90,11 @@ function PostPage() {
       return;
     }
 
+    const randomBytes = new Uint8Array(16);
+    crypto.getRandomValues(randomBytes);
     const newVisitorId = typeof crypto.randomUUID === "function"
       ? crypto.randomUUID()
-      : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+      : Array.from(randomBytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
     window.localStorage.setItem(storageKey, newVisitorId);
     setVisitorId(newVisitorId);
   }, []);
@@ -384,7 +393,7 @@ function CommentForm({ postId, onPosted }: { postId: string; onPosted: () => voi
       </div>
       <Textarea value={text} onChange={(e) => setText(e.target.value)} placeholder="Add a thoughtful comment..." className="mt-3 rounded-xl" rows={3} maxLength={1000} />
       <div className="mt-3">
-        <TurnstileWidget onToken={setTurnstileToken} />
+        <TurnstileWidget action="comment" onToken={setTurnstileToken} />
       </div>
       <div className="mt-2 flex justify-end">
         <Button onClick={submit} disabled={busy || !name.trim() || !email.trim() || !text.trim() || !turnstileToken} className="rounded-lg bg-gradient-to-r from-violet to-electric text-white">
