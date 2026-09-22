@@ -326,8 +326,8 @@ export function SecurityTab({ requiredSetup = false, onRequiredComplete }: { req
         </div>
         {!mfaEnabled && (
           <p className="mt-4 text-sm text-muted-foreground">
-            Add an extra layer of security to your account. After enabling, you'll need your
-            authenticator app each time you sign in.
+            Two-step verification is required for the CodeForge administrator. After enabling it,
+            you'll need your authenticator app each time you sign in.
           </p>
         )}
       </div>
