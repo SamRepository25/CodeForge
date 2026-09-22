@@ -9,7 +9,7 @@ ALTER TABLE public.guest_comments
 CREATE INDEX IF NOT EXISTS guest_comments_ip_hash_created_idx
   ON public.guest_comments (ip_hash, created_at DESC);
 
-REVOKE INSERT ON public.guest_comments FROM anon, authenticated;
+REVOKE INSERT ON public.guest_comments FROM PUBLIC, anon, authenticated;
 REVOKE UPDATE, DELETE ON public.guest_comments FROM anon;
 
 -- Atomic, published-post-only view counter. The function intentionally
