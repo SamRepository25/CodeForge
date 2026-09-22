@@ -15,7 +15,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 
-type Step = "idle" | "enable-password" | "enable-qr" | "enable-complete";
+type Step = "idle" | "enable-qr" | "enable-complete";
 
 export function SecurityTab({
   requiredSetup = false,
@@ -32,8 +32,6 @@ export function SecurityTab({
   const [qrCode, setQrCode] = useState("");
   const [secret, setSecret] = useState("");
   const [totpCode, setTotpCode] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [busy, setBusy] = useState(false);
   const [secretCopied, setSecretCopied] = useState(false);
 
@@ -54,35 +52,21 @@ export function SecurityTab({
 
   const reset = () => {
     setStep("idle");
-    setPassword("");
     setTotpCode("");
     setQrCode("");
     setSecret("");
     setEnrollFactorId("");
-    setShowPassword(false);
     setSecretCopied(false);
     setBusy(false);
   };
 
-  const verifyPassword = async (pw: string): Promise<boolean> => {
-    if (!user?.email) return false;
-    const { error } = await supabase.auth.signInWithPassword({
-      email: user.email,
-      password: pw,
-    });
-    return !error;
-  };
-
-  const handleEnablePassword = async () => {
-    if (!password) {
-      toast.error("Enter your password.");
-      return;
-    }
-
+  const handleStartEnrollment = async () => {
     setBusy(true);
-    const ok = await verifyPassword(password);
-    if (!ok) {
-      toast.error("Incorrect password.");
+
+    const { data: assurance, error: assuranceError } =
+      await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+    if (assuranceError || assurance.currentLevel !== "aal2") {
+      toast.error("Two-step verification is required before adding a backup authenticator.");
       setBusy(false);
       return;
     }
@@ -109,7 +93,6 @@ export function SecurityTab({
     setEnrollFactorId(data.id);
     setQrCode(data.totp.qr_code);
     setSecret(data.totp.secret);
-    setPassword("");
     setBusy(false);
     setStep("enable-qr");
   };
@@ -199,7 +182,7 @@ export function SecurityTab({
                 ? "rounded-xl"
                 : "rounded-xl bg-gradient-to-r from-violet to-electric text-white"
             }
-            onClick={() => setStep("enable-password")}
+            onClick={() => void handleStartEnrollment()}
           >
             {mfaCount > 0 ? (
               <>
@@ -221,33 +204,6 @@ export function SecurityTab({
         </p>
       </div>
 
-      {step === "enable-password" && (
-        <StepCard
-          icon={<KeyRound className="h-5 w-5 text-violet" />}
-          title={mfaCount > 0 ? "Add Backup Authenticator" : "Verify Your Password"}
-          description="Re-enter your current password before creating a new TOTP factor."
-          onClose={reset}
-        >
-          <PasswordField
-            value={password}
-            show={showPassword}
-            onChange={setPassword}
-            onToggle={() => setShowPassword((visible) => !visible)}
-          />
-          <div className="flex gap-2">
-            <Button
-              onClick={() => void handleEnablePassword()}
-              disabled={busy || !password}
-              className="rounded-xl bg-gradient-to-r from-violet to-electric text-white"
-            >
-              {busy ? "Verifying…" : "Continue"}
-            </Button>
-            <Button variant="outline" className="rounded-xl" onClick={reset}>
-              Cancel
-            </Button>
-          </div>
-        </StepCard>
-      )}
 
       {step === "enable-qr" && (
         <StepCard
@@ -391,41 +347,3 @@ function StepCard({
   );
 }
 
-function PasswordField({
-  value,
-  show,
-  onChange,
-  onToggle,
-}: {
-  value: string;
-  show: boolean;
-  onChange: (value: string) => void;
-  onToggle: () => void;
-}) {
-  return (
-    <div>
-      <Label htmlFor="security-password" className="text-xs">
-        Current Password
-      </Label>
-      <div className="relative mt-1.5">
-        <Input
-          id="security-password"
-          type={show ? "text" : "password"}
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-          className="rounded-xl pr-10"
-          autoComplete="current-password"
-          autoFocus
-        />
-        <button
-          type="button"
-          onClick={onToggle}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-          aria-label={show ? "Hide password" : "Show password"}
-        >
-          {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-        </button>
-      </div>
-    </div>
-  );
-}
