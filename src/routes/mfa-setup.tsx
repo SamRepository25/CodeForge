@@ -46,7 +46,7 @@ function MfaSetupPage() {
           <h1 className="mt-4 font-display text-3xl font-bold">Set Up Two-Step Verification</h1>
           <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">
             CodeForge requires TOTP two-step verification before the administration dashboard
-            can be used. Scan the QR code, verify the six-digit code, and save your recovery codes.
+            can be used. Scan the QR code and verify the six-digit code. For recovery, you can add a second authenticator on another trusted device.
           </p>
         </div>
 
