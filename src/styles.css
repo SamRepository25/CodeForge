@@ -171,6 +171,37 @@
 @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 @utility float-slow { animation: float 6s ease-in-out infinite; }
 /* ===========================
+   Copy Protection
+   Prevent normal content selection/copying while preserving
+   text entry and selection inside interactive controls.
+=========================== */
+body {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+input,
+textarea,
+select,
+button,
+[contenteditable="true"],
+[contenteditable=""],
+[role="textbox"] {
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+}
+
+img,
+svg {
+  -webkit-user-drag: none;
+  user-drag: none;
+}
+
+/* ===========================
    Blog Markdown Styling
 =========================== */
 
