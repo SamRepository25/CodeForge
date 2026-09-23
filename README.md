@@ -2,122 +2,165 @@
 
 > **Forge ideas into reality.**
 
-A modern **personal developer portfolio and technical blog** built to showcase projects, technical work, learning, and AI-powered development.
+CodeForge is a modern personal developer platform built to showcase software projects, technical work, learning, technical writing, and AI-powered development.
 
-CodeForge is built with **React, TypeScript, Tailwind CSS, TanStack, Supabase, and PostgreSQL**, with production deployment on **Vercel**.
-
-🌐 **Live Website:** https://codeforgedev.vercel.app  
+It combines a developer portfolio, technical blog, AI-powered capabilities, authentication, protected application areas, and a modern full-stack architecture.
 
 ---
 
-## ✨ Highlights
+## ✨ Features
 
-- 🌐 Personal developer portfolio
-- 💼 Project showcase
-- 📝 Technical blog
-- 🤖 AI-powered development
-- 🔐 Authentication
-- 🛡️ Protected application areas
-- 📱 Responsive modern UI
-- ⚡ Modern frontend architecture
-- ☁️ Vercel deployment
-- 📚 Continuous learning and development
-
----
-
-## 🏠 About CodeForge
-
-CodeForge is a personal developer platform created to showcase software projects, technical interests, development work, and continuous learning.
-
-The platform is built around three core ideas:
-
-**Modern Stack · Fast Performance · AI Powered**
-
-### Current Highlights
-
-| Metric | Value |
-|---|---:|
-| 🚀 Projects Built | **6+** |
-| 💻 Lines of Code | **15K+** |
-| 🛠️ Technologies | **5+** |
-| 📚 Learning | **24/7** |
+* 💼 Developer portfolio
+* 🚀 Project showcase
+* 📝 Technical blog
+* 🔎 Blog search and discovery
+* 🏷️ Categories and tags
+* 💬 Blog comments
+* 🤖 AI-powered developer features
+* 🔐 Authentication
+* 🛡️ Protected application areas
+* 👤 Admin functionality
+* 🔑 Password recovery
+* 🔒 Multi-factor authentication support
+* 📬 Contact functionality
+* 📱 Responsive user interface
+* ⚡ Modern application architecture
+* 📊 Data visualization
+* ☁️ Vercel deployment
+* 📈 Vercel Analytics
 
 ---
 
-## 💼 Projects
+## 🌐 Live Website
 
-The Projects section showcases software projects and technical work.
-
-Projects focus on:
-
-- Project purpose
-- Key features
-- Technologies used
-- Technical implementation
-- Development approach
-- Project outcomes
-
-The goal is to showcase practical software engineering and real-world project development.
+**CodeForge:** https://codeforgedev.vercel.app
 
 ---
 
-## 📝 Technical Blog
+# 🏠 About CodeForge
 
-CodeForge includes a dedicated technical blog for sharing technical knowledge and development experiences.
+CodeForge is a personal developer platform created to bring together software projects, technical articles, development experiments, learning resources, and AI-powered tools in one place.
 
-### Blog Features
+The platform focuses on:
 
-- Technical articles
-- Individual article pages
-- Search functionality
-- Categories and tags
-- Markdown-based content
-- Comments
-- Content management
+* Building practical software
+* Exploring modern technologies
+* Learning through real projects
+* Documenting technical knowledge
+* Experimenting with AI
+* Applying security-conscious development practices
 
-The blog is designed to support technical writing, documentation, and knowledge sharing.
+### Core Philosophy
 
----
-
-## 🤖 AI-Powered Development
-
-AI is one of the core themes of CodeForge.
-
-The project explores AI-powered development alongside traditional software engineering.
-
-Areas of interest include:
-
-- Artificial Intelligence
-- Machine Learning
-- Generative AI
-- LLM-powered applications
-- AI developer tools
-- Prompt engineering
-- Intelligent automation
+**Build · Learn · Experiment · Secure**
 
 ---
 
-## 🔐 Authentication & Security
+# 💼 Portfolio
 
-CodeForge includes authentication and protected application functionality.
+The portfolio section showcases software projects and technical work.
 
-### Authentication
+Each project can highlight:
 
-- Email and password authentication
-- Supabase Authentication
-- Protected routes
-- Session-aware application flow
-- Multi-factor authentication support
+* Project purpose
+* Key features
+* Technologies used
+* Technical implementation
+* Development decisions
+* Project status
+* Relevant resources
 
-### Security
+The goal is to demonstrate practical software engineering rather than simply listing technologies.
 
-- Environment-based configuration
-- Protected application areas
-- PostgreSQL-backed data
-- Authentication-aware application flows
-- Sensitive credentials kept outside the repository
+---
 
-> ⚠️ Never commit production credentials, service-role keys, private API keys, or other secrets to the repository.
+# 📝 Technical Blog
+
+CodeForge includes a technical blog for publishing development-related articles and technical knowledge.
+
+### Blog Capabilities
+
+* Technical articles
+* Individual article pages
+* Search
+* Categories
+* Tags
+* Markdown content
+* GitHub-flavored Markdown
+* Comments
+* Content management
+* Responsive reading experience
+
+### Topics
+
+Blog content can cover areas such as:
+
+* Programming
+* Artificial Intelligence
+* Cybersecurity
+* Web Development
+* Databases
+* Cloud Computing
+* Computer Networks
+* Software Engineering
+* Developer Tools
+* Technical Learning
+
+---
+
+# 🤖 AI-Powered Development
+
+AI is one of the major areas explored by CodeForge.
+
+The project uses modern AI technologies to experiment with developer-focused and productivity-oriented workflows.
+
+Areas of exploration include:
+
+* Artificial Intelligence
+* Generative AI
+* Large Language Models
+* AI-assisted development
+* AI developer tools
+* Prompt engineering
+* Intelligent automation
+* AI-powered applications
+* AI-assisted learning
+
+The AI capabilities of CodeForge are continuously evolving as new ideas and technologies are explored.
+
+---
+
+# 🔐 Authentication & Security
+
+Security is an important part of the CodeForge architecture.
+
+## Authentication
+
+CodeForge uses Supabase Authentication and application-level access control.
+
+Authentication functionality includes:
+
+* Email and password authentication
+* Session management
+* Protected routes
+* Password recovery
+* Authentication-aware application flows
+* Multi-factor authentication support
+* Protected administrative functionality
+
+## Security Practices
+
+The project follows security-conscious development practices including:
+
+* Environment-based configuration
+* Protected application areas
+* Authentication-aware access control
+* Database-backed authorization
+* Separation of public and privileged functionality
+* Server-side handling of sensitive operations
+* Secrets kept outside the repository
+
+> ⚠️ Never commit production credentials, service-role keys, private API keys, access tokens, or other secrets to the repository.
 
 ---
 
@@ -125,84 +168,103 @@ CodeForge includes authentication and protected application functionality.
 
 ## Frontend
 
-- **React 19**
-- **TypeScript**
-- **Vite**
-- **TanStack Router**
-- **TanStack Start**
-- **Tailwind CSS**
-- **shadcn/ui**
-- **Radix UI**
-- **Framer Motion**
-- **Lucide React**
+* **React 19**
+* **TypeScript**
+* **Vite**
+* **TanStack Router**
+* **TanStack Start**
+* **Tailwind CSS**
+* **shadcn/ui**
+* **Radix UI**
+* **Framer Motion**
+* **Lucide React**
 
 ## Backend & Database
 
-- **Supabase**
-- **PostgreSQL**
-- **Supabase Authentication**
+* **Supabase**
+* **PostgreSQL**
+* **Supabase Authentication**
 
 ## AI
 
-- **AI SDK**
-- **AI integrations**
+* **Vercel AI SDK**
+* **OpenAI-compatible AI integrations**
 
 ## Forms & Validation
 
-- **React Hook Form**
-- **Zod**
+* **React Hook Form**
+* **Zod**
 
 ## Content
 
-- **React Markdown**
-- **remark-gfm**
+* **React Markdown**
+* **remark-gfm**
 
-## Data & UI
+## Data & Visualization
 
-- **TanStack Query**
-- **Recharts**
-- **date-fns**
-- **Sonner**
+* **TanStack Query**
+* **Recharts**
+* **date-fns**
 
-## Deployment
+## UI & Utilities
 
-- **Vercel**
+* **Sonner**
+* **Embla Carousel**
+* **Tailwind Merge**
+* **Class Variance Authority**
+
+## Email
+
+* **Resend**
+
+## Deployment & Analytics
+
+* **Vercel**
+* **Vercel Analytics**
 
 ---
 
 # 🏗️ Architecture
 
 ```text
-                         ┌───────────────────────┐
-                         │       CodeForge       │
-                         │ Portfolio + Technical │
-                         │         Blog          │
-                         └───────────┬───────────┘
-                                     │
-                                     ▼
-                         ┌───────────────────────┐
-                         │ React + TypeScript    │
-                         │ TanStack + Tailwind   │
-                         └───────────┬───────────┘
-                                     │
-                  ┌──────────────────┴──────────────────┐
-                  │                                     │
-                  ▼                                     ▼
-           Public Experience                    Protected Areas
-                  │                                     │
-        ┌─────────┼─────────┐                    Authentication
-        │         │         │                         │
-        ▼         ▼         ▼                         ▼
-     Portfolio Projects   Blog                    Admin
-                                                      │
-                                                      ▼
-                                                 Supabase
-                                                      │
-                                                      ▼
-                                                  PostgreSQL
-                                                      │
-                                                      ▼
-                                                    Vercel
+                         ┌──────────────────────────┐
+                         │        CodeForge         │
+                         │ Portfolio + Blog + AI    │
+                         └────────────┬─────────────┘
+                                      │
+                                      ▼
+                         ┌──────────────────────────┐
+                         │   React + TypeScript     │
+                         │ TanStack + Tailwind CSS  │
+                         └────────────┬─────────────┘
+                                      │
+                ┌─────────────────────┴─────────────────────┐
+                │                                           │
+                ▼                                           ▼
+         Public Experience                         Protected Experience
+                │                                           │
+       ┌────────┼────────┐                         ┌─────────┴─────────┐
+       │        │        │                         │                   │
+       ▼        ▼        ▼                         ▼                   ▼
+   Portfolio   Blog      AI                   Authentication         Admin
+       │        │        │                         │                   │
+       └────────┴────────┘                         └─────────┬─────────┘
+                                                            │
+                                                            ▼
+                                                   ┌────────────────┐
+                                                   │    Supabase    │
+                                                   │ Auth + Database│
+                                                   └───────┬────────┘
+                                                           │
+                                                           ▼
+                                                   ┌────────────────┐
+                                                   │   PostgreSQL   │
+                                                   └───────┬────────┘
+                                                           │
+                                                           ▼
+                                                   ┌────────────────┐
+                                                   │     Vercel     │
+                                                   └────────────────┘
 ```
 
 ---
@@ -214,12 +276,23 @@ CodeForge/
 │
 ├── .main/
 │   └── project.json
+│
 ├── migration/
+│
 ├── public/
+│
+├── scripts/
+│
 ├── src/
+│   ├── components/
+│   ├── lib/
+│   ├── routes/
+│   └── ...
+│
 ├── supabase/
 │   ├── migrations/
 │   └── config.toml
+│
 ├── .env.example
 ├── .gitignore
 ├── .prettierignore
@@ -236,43 +309,57 @@ CodeForge/
 └── vite.config.ts
 ```
 
+> The project structure may evolve as new features are added.
+
 ---
 
 # 🚀 Getting Started
 
 ## Prerequisites
 
-Make sure you have:
+Before running CodeForge locally, make sure you have:
 
-- Node.js
-- npm
-- A Supabase project
+* Node.js
+* npm
+* A Supabase project
 
-### 1. Clone the Repository
+---
+
+## 1. Clone the Repository
 
 ```bash
 git clone https://github.com/SamRepository25/CodeForge.git
 cd CodeForge
 ```
 
-### 2. Install Dependencies
+---
+
+## 2. Install Dependencies
 
 ```bash
 npm install
 ```
 
-### 3. Configure Environment Variables
+---
 
-Create a `.env` file in the project root:
+## 3. Configure Environment Variables
+
+Create a `.env` file in the project root.
+
+Example:
 
 ```env
 VITE_SUPABASE_URL=your_supabase_project_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
-> ⚠️ Never commit your real credentials or private keys to GitHub.
+Additional environment variables may be required for server-side, AI, email, or other integrations depending on the enabled features.
 
-### 4. Start the Development Server
+> ⚠️ Never commit your real `.env` file or production secrets.
+
+---
+
+## 4. Start the Development Server
 
 ```bash
 npm run dev
@@ -284,37 +371,37 @@ The development server will provide a local URL.
 
 # 🧪 Development Commands
 
-### Start Development Server
+## Start Development Server
 
 ```bash
 npm run dev
 ```
 
-### Build for Production
+## Production Build
 
 ```bash
 npm run build
 ```
 
-### Development Build
+## Development Build
 
 ```bash
 npm run build:dev
 ```
 
-### Preview Production Build
+## Preview Production Build
 
 ```bash
 npm run preview
 ```
 
-### Run Linter
+## Run ESLint
 
 ```bash
 npm run lint
 ```
 
-### Format Code
+## Format Code
 
 ```bash
 npm run format
@@ -326,70 +413,99 @@ npm run format
 
 CodeForge is deployed using **Vercel**.
 
+The production application is connected to the GitHub repository and is continuously maintained as the project evolves.
+
 ### Production Website
 
 https://codeforgedev.vercel.app
 
-The production application is connected to the CodeForge GitHub repository.
+---
+
+# 🔒 Security Guidelines
+
+When developing or deploying CodeForge:
+
+* Never commit `.env` files containing secrets.
+* Never expose Supabase service-role credentials to the browser.
+* Never commit private API keys.
+* Keep privileged operations on trusted server-side boundaries.
+* Validate user-controlled input.
+* Use appropriate authentication and authorization checks.
+* Review database access policies before changing protected functionality.
+* Avoid exposing sensitive application information through client-side code.
+* Test authentication and authorization changes carefully.
+
+Security changes should be treated as application-wide changes because authentication, database policies, protected routes, and administrative functionality can depend on one another.
 
 ---
 
-# 📸 Screenshots
+# 🧠 Development Philosophy
 
-### 🏠 Home
+CodeForge is built around four principles.
 
-<img width="1918" height="1078" alt="CodeForge Home" src="https://github.com/user-attachments/assets/3e1df4b1-59ca-4866-bf09-72c040ac0fa8" />
+### 🚀 Build
 
-### 👨‍💻 About
+Turn ideas into working software.
 
-<img width="1917" height="1078" alt="CodeForge About" src="https://github.com/user-attachments/assets/5e661a29-9e38-4d0a-95e3-258945605ca8" />
+### 📚 Learn
 
-### 💼 Projects
+Use real projects and experimentation to develop practical technical knowledge.
 
-<img width="1918" height="1078" alt="CodeForge Projects" src="https://github.com/user-attachments/assets/a251de55-e2b0-4261-a35b-fffdf37c0bf6" />
+### 🤖 Explore
 
-### 📝 Blog
+Experiment with emerging technologies, especially AI and modern developer tooling.
 
-<img width="1918" height="1078" alt="CodeForge Blog" src="https://github.com/user-attachments/assets/874fd185-8cd8-4461-8aec-1557dbe3be0d" />
+### 🔐 Secure
+
+Treat security, privacy, authorization, and maintainability as part of the development process.
 
 ---
 
-# 🗺️ Future Improvements
+# 🗺️ Roadmap
+
+CodeForge is an actively evolving project.
 
 Potential future improvements include:
 
-- [ ] Expanded AI-powered features
-- [ ] AI chat capabilities
-- [ ] Portfolio analytics
-- [ ] Advanced blog search
-- [ ] Automated testing
-- [ ] Performance optimization
-- [ ] Progressive Web App support
-- [ ] Additional security hardening
-- [ ] More technical articles
-- [ ] Expanded project case studies
-- [ ] Accessibility improvements
+* [ ] Additional AI-powered tools
+* [ ] AI chat capabilities
+* [ ] Expanded developer utilities
+* [ ] More technical articles
+* [ ] Expanded project case studies
+* [ ] Advanced blog search
+* [ ] Portfolio analytics
+* [ ] Automated testing
+* [ ] Performance optimization
+* [ ] Accessibility improvements
+* [ ] Additional security hardening
+* [ ] Progressive Web App capabilities
+* [ ] Additional developer-focused features
+
+The roadmap may change as the project evolves.
 
 ---
 
 # 🤝 Contributing
 
-CodeForge is primarily a personal project, but feedback, suggestions, bug reports, and feature requests are welcome.
+CodeForge is primarily a personal project.
 
-If you discover an issue:
+Feedback, suggestions, bug reports, and feature requests are welcome.
+
+If you discover a problem:
 
 1. Open a GitHub Issue.
-2. Clearly describe the problem.
+2. Clearly describe the issue.
 3. Include reproduction steps when possible.
 4. Add screenshots or logs when useful.
+5. Never include passwords, API keys, tokens, or other secrets.
 
 ---
 
 # 📄 License
 
-This project is licensed under the **Proprietary License**.
+CodeForge is licensed under the **Proprietary License**.
 
-See the [**LICENSE**](./LICENSE) file for details.
+See the [`LICENSE`](./LICENSE) file for the applicable terms.
 
 ---
 
@@ -401,17 +517,13 @@ See the [**LICENSE**](./LICENSE) file for details.
 
 ### Interests
 
-- Software Development
-- Artificial Intelligence
-- Cybersecurity
-- Full-Stack Development
-- Developer Tools
-- Modern Web Technologies
-
-### Links
-
-- **GitHub:** https://github.com/SamRepository25
-- **CodeForge:** https://codeforgedev.vercel.app
+* 💻 Software Development
+* 🤖 Artificial Intelligence
+* 🔐 Cybersecurity
+* 🌐 Full-Stack Development
+* 🛠️ Developer Tools
+* ☁️ Cloud Technologies
+* 🌍 Modern Web Technologies
 
 ---
 
