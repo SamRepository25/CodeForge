@@ -370,7 +370,7 @@ export function AboutPage() {
               asChild
               className="rounded-xl bg-gradient-to-r from-violet to-electric text-white"
             >
-              <a href={`mailto:${s.email || "simakahmed@outlook.com"}`}>Get in touch</a>
+              <Link to="/contact">Get in touch</Link>
             </Button>
             <Button asChild variant="outline" className="rounded-xl">
               <Link to="/projects">See my work</Link>
