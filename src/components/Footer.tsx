@@ -44,7 +44,7 @@ export function Footer() {
             </p>
             <div className="mt-4 flex items-center gap-2">
               {[
-                { icon: Github, href: "https://github.com/SamRepository25/", label: "GitHub" },
+                { icon: Github, href: "https://github.com/SamRepository25", label: "GitHub" },
                 {
                   icon: Linkedin,
                   href: "https://www.linkedin.com/in/simakahmed",
