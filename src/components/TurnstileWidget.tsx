@@ -28,7 +28,7 @@ function loadTurnstileScript(): Promise<void> {
   return scriptPromise;
 }
 
-export function TurnstileWidget({ action = "default", onToken }: { action?: string; onToken: (token: string) => void }) {
+export function TurnstileWidget({ action = "default", invisible = false, onToken }: { action?: string; invisible?: boolean; onToken: (token: string) => void }) {
   const id = useId();
   const containerRef = useRef<HTMLDivElement>(null);
   const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined;
@@ -44,6 +44,7 @@ export function TurnstileWidget({ action = "default", onToken }: { action?: stri
         sitekey: siteKey,
         theme: "dark",
         action,
+        ...(invisible ? { size: "invisible" } : {}),
         callback: (token: string) => onToken(token),
         "expired-callback": () => onToken(""),
         "error-callback": () => onToken(""),

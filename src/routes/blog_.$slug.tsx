@@ -391,9 +391,7 @@ function CommentForm({ postId, onPosted }: { postId: string; onPosted: () => voi
         />
       </div>
       <Textarea value={text} onChange={(e) => setText(e.target.value)} placeholder="Add a thoughtful comment..." className="mt-3 rounded-xl" rows={3} maxLength={1000} />
-      <div className="mt-3">
-        <TurnstileWidget action="comment" onToken={setTurnstileToken} />
-      </div>
+      <TurnstileWidget action="comment" invisible onToken={setTurnstileToken} />
       <div className="mt-2 flex justify-end">
         <Button onClick={submit} disabled={busy || !name.trim() || !email.trim() || !text.trim() || !turnstileToken} className="rounded-lg bg-gradient-to-r from-violet to-electric text-white">
           <Send className="mr-1.5 h-3.5 w-3.5" />Post comment
