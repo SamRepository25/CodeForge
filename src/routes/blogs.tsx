@@ -6,15 +6,15 @@ import { SiteLayout } from "@/components/SiteLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 
-const URL_BLOG = "https://codeforgedev.vercel.app/blog";
+const URL_BLOG = "https://codeforgedev.vercel.app/blogs";
 const OG_IMAGE = "https://codeforgedev.vercel.app/og-image.png";
 
-export const Route = createFileRoute("/blog")({
+export const Route = createFileRoute("/blogs")({
   head: () => ({
     meta: [
-      { title: "Blog — CodeForge" },
+      { title: "Blogs — CodeForge" },
       { name: "description", content: "Technical articles, tutorials and reflections on building modern web apps." },
-      { property: "og:title", content: "Blog — CodeForge" },
+      { property: "og:title", content: "Blogs — CodeForge" },
       { property: "og:description", content: "Technical articles & tutorials on React, TypeScript and modern web development." },
       { property: "og:url", content: URL_BLOG },
       { property: "og:image", content: OG_IMAGE },
@@ -55,7 +55,7 @@ function Blog() {
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div className="max-w-2xl">
             <div className="text-xs uppercase tracking-[0.18em] text-electric">Writing</div>
-            <h1 className="mt-2 font-display text-5xl font-bold tracking-tight md:text-6xl">The blog</h1>
+            <h1 className="mt-2 font-display text-5xl font-bold tracking-tight md:text-6xl">The blogs</h1>
             <p className="mt-4 text-lg text-muted-foreground">Long-form notes on building, shipping & learning in public.</p>
           </div>
           <div className="relative w-full max-w-sm">
@@ -74,7 +74,7 @@ function Blog() {
         ) : (
           <>
             {featured && (
-              <Link to="/blog/$slug" params={{ slug: featured.slug }} className="glass gradient-border mt-12 block overflow-hidden rounded-3xl p-8 transition hover:-translate-y-1 md:p-12">
+              <Link to="/blogs/$slug" params={{ slug: featured.slug }} className="glass gradient-border mt-12 block overflow-hidden rounded-3xl p-8 transition hover:-translate-y-1 md:p-12">
                 <div className="text-xs uppercase tracking-wider text-electric">Featured · {featured.category}</div>
                 <h2 className="mt-3 font-display text-3xl font-bold md:text-4xl">{featured.title}</h2>
                 <p className="mt-3 max-w-2xl text-muted-foreground">{featured.excerpt}</p>
@@ -85,7 +85,7 @@ function Blog() {
             )}
             <div className="mt-10 grid gap-6 pb-20 md:grid-cols-2 lg:grid-cols-3">
               {rest.map((p) => (
-                <Link key={p.id} to="/blog/$slug" params={{ slug: p.slug }} className="glass group flex flex-col rounded-2xl p-6 transition hover:-translate-y-1">
+                <Link key={p.id} to="/blogs/$slug" params={{ slug: p.slug }} className="glass group flex flex-col rounded-2xl p-6 transition hover:-translate-y-1">
                   <div className="text-[10px] uppercase tracking-wider text-electric">{p.category ?? "Article"}</div>
                   <h3 className="mt-2 font-display text-lg font-semibold group-hover:gradient-text">{p.title}</h3>
                   <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">{p.excerpt}</p>
