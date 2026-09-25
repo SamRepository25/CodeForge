@@ -50,7 +50,7 @@ export function Footer() {
                   href: "https://www.linkedin.com/in/simakahmed",
                   label: "LinkedIn",
                 },
-                { icon: XLogo, href: xUrl, label: "X" },
+                { icon: XLogo, href:"https://x.com/codeforgedev", label: "X" },
                 { icon: Mail, href: "mailto:simakahmed@outlook.com", label: "Email" },
               ].map(({ icon: Icon, href, label }) => (
                 <a
