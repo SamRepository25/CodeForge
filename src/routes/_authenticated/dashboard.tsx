@@ -216,7 +216,7 @@ function Dashboard() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    {p.published && <Link to="/blog/$slug" params={{ slug: p.slug }} className="text-xs text-electric">View</Link>}
+                    {p.published && <Link to="/blogs/$slug" params={{ slug: p.slug }} className="text-xs text-electric">View</Link>}
                     <Button asChild size="sm" variant="outline" className="rounded-lg">
                       <Link to="/dashboard/edit/$id" params={{ id: p.id }}><Edit className="h-3.5 w-3.5" /></Link>
                     </Button>
@@ -231,9 +231,9 @@ function Dashboard() {
 
           <TabsContent value="bookmarks" className="mt-6">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {(bookmarks.data ?? []).length === 0 && <div className="glass md:col-span-2 lg:col-span-3 rounded-2xl p-10 text-center text-sm text-muted-foreground">No bookmarks yet. <Link to="/blog" className="text-electric">Explore articles</Link>.</div>}
+              {(bookmarks.data ?? []).length === 0 && <div className="glass md:col-span-2 lg:col-span-3 rounded-2xl p-10 text-center text-sm text-muted-foreground">No bookmarks yet. <Link to="/blogs" className="text-electric">Explore articles</Link>.</div>}
               {(bookmarks.data ?? []).map((b) => b.posts && (
-                <Link key={b.post_id} to="/blog/$slug" params={{ slug: b.posts.slug }} className="glass block rounded-2xl p-5 transition hover:-translate-y-0.5">
+                <Link key={b.post_id} to="/blogs/$slug" params={{ slug: b.posts.slug }} className="glass block rounded-2xl p-5 transition hover:-translate-y-0.5">
                   <div className="text-[10px] uppercase tracking-wider text-electric">{b.posts.category}</div>
                   <h3 className="mt-1 font-semibold"><Bookmark className="mr-1 inline h-3 w-3 fill-electric text-electric" />{b.posts.title}</h3>
                   <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{b.posts.excerpt}</p>

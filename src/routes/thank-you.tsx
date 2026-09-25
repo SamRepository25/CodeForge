@@ -41,10 +41,10 @@ function ThankYouPage() {
             View projects
           </Link>
           <Link
-            to="/blog"
+            to="/blogs"
             className="rounded-xl border border-border/60 px-5 py-2.5 text-sm font-semibold text-muted-foreground hover:text-foreground"
           >
-            Read the blog
+            Read the blogs
           </Link>
         </div>
       </section>

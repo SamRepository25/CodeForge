@@ -159,12 +159,12 @@ function Home() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-20">
-        <SectionHeading eyebrow="Writing" title="Notes from the journey" cta={{ to: "/blog", label: "Read all posts" }} />
+        <SectionHeading eyebrow="Writing" title="Notes from the journey" cta={{ to: "/blogs", label: "Read all posts" }} />
         <div className="mt-10 grid gap-6 md:grid-cols-3">
           {posts.data && posts.data.length > 0 ? posts.data.map((p, i) => (
             <motion.div key={p.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="glass rounded-2xl p-6">
               <div className="text-[10px] uppercase tracking-wider text-electric">{p.category ?? "Article"}</div>
-              <h3 className="mt-2 font-display text-lg font-semibold"><Link to="/blog/$slug" params={{ slug: p.slug }} className="hover:gradient-text">{p.title}</Link></h3>
+              <h3 className="mt-2 font-display text-lg font-semibold"><Link to="/blogs/$slug" params={{ slug: p.slug }} className="hover:gradient-text">{p.title}</Link></h3>
               <p className="mt-2 line-clamp-3 text-sm leading-6 text-muted-foreground">{p.excerpt}</p>
               <div className="mt-4 text-xs text-muted-foreground">{p.reading_time} min read</div>
             </motion.div>

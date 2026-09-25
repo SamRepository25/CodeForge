@@ -11,17 +11,19 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ThankYouRouteImport } from './routes/thank-you'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as MfaVerifyRouteImport } from './routes/mfa-verify'
+import { Route as MfaSetupRouteImport } from './routes/mfa-setup'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as ContactRouteImport } from './routes/contact'
-import { Route as BlogRouteImport } from './routes/blog'
-import { Route as Auth_backupRouteImport } from './routes/auth_backup'
+import { Route as BlogsRouteImport } from './routes/blogs'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as BlogSlugRouteImport } from './routes/blog_.$slug'
+import { Route as BlogsSlugRouteImport } from './routes/blogs_.$slug'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedDashboardNewRouteImport } from './routes/_authenticated/dashboard.new'
@@ -35,6 +37,11 @@ const ThankYouRoute = ThankYouRouteImport.update({
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProjectsRoute = ProjectsRouteImport.update({
@@ -52,19 +59,24 @@ const MfaVerifyRoute = MfaVerifyRouteImport.update({
   path: '/mfa-verify',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MfaSetupRoute = MfaSetupRouteImport.update({
+  id: '/mfa-setup',
+  path: '/mfa-setup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BlogRoute = BlogRouteImport.update({
-  id: '/blog',
-  path: '/blog',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const Auth_backupRoute = Auth_backupRouteImport.update({
-  id: '/auth_backup',
-  path: '/auth_backup',
+const BlogsRoute = BlogsRouteImport.update({
+  id: '/blogs',
+  path: '/blogs',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -86,9 +98,9 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BlogSlugRoute = BlogSlugRouteImport.update({
-  id: '/blog_/$slug',
-  path: '/blog/$slug',
+const BlogsSlugRoute = BlogsSlugRouteImport.update({
+  id: '/blogs_/$slug',
+  path: '/blogs/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
@@ -118,17 +130,19 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
-  '/auth_backup': typeof Auth_backupRoute
-  '/blog': typeof BlogRoute
+  '/blogs': typeof BlogsRoute
   '/contact': typeof ContactRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/mfa-setup': typeof MfaSetupRoute
   '/mfa-verify': typeof MfaVerifyRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/projects': typeof ProjectsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
   '/thank-you': typeof ThankYouRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
-  '/blog/$slug': typeof BlogSlugRoute
+  '/blogs/$slug': typeof BlogsSlugRoute
   '/dashboard/new': typeof AuthenticatedDashboardNewRoute
   '/dashboard/edit/$id': typeof AuthenticatedDashboardEditIdRoute
 }
@@ -136,17 +150,19 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
-  '/auth_backup': typeof Auth_backupRoute
-  '/blog': typeof BlogRoute
+  '/blogs': typeof BlogsRoute
   '/contact': typeof ContactRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/mfa-setup': typeof MfaSetupRoute
   '/mfa-verify': typeof MfaVerifyRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/projects': typeof ProjectsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
   '/thank-you': typeof ThankYouRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
-  '/blog/$slug': typeof BlogSlugRoute
+  '/blogs/$slug': typeof BlogsSlugRoute
   '/dashboard/new': typeof AuthenticatedDashboardNewRoute
   '/dashboard/edit/$id': typeof AuthenticatedDashboardEditIdRoute
 }
@@ -156,17 +172,19 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
-  '/auth_backup': typeof Auth_backupRoute
-  '/blog': typeof BlogRoute
+  '/blogs': typeof BlogsRoute
   '/contact': typeof ContactRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/mfa-setup': typeof MfaSetupRoute
   '/mfa-verify': typeof MfaVerifyRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/projects': typeof ProjectsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
   '/thank-you': typeof ThankYouRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
-  '/blog_/$slug': typeof BlogSlugRoute
+  '/blogs_/$slug': typeof BlogsSlugRoute
   '/_authenticated/dashboard/new': typeof AuthenticatedDashboardNewRoute
   '/_authenticated/dashboard/edit/$id': typeof AuthenticatedDashboardEditIdRoute
 }
@@ -176,17 +194,19 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/auth'
-    | '/auth_backup'
-    | '/blog'
+    | '/blogs'
     | '/contact'
+    | '/forgot-password'
+    | '/mfa-setup'
     | '/mfa-verify'
     | '/privacy-policy'
     | '/projects'
+    | '/reset-password'
     | '/terms'
     | '/thank-you'
     | '/admin'
     | '/dashboard'
-    | '/blog/$slug'
+    | '/blogs/$slug'
     | '/dashboard/new'
     | '/dashboard/edit/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -194,17 +214,19 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/auth'
-    | '/auth_backup'
-    | '/blog'
+    | '/blogs'
     | '/contact'
+    | '/forgot-password'
+    | '/mfa-setup'
     | '/mfa-verify'
     | '/privacy-policy'
     | '/projects'
+    | '/reset-password'
     | '/terms'
     | '/thank-you'
     | '/admin'
     | '/dashboard'
-    | '/blog/$slug'
+    | '/blogs/$slug'
     | '/dashboard/new'
     | '/dashboard/edit/$id'
   id:
@@ -213,17 +235,19 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/about'
     | '/auth'
-    | '/auth_backup'
-    | '/blog'
+    | '/blogs'
     | '/contact'
+    | '/forgot-password'
+    | '/mfa-setup'
     | '/mfa-verify'
     | '/privacy-policy'
     | '/projects'
+    | '/reset-password'
     | '/terms'
     | '/thank-you'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
-    | '/blog_/$slug'
+    | '/blogs_/$slug'
     | '/_authenticated/dashboard/new'
     | '/_authenticated/dashboard/edit/$id'
   fileRoutesById: FileRoutesById
@@ -233,15 +257,17 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
-  Auth_backupRoute: typeof Auth_backupRoute
-  BlogRoute: typeof BlogRoute
+  BlogsRoute: typeof BlogsRoute
   ContactRoute: typeof ContactRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
+  MfaSetupRoute: typeof MfaSetupRoute
   MfaVerifyRoute: typeof MfaVerifyRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   ProjectsRoute: typeof ProjectsRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   TermsRoute: typeof TermsRoute
   ThankYouRoute: typeof ThankYouRoute
-  BlogSlugRoute: typeof BlogSlugRoute
+  BlogsSlugRoute: typeof BlogsSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -258,6 +284,13 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/projects': {
@@ -281,6 +314,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MfaVerifyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/mfa-setup': {
+      id: '/mfa-setup'
+      path: '/mfa-setup'
+      fullPath: '/mfa-setup'
+      preLoaderRoute: typeof MfaSetupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/contact': {
       id: '/contact'
       path: '/contact'
@@ -288,18 +335,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/blog': {
-      id: '/blog'
-      path: '/blog'
-      fullPath: '/blog'
-      preLoaderRoute: typeof BlogRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth_backup': {
-      id: '/auth_backup'
-      path: '/auth_backup'
-      fullPath: '/auth_backup'
-      preLoaderRoute: typeof Auth_backupRouteImport
+    '/blogs': {
+      id: '/blogs'
+      path: '/blogs'
+      fullPath: '/blogs'
+      preLoaderRoute: typeof BlogsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -330,11 +370,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/blog_/$slug': {
-      id: '/blog_/$slug'
-      path: '/blog/$slug'
-      fullPath: '/blog/$slug'
-      preLoaderRoute: typeof BlogSlugRouteImport
+    '/blogs_/$slug': {
+      id: '/blogs_/$slug'
+      path: '/blogs/$slug'
+      fullPath: '/blogs/$slug'
+      preLoaderRoute: typeof BlogsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/dashboard': {
@@ -402,15 +442,17 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
-  Auth_backupRoute: Auth_backupRoute,
-  BlogRoute: BlogRoute,
+  BlogsRoute: BlogsRoute,
   ContactRoute: ContactRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
+  MfaSetupRoute: MfaSetupRoute,
   MfaVerifyRoute: MfaVerifyRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
   ProjectsRoute: ProjectsRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   TermsRoute: TermsRoute,
   ThankYouRoute: ThankYouRoute,
-  BlogSlugRoute: BlogSlugRoute,
+  BlogsSlugRoute: BlogsSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

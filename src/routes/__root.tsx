@@ -106,7 +106,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           url: "https://codeforgedev.vercel.app",
           potentialAction: {
             "@type": "SearchAction",
-            target: "https://codeforgedev.vercel.app/blog?q={search_term_string}",
+            target: "https://codeforgedev.vercel.app/blogs?q={search_term_string}",
           },
         }),
       },

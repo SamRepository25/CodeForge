@@ -20,7 +20,7 @@ function toSafeJsonLd(value: unknown): string {
     .replace(/&/g, "\\u0026");
 }
 
-export const Route = createFileRoute("/blog_/$slug")({
+export const Route = createFileRoute("/blogs_/$slug")({
   loader: async ({ params }) => {
     const { data } = await supabase
       .from("posts")
@@ -31,10 +31,10 @@ export const Route = createFileRoute("/blog_/$slug")({
     return { meta: data };
   },
   head: ({ params, loaderData }) => {
-    const url = `https://codeforgedev.vercel.app/blog/${params.slug}`;
+    const url = `https://codeforgedev.vercel.app/blogs/${params.slug}`;
     const m = loaderData?.meta;
     const title = m?.title ? `${m.title} — CodeForge` : "Article — CodeForge";
-    const description = m?.excerpt ?? "Technical article on the CodeForge blog.";
+    const description = m?.excerpt ?? "Technical article on the CodeForge blogs.";
     const image = m?.cover_image ?? "https://codeforgedev.vercel.app/og-image.png";
     return {
       meta: [
@@ -315,7 +315,7 @@ const post = useQuery({
             <h2 className="font-display text-2xl font-bold">Related articles</h2>
             <div className="mt-4 grid gap-4 md:grid-cols-3">
               {related.data!.map((r) => (
-                <Link key={r.id} to="/blog/$slug" params={{ slug: r.slug }} className="glass rounded-xl p-4 transition hover:-translate-y-0.5">
+                <Link key={r.id} to="/blogs/$slug" params={{ slug: r.slug }} className="glass rounded-xl p-4 transition hover:-translate-y-0.5">
                   <h3 className="text-sm font-semibold">{r.title}</h3>
                   <div className="mt-2 text-xs text-muted-foreground"><Clock className="mr-1 inline h-3 w-3" />{r.reading_time} min</div>
                 </Link>
