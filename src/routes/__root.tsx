@@ -124,11 +124,7 @@ function RootShell({ children }: { children: ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body
-        onContextMenu={(event) => event.preventDefault()}
-        onCopy={(event) => event.preventDefault()}
-        onCut={(event) => event.preventDefault()}
-      >
+      <body>
         {children}
         <Scripts />
       </body>
