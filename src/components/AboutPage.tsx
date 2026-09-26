@@ -5,7 +5,7 @@ import {
   GraduationCap,
   Sparkles,
   Code2,
-  Download,
+  FileText,
   Github,
   Linkedin,
   Mail,
@@ -292,7 +292,7 @@ export function AboutPage() {
                 className="rounded-xl bg-gradient-to-r from-violet to-electric text-white"
               >
                 <a href={s.resume_url || "#"} download>
-                  <Download className="mr-1.5 h-4 w-4" />
+                  <FileText className="mr-1.5 h-4 w-4" />
                   View Resume
                 </a>
               </Button>
