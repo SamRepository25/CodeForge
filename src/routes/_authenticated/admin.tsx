@@ -46,7 +46,9 @@ import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin")({
-  head: () => ({ meta: [{ title: "Admin — CodeForge" }] }),
+  head: () => ({
+    meta: [{ title: "Admin — CodeForge" }, { name: "robots", content: "noindex, nofollow" }],
+  }),
   beforeLoad: async () => {
     const { data: u } = await supabase.auth.getUser();
     if (!u.user) throw redirect({ to: "/auth" });

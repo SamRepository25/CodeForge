@@ -15,7 +15,9 @@ import { toast } from "sonner";
 import { SecurityTab } from "@/components/SecurityTab";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
-  head: () => ({ meta: [{ title: "Dashboard — CodeForge" }] }),
+  head: () => ({
+    meta: [{ title: "Dashboard — CodeForge" }, { name: "robots", content: "noindex, nofollow" }],
+  }),
   component: Dashboard,
 });
 

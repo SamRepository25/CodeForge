@@ -24,7 +24,7 @@ export const Route = createFileRoute("/terms")({
   component: TermsPage,
 });
 
-const LAST_UPDATED = "September 14, 2026";
+const LAST_UPDATED = "September 26, 2026";
 
 function TermsPage() {
   return (
@@ -56,10 +56,17 @@ function TermsPage() {
           <section>
             <h2 className="text-base font-semibold text-foreground">3. Intellectual property</h2>
             <p className="mt-2">
-              Unless otherwise noted, the design, branding, and written content on CodeForge belong
-              to the site owner. Open-source project code is governed by the license published in
-              that project's own repository. Please don't reproduce written content from this site
-              without permission or attribution.
+              Unless otherwise noted, the design, branding, written content, images, and watermarked
+              assets on CodeForge belong to the site owner. Open-source project code is governed by
+              the license published in that project's own repository.
+            </p>
+            <p className="mt-2">
+              You may view and share links to this content for personal, non-commercial use.
+              Reproducing, copying, screenshotting, redistributing, republishing, or using this
+              site's content — including images, articles, and project write-ups — for commercial
+              purposes or without permission or attribution is not allowed. Some pages on this site
+              display a privacy and copyright notice and visible watermarking as a reminder of these
+              terms; their absence on any given page does not waive these rights.
             </p>
           </section>
 

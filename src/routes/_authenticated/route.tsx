@@ -22,6 +22,7 @@ import {
   registerCurrentAdminSession,
   touchCurrentAdminSession,
 } from "@/lib/admin-sessions";
+import { PrivacyBlur } from "@/components/PrivacyBlur";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -84,5 +85,9 @@ function AuthenticatedLayout() {
     };
   }, [navigate]);
 
-  return <Outlet />;
+  return (
+    <PrivacyBlur>
+      <Outlet />
+    </PrivacyBlur>
+  );
 }

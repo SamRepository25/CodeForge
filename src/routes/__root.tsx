@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { AuthProvider } from "@/hooks/use-auth";
 import { Toaster } from "@/components/ui/sonner";
 import { EditModeProvider } from "@/contexts/EditModeContext";
+import { PrivacyNotice } from "@/components/PrivacyNotice";
 
 function NotFoundComponent() {
   return (
@@ -124,11 +125,8 @@ function RootShell({ children }: { children: ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body
-        onContextMenu={(event) => event.preventDefault()}
-        onCopy={(event) => event.preventDefault()}
-        onCut={(event) => event.preventDefault()}
-      >
+      <body>
+        <PrivacyNotice />
         {children}
         <Scripts />
       </body>

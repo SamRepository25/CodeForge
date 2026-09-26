@@ -84,7 +84,7 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-10 flex flex-col gap-4 border-t border-border/40 pt-6 text-xs text-muted-foreground md:flex-row md:items-start md:justify-between">
-          <span>© {new Date().getFullYear()} CodeForge.</span>
+          <span>CodeForge © {new Date().getFullYear()} — All Rights Reserved.</span>
           <span>Built with React, TypeScript, Tailwind CSS & TanStack.</span>
         </div>
       </div>
