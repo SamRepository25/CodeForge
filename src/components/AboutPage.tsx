@@ -5,6 +5,7 @@ import {
   GraduationCap,
   Sparkles,
   Code2,
+  FileText,
   Github,
   Linkedin,
   Mail,
