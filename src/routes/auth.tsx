@@ -9,7 +9,7 @@
  */
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Code2, Mail, Lock, Eye, EyeOff, Info, KeyRound } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, Info, KeyRound } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -162,7 +162,13 @@ function AuthPage() {
         <div className="glass-strong gradient-border w-full rounded-3xl p-8">
           <div className="mb-6 flex flex-col items-center text-center">
             <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-violet to-electric glow-violet">
-              <Code2 className="h-6 w-6 text-white" />
+              <img
+                src="/Firefly_RemoveBackground.png"
+                alt="CodeForge logo"
+                className="h-10 w-10 object-contain"
+                width={40}
+                height={40}
+              />
             </div>
             <h1 className="mt-3 font-display text-2xl font-bold">Admin Login</h1>
             <p className="mt-1 text-sm text-muted-foreground">
