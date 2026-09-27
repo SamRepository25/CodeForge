@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 import { verifyTurnstile, getClientIp } from "@/lib/turnstile.server";
 
 const LOCKOUT_MINUTES = 30;
-const MAX_FAILED_ATTEMPTS = 4;
+const MAX_FAILED_ATTEMPTS = 5;
 
 type LockoutRow = {
   failed_attempts: number;
