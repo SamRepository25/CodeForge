@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ThankYouRouteImport } from './routes/thank-you'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as ResumeAccessRouteImport } from './routes/resume-access'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
@@ -37,6 +38,11 @@ const ThankYouRoute = ThankYouRouteImport.update({
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResumeAccessRoute = ResumeAccessRouteImport.update({
+  id: '/resume-access',
+  path: '/resume-access',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -138,6 +144,7 @@ export interface FileRoutesByFullPath {
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/projects': typeof ProjectsRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/resume-access': typeof ResumeAccessRoute
   '/terms': typeof TermsRoute
   '/thank-you': typeof ThankYouRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -158,6 +165,7 @@ export interface FileRoutesByTo {
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/projects': typeof ProjectsRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/resume-access': typeof ResumeAccessRoute
   '/terms': typeof TermsRoute
   '/thank-you': typeof ThankYouRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -180,6 +188,7 @@ export interface FileRoutesById {
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/projects': typeof ProjectsRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/resume-access': typeof ResumeAccessRoute
   '/terms': typeof TermsRoute
   '/thank-you': typeof ThankYouRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
@@ -202,6 +211,7 @@ export interface FileRouteTypes {
     | '/privacy-policy'
     | '/projects'
     | '/reset-password'
+    | '/resume-access'
     | '/terms'
     | '/thank-you'
     | '/admin'
@@ -222,6 +232,7 @@ export interface FileRouteTypes {
     | '/privacy-policy'
     | '/projects'
     | '/reset-password'
+    | '/resume-access'
     | '/terms'
     | '/thank-you'
     | '/admin'
@@ -243,6 +254,7 @@ export interface FileRouteTypes {
     | '/privacy-policy'
     | '/projects'
     | '/reset-password'
+    | '/resume-access'
     | '/terms'
     | '/thank-you'
     | '/_authenticated/admin'
@@ -265,6 +277,7 @@ export interface RootRouteChildren {
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   ProjectsRoute: typeof ProjectsRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  ResumeAccessRoute: typeof ResumeAccessRoute
   TermsRoute: typeof TermsRoute
   ThankYouRoute: typeof ThankYouRoute
   BlogsSlugRoute: typeof BlogsSlugRoute
@@ -284,6 +297,13 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/resume-access': {
+      id: '/resume-access'
+      path: '/resume-access'
+      fullPath: '/resume-access'
+      preLoaderRoute: typeof ResumeAccessRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -450,6 +470,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyPolicyRoute: PrivacyPolicyRoute,
   ProjectsRoute: ProjectsRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  ResumeAccessRoute: ResumeAccessRoute,
   TermsRoute: TermsRoute,
   ThankYouRoute: ThankYouRoute,
   BlogsSlugRoute: BlogsSlugRoute,
