@@ -4,7 +4,9 @@ import { SiteLayout } from "@/components/SiteLayout";
 import { PostEditor } from "@/components/PostEditor";
 
 export const Route = createFileRoute("/_authenticated/dashboard/new")({
-  head: () => ({ meta: [{ title: "New post — CodeForge" }] }),
+  head: () => ({
+    meta: [{ title: "New post — CodeForge" }, { name: "robots", content: "noindex, nofollow" }],
+  }),
   component: NewPost,
 });
 

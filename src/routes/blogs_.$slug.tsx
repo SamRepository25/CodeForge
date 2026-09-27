@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { TurnstileWidget } from "@/components/TurnstileWidget";
 import { submitGuestComment } from "@/lib/comment.functions";
+import { ProtectedImage } from "@/components/ProtectedImage";
 
 function toSafeJsonLd(value: unknown): string {
   return JSON.stringify(value)
@@ -278,6 +279,16 @@ const post = useQuery({
                   <table>{children}</table>
                 </div>
               ),
+              img: ({ src, alt }) =>
+                typeof src === "string" ? (
+                  <ProtectedImage
+                    src={src}
+                    alt={alt ?? ""}
+                    containerClassName="my-4 rounded-xl"
+                    className="rounded-xl"
+                    loading="lazy"
+                  />
+                ) : null,
             }}
           >
             {p.content}

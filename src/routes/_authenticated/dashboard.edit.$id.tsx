@@ -7,7 +7,9 @@ import { PostEditor, type PostDraft } from "@/components/PostEditor";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/dashboard/edit/$id")({
-  head: () => ({ meta: [{ title: "Edit post — CodeForge" }] }),
+  head: () => ({
+    meta: [{ title: "Edit post — CodeForge" }, { name: "robots", content: "noindex, nofollow" }],
+  }),
   component: EditPost,
 });
 
