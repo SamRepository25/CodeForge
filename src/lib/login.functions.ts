@@ -51,7 +51,7 @@ async function recordFailure(supabaseAdmin: any, lockoutKey: string) {
   });
   if (error) {
     console.error("[login] failed-attempt recording failed", error);
-    throw new Error("Unable to record login attempt.");
+    throw new Error("Login security check failed. Please try again later.");
   }
   return (data?.[0] ?? null) as LockoutRow | null;
 }
@@ -152,25 +152,22 @@ export const loginWithProtection = createServerFn({ method: "POST" })
       .eq("role", "admin")
       .maybeSingle();
 
-    if (roleError || !roleRow) {
+    if (roleError) {
+      console.error("[login] admin role lookup failed", roleError);
       await userClient.auth.signOut();
-      const failureRow = await recordFailure(supabaseAdmin, lockoutKey);
-      const lockedUntil = failureRow?.locked_until ?? null;
-      const locked = !!lockedUntil && new Date(lockedUntil).getTime() > Date.now();
+      throw new Error("Unable to verify administrator access. Please try again later.");
+    }
 
+    if (!roleRow) {
+      // Credentials were valid, but this account is not authorized for the admin area.
+      // Do not count a valid non-admin password as a failed-password attempt.
+      await userClient.auth.signOut();
       return {
         success: false,
-        reason: locked ? ("locked" as const) : ("invalid_credentials" as const),
-        locked,
-        lockedUntil: locked ? lockedUntil : null,
-        failedAttempts: failureRow?.failed_attempts ?? 1,
-        remainingAttempts: Math.max(
-          0,
-          MAX_FAILED_ATTEMPTS - (failureRow?.failed_attempts ?? 1),
-        ),
-        error: locked
-          ? `Security lockout. Please try again after ${LOCKOUT_MINUTES} minutes.`
-          : "Invalid username or password.",
+        reason: "not_admin" as const,
+        locked: false,
+        lockedUntil: null,
+        error: "Only admins can access this webpage.",
       };
     }
 
