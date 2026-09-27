@@ -124,20 +124,26 @@ export const loginWithProtection = createServerFn({ method: "POST" })
     });
 
     if (authError || !authData.user || !authData.session) {
-      const failureRow = await recordFailure(supabaseAdmin, lockoutKey);
+      // Authentication failed regardless of whether lockout telemetry can be persisted.
+      // Never replace the user-facing credential error with an internal RPC failure.
+      let failureRow: LockoutRow | null = null;
+      try {
+        failureRow = await recordFailure(supabaseAdmin, lockoutKey);
+      } catch (error) {
+        console.error("[login] unable to persist failed-attempt lockout state", error);
+      }
+
       const lockedUntil = failureRow?.locked_until ?? null;
       const locked = !!lockedUntil && new Date(lockedUntil).getTime() > Date.now();
+      const failedAttempts = failureRow?.failed_attempts ?? 0;
 
       return {
         success: false,
         reason: "invalid_credentials" as const,
         locked,
         lockedUntil: locked ? lockedUntil : null,
-        failedAttempts: failureRow?.failed_attempts ?? 1,
-        remainingAttempts: Math.max(
-          0,
-          MAX_FAILED_ATTEMPTS - (failureRow?.failed_attempts ?? 1),
-        ),
+        failedAttempts,
+        remainingAttempts: Math.max(0, MAX_FAILED_ATTEMPTS - failedAttempts),
         error: locked
           ? `Security lockout. Please try again after ${LOCKOUT_MINUTES} minutes.`
           : "Invalid username or password.",
