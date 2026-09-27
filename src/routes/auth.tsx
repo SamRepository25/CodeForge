@@ -3,7 +3,7 @@
  *
  * Flow after successful password login:
  *   - Authorization is role-based on the server; no admin email is hard-coded here
- *   - Four invalid login attempts per client IP trigger a 30-minute server-side lockout
+ *   - Five invalid login attempts per client IP trigger a 30-minute server-side lockout
  *   - If the admin has a verified TOTP factor → /mfa-verify
  *   - Otherwise → /mfa-setup
  */
