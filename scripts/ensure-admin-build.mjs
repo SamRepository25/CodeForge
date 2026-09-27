@@ -5,6 +5,8 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const file = path.join(root, "src", "routes", "_authenticated", "admin.tsx");
 let source = fs.readFileSync(file, "utf8");
+const lineEnding = source.includes("\r\n") ? "\r\n" : "\n";
+source = source.replace(/\r\n/g, "\n");
 
 // Keep the existing production build guard for the historical duplicate Metric.
 const duplicate = `\nfunction Metric({ label, value }: { label: string; value: number }) { return <div className="glass rounded-2xl p-5"><div className="text-xs text-muted-foreground">{label}</div><div className="mt-1 font-display text-3xl font-bold gradient-text">{value}</div></div>; }`;
@@ -50,5 +52,5 @@ if (!source.includes(devicesRender)) {
   source = source.replace(anchor, `${anchor}\n      ${devicesRender}`);
 }
 
-fs.writeFileSync(file, source, "utf8");
+fs.writeFileSync(file, source.replace(/\n/g, lineEnding), "utf8");
 console.log("Admin Devices integration: ready");
