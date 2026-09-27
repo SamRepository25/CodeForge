@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Code2, Menu, X, LayoutDashboard } from "lucide-react";
+import { Menu, X, LayoutDashboard } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
@@ -23,9 +23,13 @@ export function Navbar() {
         <nav className="glass-strong grid grid-cols-[1fr_1fr] items-center rounded-2xl px-4 py-3 md:grid-cols-3">
           {/* Left — logo */}
           <Link to="/" className="group flex items-center gap-2.5 justify-self-start">
-            <div className="relative grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-violet to-electric glow-violet">
-              <Code2 className="h-5 w-5 text-white" />
-            </div>
+            <img
+              src="/Firefly_RemoveBackground.png"
+              alt="CodeForge developer logo"
+              className="h-9 w-9 shrink-0 rounded-xl object-contain"
+              width={36}
+              height={36}
+            />
             <div className="flex flex-col leading-none">
               <span className="font-display text-base font-bold tracking-tight">CodeForge</span>
               <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Forge ideas</span>
