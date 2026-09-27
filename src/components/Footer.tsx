@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Code2, Github, Linkedin, Mail } from "lucide-react";
+import { Github, Linkedin, Mail } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 function XLogo({ className }: { className?: string }) {
@@ -33,9 +33,13 @@ export function Footer() {
         <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4">
           <div className="md:col-span-2">
             <Link to="/" className="flex items-center gap-2.5">
-              <div className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-violet to-electric">
-                <Code2 className="h-5 w-5 text-white" />
-              </div>
+              <img
+                src="/Firefly_RemoveBackground.png"
+                alt="CodeForge developer logo"
+                className="h-9 w-9 shrink-0 rounded-xl object-contain"
+                width={36}
+                height={36}
+              />
               <span className="font-display text-lg font-bold">CodeForge</span>
             </Link>
             <p className="mt-3 max-w-sm text-sm leading-6 text-muted-foreground">
