@@ -288,7 +288,8 @@ function MfaVerify() {
                   value={code}
                   onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
                   onKeyDown={(e) => { if (e.key === "Enter") void verify(); }}
-                  className="mt-1.5 rounded-xl text-center font-mono text-lg tracking-[0.5em]"
+                  className="mt-1.5 rounded-xl text-center text-lg tracking-[0.5em]"
+style={{ fontFamily: "Calibri, Arial, sans-serif" }}
                   autoComplete="one-time-code"
                   autoFocus
                   disabled={verifying}
