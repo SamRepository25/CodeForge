@@ -314,7 +314,7 @@ export function AboutPage() {
               </Button>
               <Button asChild variant="outline" className="rounded-xl">
                 <a
-                  href={s.linkedin_url || "https://www.linkedin.com/in/simakahmed"}
+                  href={s.linkedin_url || "https://linkedin.com/in/simakahmed"}
                   target="_blank"
                   rel="noreferrer"
                 >
