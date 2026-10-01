@@ -51,7 +51,7 @@ export function Footer() {
                 { icon: Github, href: "https://github.com/SamRepository25", label: "GitHub" },
                 {
                   icon: Linkedin,
-                  href: "https://www.linkedin.com/in/simakahmed",
+                  href: "https://linkedin.com/in/simakahmed",
                   label: "LinkedIn",
                 },
                 { icon: XLogo, href:"https://x.com/codeforgedev", label: "X" },
