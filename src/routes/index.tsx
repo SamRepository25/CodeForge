@@ -98,7 +98,7 @@ function Home() {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="mx-auto max-w-4xl text-center">
             <div className="mx-auto inline-flex items-center gap-2 rounded-full glass px-3 py-1.5 text-xs font-medium">
               <Sparkles className="h-3.5 w-3.5 text-violet" />
-              <span className="text-muted-foreground">CSE student • developer • builder</span>
+              <span className="text-muted-foreground">CSE Student • Developer • Builder</span>
             </div>
             <h1 className="mt-6 font-display text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
               {editMode ? (
