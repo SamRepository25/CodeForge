@@ -7,7 +7,7 @@
  */
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowLeft, CheckCircle2, Code2, Info, KeyRound, Mail } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Info, Mail } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,7 +20,10 @@ export const Route = createFileRoute("/forgot-password")({
   head: () => ({
     meta: [
       { title: "Forgot Password — CodeForge" },
-      { name: "description", content: "Request a secure password reset link for CodeForge administrator access." },
+      {
+        name: "description",
+        content: "Request a secure password reset link for CodeForge administrator access.",
+      },
       { name: "robots", content: "noindex, nofollow" },
     ],
     links: [{ rel: "canonical", href: "https://codeforgedev.vercel.app/forgot-password" }],
@@ -68,7 +71,13 @@ function ForgotPasswordPage() {
         <div className="glass-strong gradient-border w-full rounded-3xl p-8">
           <div className="mb-6 flex flex-col items-center text-center">
             <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-violet to-electric glow-violet">
-              <Code2 className="h-6 w-6 text-white" />
+              <img
+                src="/Firefly_RemoveBackground.png"
+                alt="CodeForge logo"
+                className="h-10 w-10 object-contain"
+                width={40}
+                height={40}
+              />
             </div>
             <h1 className="mt-3 font-display text-2xl font-bold">Forgot Password?</h1>
             <p className="mt-1 text-sm text-muted-foreground">
@@ -82,11 +91,14 @@ function ForgotPasswordPage() {
                 <CheckCircle2 className="mx-auto h-8 w-8 text-emerald-400" />
                 <p className="mt-3 font-semibold">Check your email</p>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  If an account uses that email address, a password reset link has been sent.
-                  The link is time-limited and can only be used through CodeForge.
+                  If an account uses that email address, a password reset link has been sent. The
+                  link is time-limited and can only be used through CodeForge.
                 </p>
               </div>
-              <Link to="/auth" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+              <Link
+                to="/auth"
+                className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+              >
                 <ArrowLeft className="h-4 w-4" />
                 Back to Admin Login
               </Link>
@@ -94,7 +106,10 @@ function ForgotPasswordPage() {
           ) : (
             <form onSubmit={submit} className="space-y-5">
               <div>
-                <Label htmlFor="forgot-email" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                <Label
+                  htmlFor="forgot-email"
+                  className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+                >
                   Admin Email
                 </Label>
                 <div className="relative mt-1.5">
@@ -112,11 +127,7 @@ function ForgotPasswordPage() {
                 </div>
               </div>
 
-              <TurnstileWidget
-                key={resetKey}
-                action="password_reset"
-                onToken={setTurnstileToken}
-              />
+              <TurnstileWidget key={resetKey} action="password_reset" onToken={setTurnstileToken} />
 
               <Button
                 type="submit"
@@ -127,7 +138,10 @@ function ForgotPasswordPage() {
               </Button>
 
               <div className="text-center">
-                <Link to="/auth" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+                <Link
+                  to="/auth"
+                  className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+                >
                   <ArrowLeft className="h-4 w-4" />
                   Back to Admin Login
                 </Link>
