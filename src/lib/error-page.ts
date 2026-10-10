@@ -1,30 +1,54 @@
-export function renderErrorPage(): string {
+function renderStatusPage({
+  title,
+  heading,
+  message,
+}: {
+  title: string;
+  heading: string;
+  message: string;
+}) {
   return `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>This page didn't load</title>
+    <title>${title}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
-      body { font: 15px/1.5 system-ui, -apple-system, sans-serif; background: #fafafa; color: #111; display: grid; place-items: center; min-height: 100vh; margin: 0; padding: 1.5rem; }
-      .card { max-width: 28rem; width: 100%; text-align: center; padding: 2rem; }
-      h1 { font-size: 1.25rem; margin: 0 0 0.5rem; }
-      p { color: #4b5563; margin: 0 0 1.5rem; }
-      .actions { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; }
-      a, button { padding: 0.5rem 1rem; border-radius: 0.375rem; font: inherit; cursor: pointer; text-decoration: none; border: 1px solid transparent; }
-      .primary { background: #111; color: #fff; }
-      .secondary { background: #fff; color: #111; border-color: #d1d5db; }
+      :root { color-scheme: dark; font: 15px/1.6 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0b0b14; color: #f7f5ff; }
+      * { box-sizing: border-box; }
+      body { display: grid; place-items: center; min-height: 100vh; margin: 0; padding: 1.5rem; }
+      main { width: 100%; max-width: 34rem; text-align: center; }
+      .brand { color: #b9a3ff; font-size: .75rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; }
+      h1 { margin: 1rem 0 .75rem; font-size: clamp(2rem, 8vw, 3rem); line-height: 1.15; }
+      p { margin: 0; color: #a6a3b5; }
+      a { display: inline-block; margin-top: 1.5rem; padding: .65rem 1rem; border: 1px solid #39324d; border-radius: .75rem; color: #f7f5ff; text-decoration: none; }
+      a:hover { background: #191626; }
     </style>
   </head>
   <body>
-    <div class="card">
-      <h1>This page didn't load</h1>
-      <p>Something went wrong on our end. You can try refreshing or head back home.</p>
-      <div class="actions">
-        <button class="primary" onclick="location.reload()">Try again</button>
-        <a class="secondary" href="/">Go home</a>
-      </div>
-    </div>
+    <main>
+      <div class="brand">CodeForge</div>
+      <h1>${heading}</h1>
+      <p>${message}</p>
+      <a href="/">Go to homepage</a>
+    </main>
   </body>
 </html>`;
+}
+
+export function renderErrorPage() {
+  return renderStatusPage({
+    title: "500 — Something went wrong | CodeForge",
+    heading: "500 — Something went wrong",
+    message: "An unexpected error occurred on our end. Please try again in a little while.",
+  });
+}
+
+export function renderMaintenancePage() {
+  return renderStatusPage({
+    title: "503 — Maintenance in progress | CodeForge",
+    heading: "We’ll be back soon",
+    message:
+      "CodeForge is temporarily unavailable while maintenance is in progress. Please check back shortly.",
+  });
 }
