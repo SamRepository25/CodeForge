@@ -7,7 +7,9 @@ import { supabase } from "@/integrations/supabase/client";
 const MAINTENANCE_SETTING_KEY = "site.maintenance_mode";
 
 function isAdminOrAuthPath(pathname: string) {
-  return /^\/(?:auth|mfa-verify|dashboard|admin)(?:\/|$)/.test(pathname);
+  return /^\/(?:auth|mfa-setup|mfa-verify|forgot-password|reset-password|dashboard|admin)(?:\/|$)/.test(
+    pathname,
+  );
 }
 
 export function MaintenanceGate({ children }: { children: ReactNode }) {

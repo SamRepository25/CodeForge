@@ -41,7 +41,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
       <div className="glass max-w-md rounded-2xl p-8 text-center">
-        <h1 className="text-xl font-semibold">Something went wrong</h1>
+        <h1 className="text-xl font-semibold">500 — Something went wrong</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           An unexpected error occurred. Please try again.
         </p>
