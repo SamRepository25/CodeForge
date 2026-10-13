@@ -57,9 +57,23 @@ function Home() {
   const featuredProjects = useQuery({
     queryKey: ["projects", "featured"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("projects").select("*").eq("featured", true).order("order_index");
+      const { data, error } = await supabase.from("projects").select("*").order("order_index");
       if (error) throw error;
-      return data ?? [];
+
+      // Keep these three projects at the front of the homepage, regardless of
+      // their database order or featured flag. Other featured projects follow.
+      const priority = (project: { title?: string | null; slug?: string | null }) => {
+        const title = (project.title ?? "").toLowerCase();
+        const slug = (project.slug ?? "").toLowerCase();
+        if (slug.includes("vulnerability") || (title.includes("vulnerability") && title.includes("assessment"))) return 0;
+        if (slug.includes("adaptive-learning") || title.includes("adaptive learning schedule planner")) return 1;
+        if (slug.includes("linux-system-monitor") || title === "linux system monitor") return 2;
+        return 99;
+      };
+
+      return (data ?? [])
+        .filter((project) => project.featured || priority(project) < 99)
+        .sort((a, b) => priority(a) - priority(b) || (a.order_index ?? 0) - (b.order_index ?? 0));
     },
   });
 
