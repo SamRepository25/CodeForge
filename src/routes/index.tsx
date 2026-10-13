@@ -41,14 +41,6 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
-const AI_TOOLS = [
-  { slug: "resume-builder", title: "AI Resume Builder", desc: "Craft ATS-ready resumes from your raw experience.", icon: FileText },
-  { slug: "study-notes", title: "Study Notes Generator", desc: "Turn any topic into structured notes and summaries.", icon: BookOpen },
-  { slug: "quiz-generator", title: "Quiz Generator", desc: "Create focused MCQ practice for any subject.", icon: GraduationCap },
-  { slug: "code-explainer", title: "Code Explainer", desc: "Break down unfamiliar code into understandable pieces.", icon: MessageSquareCode },
-  { slug: "interview-questions", title: "Interview Q Generator", desc: "Generate targeted questions for technical interview practice.", icon: Cpu },
-  { slug: "text-improver", title: "Text Improver", desc: "Clean up clarity, grammar, and tone while keeping your voice.", icon: Wand2 },
-];
 
 function Home() {
   const qc = useQueryClient();
