@@ -71,9 +71,12 @@ function Home() {
         return 99;
       };
 
-      return (data ?? [])
-        .filter((project) => project.featured || priority(project) < 99)
-        .sort((a, b) => priority(a) - priority(b) || (a.order_index ?? 0) - (b.order_index ?? 0));
+      const prioritized = (data ?? [])
+        .filter((project) => priority(project) < 99)
+        .sort((a, b) => priority(a) - priority(b));
+
+      // The homepage's Selected Work section should show exactly these three projects.
+      return prioritized;
     },
   });
 
