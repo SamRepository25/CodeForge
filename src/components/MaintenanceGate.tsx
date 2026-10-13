@@ -31,15 +31,12 @@ export function MaintenanceGate({ children }: { children: ReactNode }) {
     retry: 1,
   });
 
-  if (bypass || maintenance.isError) return children;
-  if (maintenance.isLoading) {
-    return (
-      <main className="flex min-h-screen items-center justify-center bg-[#0b0b14] px-6 text-sm text-white/60">
-        Checking CodeForge status…
-      </main>
-    );
+  // Render the site immediately; maintenance status resolves asynchronously.
+  // If maintenance is enabled, the existing maintenance screen replaces the site
+  // as soon as the background check confirms it.
+  if (bypass || maintenance.isError || maintenance.isLoading || !maintenance.data) {
+    return children;
   }
-  if (!maintenance.data) return children;
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#0b0b14] px-6 text-white">
