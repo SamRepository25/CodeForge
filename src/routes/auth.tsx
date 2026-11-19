@@ -158,7 +158,7 @@ function AuthPage() {
 
   return (
     <SiteLayout>
-      <section data-page="admin-login" className="relative mx-auto flex min-h-[80vh] max-w-md items-center px-4">
+      <section data-page="admin-login" className="relative mx-auto mt-8 flex min-h-[80vh] max-w-md items-center px-4">
         <div className="glass-strong gradient-border w-full rounded-3xl p-8">
           <div className="mb-6 flex flex-col items-center text-center">
             <div className="flex h-14 w-14 items-center justify-center">
