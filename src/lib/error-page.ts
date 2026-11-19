@@ -97,7 +97,7 @@ export function renderMaintenancePage() {
         <div class="working-icon" aria-hidden="true">⚙</div>
         <div><div class="working-title">We’re working on it</div><div class="working-note">Thanks for your patience</div></div>
       </div>
-      <footer>CodeForge <span aria-hidden="true">·</span> Built with care</footer>
+      <footer>CodeForge - Developer Portfolio and Technical Blog</footer>
     </main>
   </body>
 </html>`;
