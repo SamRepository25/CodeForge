@@ -66,17 +66,17 @@ function ForgotPasswordPage() {
   };
 
   return (
-    <SiteLayout>
+    <SiteLayout showChrome={false}>
       <section className="relative mx-auto flex min-h-[80vh] max-w-md items-center px-4">
         <div className="glass-strong gradient-border w-full rounded-3xl p-8">
           <div className="mb-6 flex flex-col items-center text-center">
-            <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-violet to-electric glow-violet">
+            <div className="flex h-14 w-14 items-center justify-center">
               <img
                 src="/Firefly_RemoveBackground.png"
                 alt="CodeForge logo"
-                className="h-10 w-10 object-contain"
-                width={40}
-                height={40}
+                className="h-12 w-12 object-contain"
+                width={48}
+                height={48}
               />
             </div>
             <h1 className="mt-3 font-display text-2xl font-bold">Forgot Password?</h1>
