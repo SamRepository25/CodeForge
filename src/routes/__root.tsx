@@ -85,8 +85,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/Firefly_RemoveBackground.png", type: "image/png" },
-      { rel: "apple-touch-icon", href: "/Firefly_RemoveBackground.png", type: "image/png" },
+      { rel: "icon", href: "/Firefly_RemoveBackground.png?v=2", type: "image/png", sizes: "276x276" },
+      { rel: "shortcut icon", href: "/Firefly_RemoveBackground.png?v=2", type: "image/png" },
+      { rel: "apple-touch-icon", href: "/Firefly_RemoveBackground.png?v=2", type: "image/png" },
       { rel: "manifest", href: "/site.webmanifest" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "" },
