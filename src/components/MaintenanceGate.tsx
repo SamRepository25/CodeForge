@@ -125,7 +125,7 @@ export function MaintenanceGate({ children }: { children: ReactNode }) {
 
           <div className="mt-11 border-t border-white/[0.07] pt-6">
             <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-slate-500">
-              CodeForge <span className="mx-2 text-slate-700">·</span> Built with care
+              CodeForge - Developer Portfolio and Technical Blog
             </p>
           </div>
         </div>
