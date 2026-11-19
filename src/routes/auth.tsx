@@ -157,7 +157,7 @@ function AuthPage() {
   const isLocked = !!lockedUntil && remainingSeconds > 0;
 
   return (
-    <SiteLayout showChrome={false}>
+    <SiteLayout>
       <section data-page="admin-login" className="relative mx-auto flex min-h-[80vh] max-w-md items-center px-4">
         <div className="glass-strong gradient-border w-full rounded-3xl p-8">
           <div className="mb-6 flex flex-col items-center text-center">
