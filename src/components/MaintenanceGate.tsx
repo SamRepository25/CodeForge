@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 const MAINTENANCE_SETTING_KEY = "site.maintenance_mode";
 
 function isAdminOrAuthPath(pathname: string) {
-  return /^\/(?:auth|mfa-setup|mfa-verify|forgot-password|reset-password|dashboard|admin)(?:\/|$)/.test(
+  return /^\/(?:auth|mfa-setup|mfa-verify|forgot-password|reset-password|dashboard|admin|workspace)(?:\/|$)/.test(
     pathname,
   );
 }
