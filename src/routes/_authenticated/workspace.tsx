@@ -1,3 +1,4 @@
+
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { SiteLayout } from "@/components/SiteLayout";
@@ -22,16 +23,22 @@ export const Route = createFileRoute("/_authenticated/workspace")({
   beforeLoad: async () => {
     const { supabase } = await import("@/integrations/supabase/client");
     const { data: userData, error: userError } = await supabase.auth.getUser();
-    if (userError || !userData.user) throw redirect({ to: "/auth" });
+
+    if (userError || !userData.user) {
+      throw redirect({ to: "/auth" });
+    }
 
     const { data: roles, error: roleError } = await supabase
       .from("user_roles")
       .select("role")
       .eq("user_id", userData.user.id);
+
     if (roleError) throw roleError;
+
     if (!(roles ?? []).some((role) => role.role === "admin")) {
       return { workspaceAuthorized: false };
     }
+
     return { workspaceAuthorized: true };
   },
   component: Workspace,
@@ -40,51 +47,51 @@ export const Route = createFileRoute("/_authenticated/workspace")({
 const modules = [
   {
     title: "Academics",
-    description: "Semester subjects, syllabus, CIEs, labs, end-semester exams and academic records.",
+    description:
+      "Semester subjects, syllabus, CIEs, labs, end-semester exams and academic records.",
     icon: GraduationCap,
-    status: "Planned",
   },
   {
     title: "Backlogs",
-    description: "Track arrears, attempts, exam dates, preparation and cleared subjects.",
+    description:
+      "Track arrears, attempts, exam dates, preparation and cleared subjects.",
     icon: BookOpen,
-    status: "Planned",
   },
   {
     title: "Attendance",
-    description: "Subject-wise attendance, target percentage, shortage warnings and attendance planning.",
+    description:
+      "Subject-wise attendance, target percentage, shortage warnings and attendance planning.",
     icon: ClipboardList,
-    status: "Planned",
   },
   {
     title: "Planner & Today Brief",
-    description: "Priorities, deadlines, revision tasks, timetable and upcoming exams in one view.",
+    description:
+      "Priorities, deadlines, revision tasks, timetable and upcoming exams in one view.",
     icon: CalendarDays,
-    status: "Planned",
   },
   {
     title: "Projects & Skills",
-    description: "Projects, practical learning, progress, evidence and skill development.",
+    description:
+      "Projects, practical learning, progress, evidence and skill development.",
     icon: Lightbulb,
-    status: "Planned",
   },
   {
     title: "Career & Placement",
-    description: "Internships, applications, certifications, interview preparation and placement tracking.",
+    description:
+      "Internships, applications, certifications, interview preparation and placement tracking.",
     icon: BriefcaseBusiness,
-    status: "Planned",
   },
   {
     title: "IT Toolbox",
-    description: "A curated collection of useful networking, Linux and IT utilities.",
+    description:
+      "A curated collection of useful networking, Linux and IT utilities.",
     icon: Wrench,
-    status: "Planned",
   },
   {
     title: "Knowledge Base",
-    description: "Keep searchable troubleshooting notes, commands, solutions and learning resources.",
+    description:
+      "Keep searchable troubleshooting notes, commands, solutions and learning resources.",
     icon: BookOpen,
-    status: "Planned",
   },
 ];
 
@@ -97,13 +104,24 @@ function Workspace() {
       <SiteLayout>
         <main className="mx-auto flex min-h-[70vh] max-w-3xl items-center justify-center px-4 py-16">
           <section className="glass w-full rounded-2xl border border-destructive/30 p-8 text-center">
-            <ShieldCheck className="mx-auto h-10 w-10 text-destructive" aria-hidden="true" />
-            <p className="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-destructive">403 Forbidden</p>
-            <h1 className="mt-2 font-display text-2xl font-bold">Access denied</h1>
-            <p className="mt-3 text-sm text-muted-foreground">
-              Your account is not authorized to access the private CodeForge Workspace.
+            <ShieldCheck
+              className="mx-auto h-10 w-10 text-destructive"
+              aria-hidden="true"
+            />
+            <p className="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-destructive">
+              403 Forbidden
             </p>
-            <a href="/" className="mt-6 inline-flex rounded-xl border border-border px-4 py-2 text-sm font-medium hover:bg-secondary">
+            <h1 className="mt-2 font-display text-2xl font-bold">
+              Access denied
+            </h1>
+            <p className="mt-3 text-sm text-muted-foreground">
+              Your account is not authorized to access the private CodeForge
+              Workspace.
+            </p>
+            <a
+              href="/"
+              className="mt-6 inline-flex rounded-xl border border-border px-4 py-2 text-sm font-medium hover:bg-secondary"
+            >
               Return to CodeForge
             </a>
           </section>
@@ -117,17 +135,28 @@ function Workspace() {
       <main className="mx-auto max-w-7xl px-4 py-12">
         <header className="glass relative overflow-hidden rounded-3xl border border-blue-400/15 p-6 sm:p-9">
           <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl" />
+
           <div className="relative flex flex-wrap items-start justify-between gap-5">
             <div>
               <div className="inline-flex items-center gap-2 rounded-full border border-blue-400/20 bg-blue-400/5 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-blue-300">
-                <ShieldCheck className="h-3.5 w-3.5" /> Private workspace
+                <ShieldCheck className="h-3.5 w-3.5" />
+                Private workspace
               </div>
-              <h1 className="mt-4 font-display text-3xl font-bold tracking-tight sm:text-4xl">Workspace</h1>
+
+              <h1 className="mt-4 font-display text-3xl font-bold tracking-tight sm:text-4xl">
+                Workspace
+              </h1>
+
               <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-                Your private command center for academics, learning, projects and career planning.
+                Your private command center for academics, learning, projects and
+                career planning.
               </p>
-              <p className="mt-3 text-xs text-muted-foreground">{user?.email}</p>
+
+              <p className="mt-3 text-xs text-muted-foreground">
+                {user?.email}
+              </p>
             </div>
+
             <button
               type="button"
               onClick={() => signOut().then(() => location.assign("/"))}
@@ -141,9 +170,60 @@ function Workspace() {
         <section className="mt-8">
           <div className="mb-4 flex items-end justify-between gap-3">
             <div>
-              <h2 className="font-display text-xl font-semibold">Personal modules</h2>
-              <p className="mt-1 text-sm text-muted-foreground">Workspace foundation. Modules will be introduced in stages.</p>
+              <h2 className="font-display text-xl font-semibold">
+                Personal modules
+              </h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Workspace foundation. Modules will be introduced in stages.
+              </p>
             </div>
-            <span className="rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground">7 modules</span>
+
+            <span className="rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground">
+              {modules.length} modules
+            </span>
           </div>
+
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {modules.map((module) => {
+              const Icon = module.icon;
+
+              return (
+                <article
+                  key={module.title}
+                  className="glass group rounded-2xl border border-border/70 p-5 transition-all duration-200 hover:border-blue-400/30 hover:bg-blue-400/[0.03]"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="rounded-xl border border-blue-400/15 bg-blue-400/5 p-3">
+                      <Icon
+                        className="h-5 w-5 text-blue-400"
+                        aria-hidden="true"
+                      />
+                    </div>
+
+                    <span className="rounded-full border border-border px-2 py-1 text-[10px] font-medium text-muted-foreground">
+                      Planned
+                    </span>
+                  </div>
+
+                  <h3 className="mt-4 font-display text-base font-semibold">
+                    {module.title}
+                  </h3>
+
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                    {module.description}
+                  </p>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+
+        <footer className="mt-8 border-t border-border/60 pt-4">
+          <p className="text-xs text-muted-foreground">
+            CodeForge Workspace · Private environment
+          </p>
+        </footer>
+      </main>
+    </SiteLayout>
+  );
+}
