@@ -26,7 +26,6 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as ThankYouRouteImport } from './routes/thank-you'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
-import { Route as AuthenticatedWorkspaceRouteImport } from './routes/_authenticated/workspace'
 import { Route as BlogsSlugRouteImport } from './routes/blogs_.$slug'
 import { Route as AuthenticatedDashboardNewRouteImport } from './routes/_authenticated/dashboard.new'
 import { Route as AuthenticatedDashboardEditIdRouteImport } from './routes/_authenticated/dashboard.edit.$id'
@@ -115,11 +114,6 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedWorkspaceRoute = AuthenticatedWorkspaceRouteImport.update({
-  id: '/workspace',
-  path: '/workspace',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const BlogsSlugRoute = BlogsSlugRouteImport.update({
   id: '/blogs_/$slug',
   path: '/blogs/$slug',
@@ -155,7 +149,6 @@ export interface FileRoutesByFullPath {
   '/thank-you': typeof ThankYouRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
-  '/workspace': typeof AuthenticatedWorkspaceRoute
   '/blogs/$slug': typeof BlogsSlugRoute
   '/dashboard/new': typeof AuthenticatedDashboardNewRoute
   '/dashboard/edit/$id': typeof AuthenticatedDashboardEditIdRoute
@@ -177,7 +170,6 @@ export interface FileRoutesByTo {
   '/thank-you': typeof ThankYouRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
-  '/workspace': typeof AuthenticatedWorkspaceRoute
   '/blogs/$slug': typeof BlogsSlugRoute
   '/dashboard/new': typeof AuthenticatedDashboardNewRoute
   '/dashboard/edit/$id': typeof AuthenticatedDashboardEditIdRoute
@@ -201,7 +193,6 @@ export interface FileRoutesById {
   '/thank-you': typeof ThankYouRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
-  '/_authenticated/workspace': typeof AuthenticatedWorkspaceRoute
   '/blogs_/$slug': typeof BlogsSlugRoute
   '/_authenticated/dashboard/new': typeof AuthenticatedDashboardNewRoute
   '/_authenticated/dashboard/edit/$id': typeof AuthenticatedDashboardEditIdRoute
@@ -225,7 +216,6 @@ export interface FileRouteTypes {
     | '/thank-you'
     | '/admin'
     | '/dashboard'
-    | '/workspace'
     | '/blogs/$slug'
     | '/dashboard/new'
     | '/dashboard/edit/$id'
@@ -247,7 +237,6 @@ export interface FileRouteTypes {
     | '/thank-you'
     | '/admin'
     | '/dashboard'
-    | '/workspace'
     | '/blogs/$slug'
     | '/dashboard/new'
     | '/dashboard/edit/$id'
@@ -270,7 +259,6 @@ export interface FileRouteTypes {
     | '/thank-you'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
-    | '/_authenticated/workspace'
     | '/blogs_/$slug'
     | '/_authenticated/dashboard/new'
     | '/_authenticated/dashboard/edit/$id'
@@ -416,13 +404,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/workspace': {
-      id: '/_authenticated/workspace'
-      path: '/workspace'
-      fullPath: '/workspace'
-      preLoaderRoute: typeof AuthenticatedWorkspaceRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/blogs_/$slug': {
       id: '/blogs_/$slug'
       path: '/blogs/$slug'
@@ -466,13 +447,11 @@ const AuthenticatedDashboardRouteWithChildren =
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRouteWithChildren
-  AuthenticatedWorkspaceRoute: typeof AuthenticatedWorkspaceRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRouteWithChildren,
-  AuthenticatedWorkspaceRoute: AuthenticatedWorkspaceRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
