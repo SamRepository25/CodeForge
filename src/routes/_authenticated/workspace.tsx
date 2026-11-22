@@ -51,61 +51,20 @@ export const Route = createFileRoute("/_authenticated/workspace")({
 });
 
 const modules = [
-  {
-    title: "Academics",
-    description:
-      "Semester subjects, syllabus, CIEs, labs, end-semester exams and academic records.",
-    icon: GraduationCap,
-    live: true,
-  },
-  {
-    title: "Backlogs",
-    description:
-      "Track arrears, attempts, exam dates, preparation and cleared subjects.",
-    icon: BookOpen,
-  },
-  {
-    title: "Attendance",
-    description:
-      "Subject-wise attendance, target percentage, shortage warnings and attendance planning.",
-    icon: ClipboardList,
-  },
-  {
-    title: "Planner & Today Brief",
-    description:
-      "Priorities, deadlines, revision tasks, timetable and upcoming exams in one view.",
-    icon: CalendarDays,
-  },
-  {
-    title: "Projects & Skills",
-    description:
-      "Projects, practical learning, progress, evidence and skill development.",
-    icon: Lightbulb,
-  },
-  {
-    title: "Career & Placement",
-    description:
-      "Internships, applications, certifications, interview preparation and placement tracking.",
-    icon: BriefcaseBusiness,
-  },
-  {
-    title: "IT Toolbox",
-    description:
-      "A curated collection of useful networking, Linux and IT utilities.",
-    icon: Wrench,
-  },
-  {
-    title: "Knowledge Base",
-    description:
-      "Keep searchable troubleshooting notes, commands, solutions and learning resources.",
-    icon: BookOpen,
-  },
-];
+  { id: "academics", title: "Academics", description: "Semester subjects, syllabus, CIEs, labs, end-semester exams and academic records.", icon: GraduationCap },
+  { id: "backlogs", title: "Backlogs", description: "Track arrears, attempts, exam dates, preparation and cleared subjects.", icon: BookOpen },
+  { id: "attendance", title: "Attendance", description: "Subject-wise attendance, target percentage, shortage warnings and attendance planning.", icon: ClipboardList },
+  { id: "planner", title: "Planner & Today Brief", description: "Priorities, deadlines, revision tasks, timetable and upcoming exams in one view.", icon: CalendarDays },
+  { id: "projects", title: "Projects & Skills", description: "Projects, practical learning, progress, evidence and skill development.", icon: Lightbulb },
+  { id: "career", title: "Career & Placement", description: "Internships, applications, certifications, interview preparation and placement tracking.", icon: BriefcaseBusiness },
+  { id: "toolbox", title: "IT Toolbox", description: "A curated collection of useful networking, Linux and IT utilities.", icon: Wrench },
+  { id: "knowledge", title: "Knowledge Base", description: "Keep searchable troubleshooting notes, commands, solutions and learning resources.", icon: BookOpen },
+] as const;
 
 function Workspace() {
   const { workspaceAuthorized } = Route.useRouteContext();
   const { user, signOut } = useAuth();
-  const [activeModule, setActiveModule] = useState<"academics" | null>(null);
+  const [activeModule, setActiveModule] = useState<WorkspaceModuleId | null>(null);
 
   if (!workspaceAuthorized) {
     return (
@@ -175,8 +134,12 @@ function Workspace() {
           </div>
         </header>
 
-        {activeModule === "academics" ? (
-          <Academics onBack={() => setActiveModule(null)} />
+        {activeModule ? (
+          activeModule === "academics" ? (
+            <Academics onBack={() => setActiveModule(null)} />
+          ) : (
+            <WorkspaceModule key={activeModule} moduleId={activeModule} onBack={() => setActiveModule(null)} />
+          )
         ) : (
           <section className="mt-8">
             <div className="mb-4 flex items-end justify-between gap-3">
@@ -185,7 +148,7 @@ function Workspace() {
                   Personal modules
                 </h2>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Workspace foundation. Modules will be introduced in stages.
+                  Your personal modules for academics, organization, projects, IT and career progress.
                 </p>
               </div>
 
@@ -203,14 +166,12 @@ function Workspace() {
                     key={module.title}
                     className="glass group relative rounded-2xl border border-border/70 p-5 transition-all duration-200 hover:border-blue-400/30 hover:bg-blue-400/[0.03]"
                   >
-                    {module.live && (
-                      <button
-                        type="button"
-                        onClick={() => setActiveModule("academics")}
-                        aria-label={`Open ${module.title}`}
-                        className="absolute inset-0 z-10 cursor-pointer rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/60"
-                      />
-                    )}
+                    <button
+                      type="button"
+                      onClick={() => setActiveModule(module.id)}
+                      aria-label={`Open ${module.title}`}
+                      className="absolute inset-0 z-10 cursor-pointer rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/60"
+                    />
 
                     <div className="flex items-start justify-between gap-3">
                       <div className="rounded-xl border border-blue-400/15 bg-blue-400/5 p-3">
@@ -221,7 +182,7 @@ function Workspace() {
                       </div>
 
                       <span className="rounded-full border border-border px-2 py-1 text-[10px] font-medium text-muted-foreground">
-                        {module.live ? "Available" : "Planned"}
+                        Available
                       </span>
                     </div>
 
@@ -248,6 +209,153 @@ function Workspace() {
     </SiteLayout>
   );
 }
+
+/* --------------------------- workspace modules --------------------------- */
+
+type WorkspaceModuleId = "academics" | "backlogs" | "attendance" | "planner" | "projects" | "career" | "toolbox" | "knowledge";
+type RecordStatus = "Not started" | "In progress" | "On hold" | "Completed";
+interface WorkspaceRecord {
+  id: string;
+  title: string;
+  category: string;
+  status: RecordStatus;
+  date: string;
+  number1: number | null;
+  number2: number | null;
+  details: string;
+  notes: string;
+}
+interface ModuleStore { version: 1; records: WorkspaceRecord[]; }
+const MODULE_STORAGE: Record<Exclude<WorkspaceModuleId, "academics" | "toolbox">, string> = {
+  backlogs: "codeforge:workspace:backlogs:v1",
+  attendance: "codeforge:workspace:attendance:v1",
+  planner: "codeforge:workspace:planner:v1",
+  projects: "codeforge:workspace:projects:v1",
+  career: "codeforge:workspace:career:v1",
+  knowledge: "codeforge:workspace:knowledge:v1",
+};
+const STATUS_OPTIONS: RecordStatus[] = ["Not started", "In progress", "On hold", "Completed"];
+const MODULE_SETTINGS: Record<Exclude<WorkspaceModuleId, "academics" | "toolbox">, {
+  title: string; subtitle: string; itemLabel: string; categoryLabel: string; categories: string[];
+  dateLabel: string; number1Label?: string; number2Label?: string; detailsLabel: string; notesLabel: string;
+  detailsPlaceholder: string; notesPlaceholder: string; statusOptions?: RecordStatus[];
+}> = {
+  backlogs: { title: "Backlogs", subtitle: "Keep arrears, attempts, exam dates and clearance history organized.", itemLabel: "Backlog subject", categoryLabel: "Subject / course", categories: ["Theory", "Lab", "Integrated", "Other"], dateLabel: "Next exam date", number1Label: "Attempts so far", detailsLabel: "Preparation / exam details", notesLabel: "Notes", detailsPlaceholder: "Syllabus, important topics, exam plan, registration details…", notesPlaceholder: "Add marks, results, reminders or anything to keep track of…" },
+  attendance: { title: "Attendance", subtitle: "Track attended classes against total classes and plan to reach your target.", itemLabel: "Subject", categoryLabel: "Course / section", categories: ["Theory", "Lab", "Integrated", "Other"], dateLabel: "Last updated", number1Label: "Total classes held", number2Label: "Classes attended", detailsLabel: "Attendance notes", notesLabel: "Notes", detailsPlaceholder: "Class schedule, attendance rules, planned absences…", notesPlaceholder: "Additional notes…" },
+  planner: { title: "Planner & Today Brief", subtitle: "Capture tasks, deadlines, revision and priorities in one place.", itemLabel: "Task / event", categoryLabel: "Type", categories: ["Study", "Assignment", "Exam", "Lab", "Personal", "Other"], dateLabel: "Due date", number1Label: "Priority (1–5)", detailsLabel: "Task details", notesLabel: "Notes", detailsPlaceholder: "What needs to be done? Break it into steps…", notesPlaceholder: "Extra context…" },
+  projects: { title: "Projects & Skills", subtitle: "Track project milestones and skill development with progress and notes.", itemLabel: "Project / skill", categoryLabel: "Type", categories: ["Project", "Skill", "Course", "Practice", "Other"], dateLabel: "Target date", number1Label: "Progress (%)", detailsLabel: "Milestones / learning plan", notesLabel: "Evidence / notes", detailsPlaceholder: "Milestones, deliverables, learning steps…", notesPlaceholder: "Links, proof of work, reflections…" },
+  career: { title: "Career & Placement", subtitle: "Manage applications, internships, certifications and interview preparation.", itemLabel: "Opportunity / activity", categoryLabel: "Type", categories: ["Internship", "Job", "Certification", "Interview prep", "Placement", "Other"], dateLabel: "Deadline / date", detailsLabel: "Details", notesLabel: "Notes / follow-up", detailsPlaceholder: "Role, company, eligibility, required skills, application link…", notesPlaceholder: "Follow-up details, preparation notes, contacts…" },
+  knowledge: { title: "Knowledge Base", subtitle: "Save searchable notes, solutions, commands and troubleshooting references.", itemLabel: "Entry title", categoryLabel: "Category", categories: ["Networking", "Linux", "Windows", "Cloud", "Security", "General IT", "Other"], dateLabel: "Reference date", detailsLabel: "Content", notesLabel: "Source / extra notes", detailsPlaceholder: "Write the solution, procedure, commands, or knowledge…", notesPlaceholder: "Reference link, source, context…" },
+};
+const emptyRecord = (): WorkspaceRecord => ({ id: makeId(), title: "", category: "", status: "Not started", date: "", number1: null, number2: null, details: "", notes: "" });
+const validStatus = (value: unknown): RecordStatus => STATUS_OPTIONS.includes(value as RecordStatus) ? value as RecordStatus : "Not started";
+function sanitizeRecord(value: unknown): WorkspaceRecord | null {
+  if (!isRecord(value)) return null;
+  const numeric = (v: unknown) => typeof v === "number" && Number.isFinite(v) ? v : null;
+  return { id: toId(value.id), title: toText(value.title, 200), category: toText(value.category, 100), status: validStatus(value.status), date: toDate(value.date), number1: numeric(value.number1), number2: numeric(value.number2), details: toText(value.details, 12000), notes: toText(value.notes, 12000) };
+}
+function loadModuleStore(key: string): { store: ModuleStore; notice: string | null } {
+  try {
+    const raw = window.localStorage.getItem(key);
+    if (!raw) return { store: { version: 1, records: [] }, notice: null };
+    const parsed: unknown = JSON.parse(raw);
+    if (!isRecord(parsed) || !Array.isArray(parsed.records)) throw new Error("Invalid stored module data");
+    const records = parsed.records.slice(0, 1000).map(sanitizeRecord).filter((r): r is WorkspaceRecord => r !== null);
+    return { store: { version: 1, records }, notice: null };
+  } catch {
+    return { store: { version: 1, records: [] }, notice: "Saved module data could not be loaded. A fresh list is shown; your original browser storage has not been overwritten yet." };
+  }
+}
+function RecordForm({ moduleId, record, onSave, onCancel }: { moduleId: Exclude<WorkspaceModuleId, "academics" | "toolbox">; record: WorkspaceRecord | null; onSave: (value: WorkspaceRecord) => void; onCancel: () => void }) {
+  const config = MODULE_SETTINGS[moduleId];
+  const [value, setValue] = useState<WorkspaceRecord>(record ?? emptyRecord());
+  const [error, setError] = useState("");
+  const setField = (field: keyof WorkspaceRecord, next: string | number | null) => setValue((prev) => ({ ...prev, [field]: next } as WorkspaceRecord));
+  return <form className={`${panelClass} space-y-3`} onSubmit={(e) => { e.preventDefault(); if (!value.title.trim()) { setError(`Enter ${config.itemLabel.toLowerCase()}.`); return; } if (moduleId === "attendance" && ((value.number1 ?? 0) < (value.number2 ?? 0) || !Number.isInteger(value.number1 ?? 0) || !Number.isInteger(value.number2 ?? 0))) { setError("Enter whole class counts and ensure attended classes do not exceed total classes held."); return; } if (moduleId === "backlogs" && value.number1 !== null && (!Number.isInteger(value.number1) || value.number1 < 0)) { setError("Attempts must be a whole number."); return; } if (moduleId === "planner" && value.number1 !== null && (!Number.isInteger(value.number1) || value.number1 < 1 || value.number1 > 5)) { setError("Priority must be between 1 and 5."); return; } if (moduleId === "projects" && value.number1 !== null && (value.number1 < 0 || value.number1 > 100)) { setError("Progress must be between 0 and 100."); return; } onSave({ ...value, title: value.title.trim(), category: value.category.trim() }); }}>
+    <h3 className="font-display font-semibold">{record ? "Edit entry" : "Add entry"}</h3>
+    <div className="grid gap-3 sm:grid-cols-2">
+      <Field label={config.itemLabel}><input className={inputClass} value={value.title} maxLength={200} onChange={(e) => { setField("title", e.target.value); setError(""); }} placeholder={config.itemLabel} /></Field>
+      <Field label={config.categoryLabel}><select className={inputClass} value={value.category} onChange={(e) => setField("category", e.target.value)}><option value="">Select</option>{config.categories.map((c) => <option key={c} value={c}>{c}</option>)}</select></Field>
+      {moduleId !== "knowledge" && <Field label="Status"><select className={inputClass} value={value.status} onChange={(e) => setField("status", e.target.value)}>{STATUS_OPTIONS.map((s) => <option key={s}>{s}</option>)}</select></Field>}
+      <Field label={config.dateLabel}><input className={inputClass} type="date" value={value.date} onChange={(e) => setField("date", e.target.value)} /></Field>
+      {config.number1Label && <Field label={config.number1Label}><input className={inputClass} type="number" min={moduleId === "planner" ? 1 : 0} max={moduleId === "planner" ? 5 : moduleId === "projects" ? 100 : undefined} step={moduleId === "attendance" || moduleId === "backlogs" || moduleId === "planner" ? 1 : "any"} value={value.number1 ?? ""} onChange={(e) => setField("number1", e.target.value === "" ? null : Number(e.target.value))} /></Field>}
+      {config.number2Label && <Field label={config.number2Label}><input className={inputClass} type="number" min={0} step={1} value={value.number2 ?? ""} onChange={(e) => setField("number2", e.target.value === "" ? null : Number(e.target.value))} /></Field>}
+    </div>
+    <Field label={config.detailsLabel}><textarea className={inputClass} rows={4} maxLength={12000} value={value.details} onChange={(e) => setField("details", e.target.value)} placeholder={config.detailsPlaceholder} /></Field>
+    <Field label={config.notesLabel}><textarea className={inputClass} rows={3} maxLength={12000} value={value.notes} onChange={(e) => setField("notes", e.target.value)} placeholder={config.notesPlaceholder} /></Field>
+    {error && <p role="alert" className="text-xs text-destructive">{error}</p>}
+    <div className="flex gap-2"><button className={primaryButtonClass} type="submit">Save entry</button><button className={buttonClass} type="button" onClick={onCancel}>Cancel</button></div>
+  </form>;
+}
+function WorkspaceModule({ moduleId, onBack }: { moduleId: Exclude<WorkspaceModuleId, "academics">; onBack: () => void }) {
+  const config = moduleId === "toolbox" ? null : MODULE_SETTINGS[moduleId];
+  const [records, setRecords] = useState<WorkspaceRecord[]>([]);
+  const [ready, setReady] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState(false);
+  const [search, setSearch] = useState("");
+  const [editing, setEditing] = useState<WorkspaceRecord | null>(null);
+  const [adding, setAdding] = useState(false);
+  useEffect(() => { if (moduleId === "toolbox") { setReady(true); return; } const loaded = loadModuleStore(MODULE_STORAGE[moduleId]); setRecords(loaded.store.records); setNotice(loaded.notice); setReady(true); }, [moduleId]);
+  useEffect(() => { if (!ready || moduleId === "toolbox" || notice) return; try { window.localStorage.setItem(MODULE_STORAGE[moduleId], JSON.stringify({ version: 1, records } satisfies ModuleStore)); setSaveError(false); } catch { setSaveError(true); } }, [records, ready, moduleId, notice]);
+  const filtered = useMemo(() => records.filter((r) => `${r.title} ${r.category} ${r.status} ${r.details} ${r.notes}`.toLowerCase().includes(search.trim().toLowerCase())).sort((a, b) => moduleId === "planner" ? (a.date || "9999-12-31").localeCompare(b.date || "9999-12-31") : 0), [records, search, moduleId]);
+  const saveRecord = (record: WorkspaceRecord) => { setRecords((prev) => editing ? prev.map((r) => r.id === record.id ? record : r) : [record, ...prev]); setEditing(null); setAdding(false); };
+  const removeRecord = (record: WorkspaceRecord) => { if (confirmDelete(`Delete "${record.title}"? This cannot be undone.`)) setRecords((prev) => prev.filter((r) => r.id !== record.id)); };
+  if (moduleId === "toolbox") return <ITToolbox onBack={onBack} />;
+  const attendanceStats = moduleId === "attendance" ? records.map((r) => { const total = r.number1 ?? 0; const attended = r.number2 ?? 0; const exactPct = total > 0 ? attended / total * 100 : 0; const pct = Math.round(exactPct); const target = 75; const needed = total > 0 && exactPct < target ? Math.max(0, Math.ceil((target * total - attended * 100) / (100 - target))) : 0; return { r, pct, needed, total, attended }; }) : [];
+  return <section className="mt-8 space-y-5">
+    <div className="flex flex-wrap items-center justify-between gap-3"><button className={buttonClass} type="button" onClick={onBack}><ArrowLeft className="h-4 w-4" /> Back to modules</button><span className="text-xs text-muted-foreground">Saved in this browser only</span></div>
+    <header className={`${panelClass} flex flex-wrap items-start justify-between gap-4`}><div><h2 className="font-display text-xl font-semibold">{config!.title}</h2><p className="mt-1 text-sm text-muted-foreground">{config!.subtitle}</p></div><button className={primaryButtonClass} type="button" onClick={() => { setEditing(null); setAdding(true); }}><Plus className="h-4 w-4" /> Add entry</button></header>
+    {notice && <p role="alert" className="rounded-xl border border-amber-400/30 bg-amber-400/5 p-3 text-sm text-amber-300">{notice}</p>}
+    {saveError && <p role="alert" className="rounded-xl border border-amber-400/30 bg-amber-400/5 p-3 text-sm text-amber-300">Changes could not be saved to browser storage.</p>}
+    {moduleId === "attendance" && <div className="grid gap-3 sm:grid-cols-3"><StatTile label="Subjects tracked" value={String(records.length)} /><StatTile label="Average attendance" value={records.length ? `${Math.round(records.reduce((a, r) => a + ((r.number1 ?? 0) > 0 ? (r.number2 ?? 0) / (r.number1 ?? 1) * 100 : 0), 0) / records.length)}%` : "—"} /><StatTile label="Below 75% target" value={String(attendanceStats.filter((a) => a.total > 0 && a.pct < 75).length)} hint="Based on classes entered" /></div>}
+    {moduleId === "backlogs" && <div className="grid gap-3 sm:grid-cols-3"><StatTile label="Total subjects" value={String(records.length)} /><StatTile label="In progress" value={String(records.filter((r) => r.status === "In progress").length)} /><StatTile label="Cleared" value={String(records.filter((r) => r.status === "Completed").length)} /></div>}
+    {moduleId === "planner" && <div className="grid gap-3 sm:grid-cols-3"><StatTile label="Open tasks" value={String(records.filter((r) => r.status !== "Completed").length)} /><StatTile label="Due today" value={String(records.filter((r) => r.date === (() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; })() && r.status !== "Completed").length)} /><StatTile label="Completed" value={String(records.filter((r) => r.status === "Completed").length)} /></div>}
+    {moduleId === "projects" && <div className="grid gap-3 sm:grid-cols-3"><StatTile label="Items tracked" value={String(records.length)} /><StatTile label="Completed" value={String(records.filter((r) => r.status === "Completed").length)} /><StatTile label="Average progress" value={records.filter((r) => r.number1 !== null).length ? `${Math.round(records.reduce((sum, r) => sum + (r.number1 ?? 0), 0) / records.filter((r) => r.number1 !== null).length)}%` : "—"} /></div>}
+    {moduleId === "career" && <div className="grid gap-3 sm:grid-cols-3"><StatTile label="Activities" value={String(records.length)} /><StatTile label="In progress" value={String(records.filter((r) => r.status === "In progress").length)} /><StatTile label="Completed" value={String(records.filter((r) => r.status === "Completed").length)} /></div>}
+    {(adding || editing) && <RecordForm key={editing?.id ?? "new"} moduleId={moduleId} record={editing} onSave={saveRecord} onCancel={() => { setEditing(null); setAdding(false); }} />}
+    <div className="flex gap-2"><input className={inputClass} value={search} onChange={(e) => setSearch(e.target.value)} placeholder={moduleId === "knowledge" ? "Search saved notes and solutions…" : "Search entries…"} aria-label="Search entries" />{search && <button className={buttonClass} type="button" onClick={() => setSearch("")}>Clear</button>}</div>
+    {!ready ? <p className="text-sm text-muted-foreground">Loading…</p> : filtered.length === 0 ? <div className={`${panelClass} text-center`}><p className="font-medium">{records.length ? "No matching entries" : "Nothing added yet"}</p><p className="mt-1 text-sm text-muted-foreground">{records.length ? "Try a different search." : "Add your first entry to start using this module."}</p></div> : <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{filtered.map((r) => { const a = attendanceStats.find((x) => x.r.id === r.id); return <article key={r.id} className={`${panelClass} flex flex-col gap-3`}><div className="flex items-start justify-between gap-2"><div className="min-w-0"><h3 className="break-words font-semibold">{r.title}</h3><p className="mt-1 text-xs text-muted-foreground">{[r.category, r.date ? formatDate(r.date) : ""].filter(Boolean).join(" · ")}</p></div>{moduleId !== "knowledge" && <span className="shrink-0 rounded-full border border-border px-2 py-1 text-[10px] text-muted-foreground">{r.status}</span>}</div>
+      {moduleId === "attendance" && a && <div className="rounded-xl border border-border/70 p-3"><p className="text-sm font-medium">{a.attended} / {a.total} classes · {a.pct}%</p><ProgressBar value={Math.min(100, a.pct)} label={`${r.title} attendance`} />{a.total > 0 && a.pct < 75 && <p className="mt-2 text-xs text-amber-400">{a.needed === 0 ? "Target met" : `Attend ${a.needed} consecutive classes to reach 75% (without absences).`}</p>}</div>}
+      {moduleId === "projects" && r.number1 !== null && <div><div className="mb-1 flex justify-between text-xs text-muted-foreground"><span>Progress</span><span>{r.number1}%</span></div><ProgressBar value={Math.min(100, Math.max(0, r.number1))} label={`${r.title} progress`} /></div>}
+      {moduleId === "planner" && r.number1 !== null && <p className="text-xs text-muted-foreground">Priority: {r.number1}/5</p>}
+      {r.details && <p className="whitespace-pre-wrap break-words text-sm text-muted-foreground">{r.details}</p>}{r.notes && <p className="whitespace-pre-wrap break-words border-t border-border/60 pt-2 text-xs text-muted-foreground">{r.notes}</p>}
+      <div className="mt-auto flex gap-2"><button type="button" className={buttonClass} onClick={() => { setAdding(false); setEditing(r); }}>Edit</button><button type="button" className={`${buttonClass} text-destructive`} onClick={() => removeRecord(r)}>Delete</button></div></article>; })}</div>}
+  </section>;
+}
+function ITToolbox({ onBack }: { onBack: () => void }) {
+  const [ip, setIp] = useState("192.168.1.1");
+  const [prefix, setPrefix] = useState("24");
+  const [commandSearch, setCommandSearch] = useState("");
+  const tools = [
+    { title: "Linux · System information", command: "uname -a\ncat /etc/os-release\nhostnamectl", description: "Kernel, distribution and host details." },
+    { title: "Linux · Storage usage", command: "df -h\ndu -sh * 2>/dev/null", description: "Filesystem usage and directory sizes." },
+    { title: "Linux · Processes", command: "ps aux --sort=-%cpu | head\ntop", description: "Inspect active processes and CPU usage." },
+    { title: "Linux · Network", command: "ip addr\nip route\nss -tulpn", description: "Interfaces, routes and listening sockets." },
+    { title: "Windows · Network diagnostics", command: "ipconfig /all\nroute print\narp -a", description: "Windows interface, routing and ARP details." },
+    { title: "Windows · Connectivity", command: "ping -n 4 1.1.1.1\ntracert 1.1.1.1\nnslookup example.com", description: "Connectivity, path and DNS checks." },
+    { title: "Windows · System health", command: "sfc /scannow\nDISM /Online /Cleanup-Image /RestoreHealth", description: "Built-in Windows integrity repair commands (run terminal as administrator)." },
+    { title: "Cisco IOS · Basic checks", command: "show ip interface brief\nshow ip route\nshow running-config", description: "Interface summary, routing table and configuration (privileged mode)." },
+  ];
+  const parsed = ip.trim().split(".").map(Number);
+  const validIp = parsed.length === 4 && parsed.every((v, i) => Number.isInteger(v) && v >= 0 && v <= 255 && String(v) === ip.trim().split(".")[i]);
+  const p = Number(prefix);
+  const validPrefix = Number.isInteger(p) && p >= 0 && p <= 32;
+  let subnet: { network: string; broadcast: string; mask: string; hosts: number } | null = null;
+  if (validIp && validPrefix) {
+    const addr = parsed.reduce((n, v) => ((n << 8) | v) >>> 0, 0);
+    const mask = p === 0 ? 0 : (0xffffffff << (32 - p)) >>> 0;
+    const network = (addr & mask) >>> 0;
+    const broadcast = (network | (~mask >>> 0)) >>> 0;
+    const toIp = (n: number) => [n >>> 24, (n >>> 16) & 255, (n >>> 8) & 255, n & 255].join(".");
+    subnet = { network: toIp(network), broadcast: toIp(broadcast), mask: toIp(mask), hosts: p >= 31 ? (p === 31 ? 2 : 1) : Math.max(0, Math.pow(2, 32 - p) - 2) };
+  }
+  const filteredTools = tools.filter((t) => `${t.title} ${t.command} ${t.description}`.toLowerCase().includes(commandSearch.toLowerCase()));
+  return <section className="mt-8 space-y-5"><div className="flex flex-wrap items-center justify-between gap-3"><button className={buttonClass} type="button" onClick={onBack}><ArrowLeft className="h-4 w-4" /> Back to modules</button><span className="text-xs text-muted-foreground">Quick reference · Verify commands before running</span></div><header className={panelClass}><h2 className="font-display text-xl font-semibold">IT Toolbox</h2><p className="mt-1 text-sm text-muted-foreground">Quick networking helpers and command references for Linux, Windows and Cisco IOS.</p></header>
+    <section className={`${panelClass} space-y-3`}><h3 className="font-semibold">IPv4 subnet calculator</h3><div className="grid gap-3 sm:grid-cols-2"><Field label="IPv4 address"><input className={inputClass} value={ip} onChange={(e) => setIp(e.target.value)} placeholder="192.168.1.1" /></Field><Field label="CIDR prefix (0–32)"><input className={inputClass} type="number" min={0} max={32} value={prefix} onChange={(e) => setPrefix(e.target.value)} /></Field></div>{subnet ? <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4"><StatTile label="Network address" value={subnet.network} /><StatTile label="Broadcast address" value={subnet.broadcast} /><StatTile label="Subnet mask" value={subnet.mask} /><StatTile label="Addresses" value={String(subnet.hosts)} hint="Usable host count (special handling for /31 and /32)" /></div> : <p className="text-sm text-destructive">Enter a valid IPv4 address and prefix.</p>}</section>
+    <div className="flex gap-2"><input className={inputClass} value={commandSearch} onChange={(e) => setCommandSearch(e.target.value)} placeholder="Filter commands (e.g. ping, Linux, route)…" aria-label="Filter command reference" />{commandSearch && <button className={buttonClass} type="button" onClick={() => setCommandSearch("")}>Clear</button>}</div><div className="grid gap-3 md:grid-cols-2">{filteredTools.map((t) => <article key={t.title} className={`${panelClass} space-y-2`}><h3 className="font-semibold">{t.title}</h3><p className="text-sm text-muted-foreground">{t.description}</p><pre className="overflow-x-auto rounded-xl border border-border/60 bg-background/70 p-3 text-xs leading-5"><code>{t.command}</code></pre><button type="button" className={buttonClass} onClick={() => navigator.clipboard?.writeText(t.command)}>Copy commands</button></article>)}</div><p className="text-xs text-muted-foreground">Commands may require administrator/root privileges or a specific device mode. Review them before executing.</p></section>;
+}
+
 
 /* -------------------------------------------------------------------------- */
 /* Academics module (private Workspace)                                       */
