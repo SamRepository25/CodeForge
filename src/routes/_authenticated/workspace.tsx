@@ -7,6 +7,7 @@ import {
   ArrowLeft,
   BookOpen,
   CalendarDays,
+  CheckCircle2,
   BriefcaseBusiness,
   ClipboardList,
   GraduationCap,
@@ -1584,6 +1585,20 @@ function Academics({ onBack }: { onBack: () => void }) {
 
       {!ready ? (
         <p className="text-sm text-muted-foreground">Loading your academics…</p>
+      ) : semester === 1 || semester === 2 ? (
+        <section className={`${panelClass} flex flex-col items-center gap-4 py-12 text-center`}>
+          <div className="rounded-full border border-emerald-400/25 bg-emerald-400/10 p-4">
+            <CheckCircle2 className="h-8 w-8 text-emerald-400" aria-hidden="true" />
+          </div>
+          <div>
+            <h3 className="font-display text-xl font-semibold text-emerald-300">
+              Semester {semester} Successfully Completed
+            </h3>
+            <p className="mt-2 text-sm text-muted-foreground">
+              You have successfully completed Semester {semester}. This semester is now marked as completed.
+            </p>
+          </div>
+        </section>
       ) : openSubject ? (
         <SubjectDetail
           key={openSubject.id}
