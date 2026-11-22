@@ -6,7 +6,7 @@ import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
 const maintenanceSettingKey = "site.maintenance_mode";
 
 function isAdminOrAuthPath(pathname: string) {
-  return /^\/(?:auth|mfa-setup|mfa-verify|forgot-password|reset-password|dashboard|admin|workspace)(?:\/|$)/.test(
+  return /^\/(?:auth|mfa-setup|mfa-verify|forgot-password|reset-password|dashboard|admin)(?:\/|$)/.test(
     pathname,
   );
 }
