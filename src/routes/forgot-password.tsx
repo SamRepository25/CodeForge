@@ -1,9 +1,8 @@
 /**
  * /forgot-password — Admin password recovery request.
  *
- * Supabase sends the recovery email. The page deliberately returns the same
- * success message regardless of whether the address exists to avoid account
- * enumeration.
+ * Supabase sends the recovery email. The server validates the address against
+ * the administrator role before allowing the reset request.
  */
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
@@ -46,12 +45,21 @@ function ForgotPasswordPage() {
 
     setBusy(true);
     try {
-      await requestPasswordReset({
+      const result = await requestPasswordReset({
         data: {
           email: normalizedEmail,
           turnstileToken,
         },
       });
+
+      if (!result.success) {
+        toast.error("Invalid email address", {
+          icon: <Info className="h-4 w-4" />,
+        });
+        setTurnstileToken("");
+        setResetKey((key) => key + 1);
+        return;
+      }
 
       setSent(true);
       setTurnstileToken("");
@@ -60,6 +68,8 @@ function ForgotPasswordPage() {
       toast.error("Unable to process the request. Please try again.", {
         icon: <Info className="h-4 w-4" />,
       });
+      setTurnstileToken("");
+      setResetKey((key) => key + 1);
     } finally {
       setBusy(false);
     }
