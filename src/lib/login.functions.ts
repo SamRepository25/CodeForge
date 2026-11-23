@@ -124,14 +124,9 @@ export const loginWithProtection = createServerFn({ method: "POST" })
     });
 
     if (authError || !authData.user || !authData.session) {
-      // Authentication failed regardless of whether lockout telemetry can be persisted.
-      // Never replace the user-facing credential error with an internal RPC failure.
-      let failureRow: LockoutRow | null = null;
-      try {
-        failureRow = await recordFailure(supabaseAdmin, lockoutKey);
-      } catch (error) {
-        console.error("[login] unable to persist failed-attempt lockout state", error);
-      }
+      // Count every failed credential pair (unknown email or wrong password) in
+      // the same per-IP counter. Fail closed if the counter cannot be persisted.
+      const failureRow = await recordFailure(supabaseAdmin, lockoutKey);
 
       const lockedUntil = failureRow?.locked_until ?? null;
       const locked = !!lockedUntil && new Date(lockedUntil).getTime() > Date.now();
