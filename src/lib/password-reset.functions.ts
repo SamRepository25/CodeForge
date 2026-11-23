@@ -18,12 +18,40 @@ export const requestPasswordReset = createServerFn({ method: "POST" })
     const verified = await verifyTurnstile(data.turnstileToken, ip, "password_reset");
     if (!verified) throw new Error("Human verification failed. Please try again.");
 
-    const { createClient } = await import("@supabase/supabase-js");
+    // Resolve the administrator email server-side from the role assignment.
+    // Never trust the submitted address or expose service-role credentials.
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: adminRoles, error: roleError } = await supabaseAdmin
+      .from("user_roles")
+      .select("user_id")
+      .eq("role", "admin");
+
+    if (roleError) {
+      console.error("[password-reset] admin role lookup failed", roleError);
+      throw new Error("Unable to process the request.");
+    }
+
+    let adminEmailMatches = false;
+    for (const role of adminRoles ?? []) {
+      const { data: userData, error: userError } = await supabaseAdmin.auth.admin.getUserById(role.user_id);
+      if (userError) {
+        console.error("[password-reset] admin user lookup failed", userError);
+        throw new Error("Unable to process the request.");
+      }
+      if (userData.user?.email?.trim().toLowerCase() === data.email) {
+        adminEmailMatches = true;
+        break;
+      }
+    }
+
+    if (!adminEmailMatches) return { success: false as const, reason: "invalid_email" as const };
+
     const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
     const publishableKey =
       process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_PUBLISHABLE_KEY;
     if (!supabaseUrl || !publishableKey) throw new Error("Supabase server configuration is incomplete.");
 
+    const { createClient } = await import("@supabase/supabase-js");
     const userClient = createClient(supabaseUrl, publishableKey, {
       auth: { autoRefreshToken: false, persistSession: false, detectSessionInUrl: false },
     });
@@ -34,6 +62,5 @@ export const requestPasswordReset = createServerFn({ method: "POST" })
 
     if (error) throw new Error("Unable to process the request.");
 
-    // Deliberately do not reveal whether the submitted address exists.
-    return { success: true };
+    return { success: true as const };
   });
